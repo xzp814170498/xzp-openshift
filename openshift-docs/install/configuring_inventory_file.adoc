@@ -1,0 +1,2106 @@
+[[install-config-configuring-inventory-file]]
+= Configuring Your Inventory File
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:prewrap!:
+ifdef::openshift-enterprise[]
+:pb-prefix: /usr/share/ansible/openshift-ansible/
+endif::[]
+ifdef::openshift-origin[]
+:pb-prefix: ~/openshift-ansible/
+endif::[]
+include::_snippets/glusterfs.adoc[]
+
+toc::[]
+
+[[配置-Ansible]]
+== 为集群定制库存文件
+
+工具目录文件描述了集群中主机的详细信息和您的{product-title}的集群配置安装细节。
+安装剧本读取您的目录文件，以及了解在何处如何跨主机安装{product-title}。
+
+[NOTE]
+====
+看此链接:https://docs.ansible.com/ansible/2.4/intro_inventory.html[Ansible文件]
+有关库存文件格式的详细信息，包括有关的基本信息
+链接:https://docs.ansible.com/ansible/2.4/YAMLSyntax.html[YAML语法].
+====
+
+当您安装 *openshift-ansible* RPM 包时,如中所述
+xref:../install/host_preparation.adoc#installing-base-packages[主机准备], 配置文件
+的依赖项在 *_/etc/ansible/hosts_*的默认位置创建一个文件。
+然而，该文件只是默认的配置示例，没有变量与{product-title}配置相关。为了成功安装
+{product-title}, 您 _必须_ 根据您的集群环境和需求进行配置。
+
+下面有几节描述是需要在您安装集群期间需要设置的常用变量文件。其中很多可能的
+变量是可选的。对于开发环境，您可以接受默认值，但是在生产环境中您必须选择适当的值。
+
+您可以查看
+xref:example_inventories。用于各种示例的adoc#install-config-example-inventories[示例库存文件]
+可以作为集群安装的起点。
+
+[NOTE]
+====
+为了维护更新，映射需要版本号策略。请查看
+xref:../architecture/core_concepts/containers_and_images。
+有关更多信息，请参考体系结构指南中
+adoc#architecture-images-tag-policy[ImageVersion Tag Policy]一节。
+====
+
+[[配置-集群-变量]]
+== 配置集群变量
+
+要在Ansible安装期间分配全局集群环境变量，请将它们添加到*_/etc/ansible/hosts_*文件
+的*[OSEv3:vars]*部分。你必须将每个参数值放在单独的一排。例如：
+
+----
+[OSEv3:vars]
+
+openshift_master_identity_providers=[{'name': 'htpasswd_auth',
+'login': 'true', 'challenge': 'true',
+'kind': 'HTPasswdPasswordIdentityProvider',}]
+
+openshift_master_default_subdomain=apps.test.example.com
+----
+
+包括::install/topics/escaping_special_characters.adoc[]
+
+下面的表格描述了Ansible使用的全局集群变量的安装程序：
+
+[[cluster-variables-table]]
+.General Cluster Variables
+[cols=".^5,.^5a",options="header"]
+|===
+
+|Variable |Purpose
+
+|`ansible_ssh_user`
+|这个变量设置安装程序使用的SSH用户，默认值为`root`。此用户必须允许基于SSH的身份验证
+xref:host_preparation.adoc#确保主机访问[不需要访问密码]。如果使用基于SSH密钥的身份
+验证，那么密钥必须由SSH管理代理。
+
+|`ansible_become`
+|如果 `ansible_ssh_user` 不是 `root`， 则必须将该变量设置为 `true` ，并且必须将
+用户配置为无密码的`sudo`。
+
+|`debug_level`
+a|这个变量设置哪些信息消息会被记录到`systemd-journald.service`中。设置之一如下:
+
+* `0` 只记录错误和警告
+* `2` 记录正常信息(这是默认级别)
+* `4` 记录调试级信息
+* `6` 记录API调试信息(请求/响应)
+* `8` 记录主体级API调试信息
+
+有关调试日志级别的更多信息，请查看 xref:../install_config/master_node_configuration.adoc#master-node-config-logging-levels[配置日志记录的水平].
+
+|`openshift_clock_enabled`
+a| `true`默认情况下，是否需要在集群节点上启用网络时间协议(NTP)。
+
+[IMPORTANT]
+====
+为了防止集群中的主节点和节点不同步，不要更改此参数的默认值。
+====
+
+|`openshift_master_admission_plugin_config`
+a|该变量根据库存主机文件中的要求设置参数和任意JSON值。例如：
+
+----
+openshift_master_admission_plugin_config={"ClusterResourceOverride":{"configuration":{"apiVersion":"v1","kind":"ClusterResourceOverrideConfig","memoryRequestToLimitPercent":"25","cpuRequestToLimitPercent":"25","limitCPUToMemoryPercent":"200"}}}
+----
+
+|`openshift_master_audit_config`
+|此变量启用API服务审计。请查看
+xref:../install_config/master_node_configuration.adoc#master-node-config-audit-config[审计配置]等有关更多信息。
+
+|`openshift_master_cluster_hostname`
+|这个变量覆盖集群的主机名，主机名默认为主机名。
+
+|`openshift_master_cluster_public_hostname`
+|此变量覆盖集群的公共主机名，该主机名默认为主机名。如果使用外部负载平衡器，请指定外部负载平衡器的地址。
+
+For example:
+
+----
+openshift_master_cluster_public_hostname=openshift-ansible.public.example.com
+----
+
+|`openshift_master_cluster_method`
+|可选的。这个变量在部署多个主机时定义HA方法。
+支持 `本地` 方法。 请查看xref:example_inventories.adoc#multiple-masters[多主机]等更多相关信息。
+
+|`openshift_rolling_restart_mode`
+|当xref:../upgrading/automated_upgrades.adoc#install-config-upgrading-automated-upgrades[运行立即提升性能]时，
+该变量支持HA多主机的轮询重启 (即, 多主机每次取下一个)。 它默认为 `services`,允许在主机上滚动重启服务。它可以被设置为`system`, 
+这样就可以滚动整个系统重新启动了。
+
+|`openshift_master_identity_providers`
+|这个变量设置
+xref:../install_config/configuring_authentication.adoc#install-config-configuring-authentication[身份提供者]。
+默认值是
+xref:../install_config/configuring_authentication.adoc#DenyAllPasswordIdentityProvider[全部否认]。
+如果使用受支持的标识提供程序，请将{product-title}为它配置使用。您可以配置多个身份提供程序。
+
+|`openshift_master_named_certificates`
+.2+.^|作为安装的一部分部署，这些变量用于配置 xref:../install_config/certificate_customization.adoc#install-config-certificate-customization[自定义证书]。
+请查看 xref:advanced-install-custom-certificates[配置自定义证书]获取更多信息。
+|`openshift_master_overwrite_named_certificates`
+
+|`openshift_hosted_router_certificate`
+|为托管的路由器提供位置
+xref:../install_config/certificate_customization.adoc#install-config-certificate-customization[自定义证书]。
+
+|`openshift_master_ca_certificate`
+| 提供
+xref:../install_config/redeploying_certificates.adoc#redeploying-new-custom-ca[单个证书]
+和签署{product-title}的密钥。
+请查看xref:../install_config/redeploying_certificates.adoc#redeploying-new-custom-ca[重新部署一个新的或自定义的 {product-title} CA]
+
+|`openshift_additional_ca`
+| 如果您的 `openshift_master_ca_certificate` 参数的证书是由一个中间证书签名的，则提供
+包含CA的整个中间证书链和根证书的绑定证书。
+请查看 xref:../install_config/redeploying_certificates.adoc#redeploying-new-custom-ca[重新部署一个新的或自定义的 {product-title} CA]
+
+|`openshift_hosted_registry_cert_expire_days`
+|自动生成的注册证书的有效期(以天为单位)，默认为 `730` (2年)。
+
+|`openshift_ca_cert_expire_days`
+|自动生成的CA证书的有效期(以天为单位)，默认为 `1825` (5年)。
+
+|`openshift_node_cert_expire_days`
+|自动生成的节点证书的有效期(以天为单位)，默认为 `730` (2年)。
+
+|`openshift_master_cert_expire_days`
+|自动生成的主证书的有效期(以天为单位)，默认为 `730` (2年)。
+
+|`etcd_ca_default_days`
+|自动生成的外部etcd证书的有效期(以天为单位)，控制CA, 对等点, 服务器和客户端证书的有效性。
+默认为 `1825`(5年)。
+
+|`openshift_certificate_expiry_warning_days`
+|自动生成的证书必须有效才能进行时间的升级，默认为`365` (1年)。
+
+|`openshift_certificate_expiry_fail_on_warn`
+|如果自动生成的证书在`openshift_certificate_expiry_warning_days` 参数指定的时间内无效，
+则升级失败，默认为 `True`。
+
+|`os_firewall_use_firewalld`
+|对防火墙设置 `true` 去替代默认的 iptables。RHEL原子主机上不可用。
+更多相关信息，请参考 xref:advanced-install-configuring-firewalls[配置防火墙]一节。
+
+|`openshift_master_session_name`
+.4+.^|在OAuth配置中，这些变量覆盖值
+xref:../install_config/configuring_authentication.adoc#session-options[会话选项]。 
+更多相关信息，请参考xref:advanced-install-session-options[配置会话选项]。
+
+|`openshift_master_session_max_seconds`
+
+|`openshift_master_session_auth_secrets`
+
+|`openshift_master_session_encryption_secrets`
+
+|`openshift_master_image_policy_config`
+|在主配置中设置`imagePolicyConfig`。有关详细信息，请参考 xref:../install_config/master_node_configuration.adoc#master-config-image-config[影像配置]。
+
+|`openshift_router_selector`
+|自动部署路由器吊舱的默认节点选择器。请查看
+xref:configuring-node-host-labels[配置节点主机标签] 获取详细信息。
+
+|`openshift_registry_selector`
+|用于自动部署注册表的默认节点选择器。 请查看
+xref:configuring-node-host-labels[配置节点主机标签] 获取详细信息。
+
+|`openshift_template_service_broker_namespaces`
+|这个变量通过指定一个或多个名称空间来支持模板服务代理,其模板将由代理服务。
+
+|`openshift_master_bootstrap_auto_approve`
+|该变量支持TLS引导自动审批，当提供引导凭据时，它允许节点自动加入集群。
+如果您要启用该选项，请将其设置为`true` 。
+在集群上配置，请查看xref:../admin_guide/cluster-autoscaler.adoc#configuring-cluster-auto-scaler-AWS[集群自动伸缩器]，
+默认值为`false`。
+
+|`ansible_service_broker_node_selector`
+|默认的节点选择器，用于自动部署可使用的服务代理pod，
+默认为 `{"node-role.kubernetes.io/infra":"true"}`。请查看
+xref:configuring-node-host-labels[配置节点主机标签] 获取详细信息。
+
+|`template_service_broker_selector`
+|用于自动部署模板服务代理表荚的默认节点选择器，
+默认值为 `{"node-role.kubernetes.io/infra":"true"}`。 请查看
+xref:configuring-node-host-labels[配置节点主机标签] 获取详细信息。
+
+|`osm_default_node_selector`
+|这个变量覆盖了项目将在放置pod时默认使用的节点选择器， 这是由主配置文件中 `projectConfig.defaultNodeSelector` 的字段定义的。
+如果未定义，这个默认值是 `node-role.kubernetes.io/compute=true`。
+
+|`openshift_docker_additional_registries`
+a|{product-title} 将指定的附加注册表或注册表添加到
+*docker* 配置中。 这些就是注册中心，如果需要访问 `80`以外的端口, 那么需要访问的形式是 `<address>:<port>`。
+
+For example:
+
+----
+openshift_docker_additional_registries=example.com:443
+----
+
+[NOTE]
+====
+如果需要配置集群以使用备用注册表，请设置
+`oreg_url` 而不是依赖于`openshift_docker_additional_registries`。
+====
+
+|`openshift_docker_insecure_registries`
+|{product-title} 将指定的附加不安全注册中心或注册中心添加到*docker* 配置中。对于任何一个注册中心， 
+不验证安全连接层 (SSL)。  将会被设置为主机的主机名或IP地址。 `0.0.0.0/0` 不是IP地址的有效设置。
+
+|`openshift_docker_blocked_registries`
+|{product-title} 将添加指定的阻塞注册表或注册中心添加到*docker* 配置中。
+阻止列出的注册中心， 在其他变量中没有的内容将此设置为 `all`。
+
+|`openshift_metrics_hawkular_hostname`
+|这个变量通过在集群度量的主配置中覆盖 `metricsPublicURL` 来设置与度量控制台集成的主机名。
+如果更改此变量，请确保主机名可以通过路由器访问。
+
+|`openshift_clusterid`
+|这个变量是 AWS 可用性区域的一个集群标识符。 使用这一点可以避免亚马逊 Web 服务
+(AWS) 有多个区域或多个集群的潜在问题。请查看 xref:../install_config/configuring_aws.adoc#aws-cluster-labeling[AWS的标记集群]获取详细信息。
+
+|`openshift_image_tag`
+|使用此变量指定安装或配置的容器图像标记。
+
+|`openshift_pkg_version`
+|使用此变量指定要安装或配置的RPM版本。
+
+|===
+
+[WARNING]
+====
+如果在集群设置之后修改 `openshift_image_tag` 或 `openshift_pkg_version` 变量，则可以触发升级，
+从而导致停机。
+
+* 如果设置`openshift_image_tag`，它的值将用于系统容器环境中的所有主机，甚至包括那些安装了其他版本的主机。如果
+* `openshift_pkg_version` 被设置， 它的值被用于基于RPM的环境中的所有主机，即使是那些安装了其他版本的主机。
+====
+
+[[advanced-install-networking-variables-table]]
+.Networking Variables
+[options="header"]
+|===
+
+|Variable |Purpose
+
+|`openshift_master_default_subdomain`
+|此变量覆盖要用于公开的默认子域
+xref:../architecture/networking/routes.adoc#architecture-core-concepts-routes[路线].
+
+|`os_sdn_network_plugin_name`
+|这个变量配置
+xref:../architecture/networking/sdn.adoc#architecture-additional-concepts-sdn[OpenShift SDN 插件]
+去用于pod网络, 标准的SDN插件的默认值为 `redhat/openshift-ovs-subnet`。
+用多组织共享技术SDN插件将变量设置为 `redhat/openshift-ovs-multitenant`。
+
+|`osm_cluster_network_cidr`
+|这变量覆盖 SDN 集群网络的 CIDR 块。 这是分配 pod IPs 的网络。 指定一个私有块，该私有块不与
+基础设施中现有的网络冲突，而pod、节点或者主机可能需要访问这些网络块。默认值是`10.128.0.0/14`，
+不能在部署后任意重新配置，不过可以在
+xref:../install_config/configuring_sdn.adoc#configuring-the-pod-network-on-masters[SDN主机配置].
+
+|`openshift_portal_net`
+|此变量配置其中的子网
+xref:../architecture/core_concepts/pods_and_services.adoc#services[services]
+将创建在
+xref:../architecture/networking/sdn.adoc#architecture-additional-concepts-sdn[{product-title}SDN]. 
+指定一个不与任何冲突的私有块在您的基础结构中存在的网络块，其中包含pods，节点，
+或者主机可能需要访问，否则安装将失败。默认为
+`172.30.0.0/16`, a部署后将无法重新配置。
+如果默认值更改， 请避免*docker0*网桥默认使用的 `172.17.0.0/16` ， 或者修改 *docker0* 网络。
+
+|`osm_host_subnet_length`
+|此变量指定分配给 pod IP 的每个主机子网的大小
+通过
+xref:../architecture/networking/sdn.adoc#sdn-design-on-masters[{product-title}
+SDN]. 默认值为 `9` 这意味着主机的每个子网的大小为 /23；
+例如, 给定默认的 10.128.0.0/14 集群网络, 这将会分配
+10.128.0.0/23, 10.128.2.0/23, 10.128.4.0/23, 以此类推。
+这是不可能在部署之后重新配置的。
+
+|`openshift_node_proxy_mode`
+|此变量指定
+xref:../architecture/core_concepts/pods_and_services.adoc#service-proxy-mode[服务代理模式] 
+去使用: 对于默认的 `iptables` , 可以使用`iptables`实现，或者对于用户空间代理使用 `userspace`。
+
+|`openshift_use_flannel`
+|此变量启用的 *flannel* 作为默认替代SDN的网络层。
+如果启用*flannel*, 使用变量`openshift_use_openshift_sdn`禁用默认的SDN。 
+有关更多信息，请查看 xref:../install_config/configuring_sdn.adoc#using-flannel[Using Flannel]。
+
+|`openshift_use_openshift_sdn`
+|设置为`false` 用来禁用 OpenShift SDN插件。
+
+|`openshift_sdn_vxlan_port`
+|这个变量是设置 `集群网络`的`vxlan port`号。默认为 `4789`. 
+更多信息，请查看 xref:../install_config/configuring_sdn.html#config-changing-vxlan-port-for-cluster-network[更改集群网络 VXLAN 端口]。
+
+|===
+
+[[advanced-install-deployment-types]]
+== 配置部署类型
+
+安装程序在整个剧本和角色中使用的各种缺省值都基于
+部署类型配置(通常在Ansible inventory文件中定义)。
+
+ifdef::openshift-enterprise[]
+确保清单文件`[OSEv3:vars]`中的 `openshift_deployment_type` 参数部分设置为
+`openshift-enterprise` 去安装 {product-title} 变量:
+
+----
+[OSEv3:vars]
+openshift_deployment_type=openshift-enterprise
+----
+endif::[]
+ifdef::openshift-origin[]
+确保清单文件`[OSEv3:vars]`中的`openshift_deployment_type` 参数设置为`origin`，用于安装 {product-title} 变量:
+
+----
+[OSEv3:vars]
+openshift_deployment_type=origin
+----
+endif::[]
+
+
+[[configuring-host-variables]]
+== 配置主机变量
+
+要在Ansibe安装期间为注解分配环境变量，请在*[masters]* 或 *[nodes]*节中的主机条目之后，
+在 *_/etc/ansible/hosts_* 文件中设置它们。例如:
+
+----
+[masters]
+ec2-52-6-179-239.compute-1.amazonaws.com openshift_public_hostname=ose3-master.public.example.com
+----
+
+下表描述了Ansible安装程序使用的变量，可以分配给各个主机条目:
+
+[[advanced-host-variables]]
+.Host Variables
+[options="header"]
+|===
+
+|变量 |目的
+
+|`openshift_public_hostname`
+|此变量覆盖系统的公共主机名。将其用于云安装，或网络上使用网络地址转换(NAT)的主机。
+
+|`openshift_public_ip`
+|此变量覆盖系统的公共IP地址。将其用于云安装，或网络上使用网络地址转换(NAT)的主机。
+
+|`openshift_node_labels`
+|这个变量是不赞成的; 为当前设置节点标签的方法，请查看
+xref:configuring-inventory-defining-node-group-and-host-mappings[定义节点组和主机映射]。
+
+|`openshift_docker_options`
+a|这个变量在*_/etc/sysconfig/docker_*中配置额外的 `docker`选项，
+比如在
+xref:host_preparation.adoc#managing-docker-container-logs[容器管理日志]使用的选项。
+建议使用 `json-file`。
+
+下面的示例显示了Docker使用 `json-file` 日志驱动的配置，其中Docker在三个1MB日志文件之间旋转，
+并且不需要签名验证。提供其他选项时，请确保保持单引号格式：
+
+----
+OPTIONS=' --selinux-enabled --log-opt  max-size=1M --log-opt max-file=3 --insecure-registry 172.30.0.0/16 --log-driver=json-file --signature-verification=false'
+----
+
+|`openshift_schedulable`
+|该变量配置主机是否被标记为可调度节点，这意味着它可用于放置新pod。
+请参考
+xref:marking-masters-as-unschedulable-nodes[在主机上配置可调度性]。
+
+|`openshift_node_problem_detector_install`
+|这个变量用于激活 xref:../admin_guide/node_problem_detector.adoc#admin-guide-node-problem-detector[探测器节点问题].
+如果设置为 `false, 默认值`, 则不会安装或启动节点问题检测器。
+
+|===
+
+[[configuring-inventory-defining-node-group-and-host-mappings]]
+== 定义节点组和主机映射
+
+节点配置是
+xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node-bootstrapping[bootstrapped]
+从主节点引导。 启动节点引导和服务时，节点在加入集群之前检查 *_kubeconfig_* 和其他节点
+配置文件是否存在。如果没有，则节点从主节点获取配置，然后加入集群。
+
+这个过程替代了管理员必须手工维护每个节点主机上唯一的节点配置。
+而是节点主机的
+*_/etc/origin/node/node-config.yaml_* 文件现在由来自主服务器的ConfigMaps提供。
+
+[[configuring-inventory--node-group-configmaps]]
+=== 节点配置图
+
+定义节点配置的 Configmaps 必须在
+*openshift-node* 项目中可用。 ConfigMaps 现在也是节点标签的权威定义; 
+旧的 `openshift_node_labels` 值实际上被忽略。
+
+默认情况下，在集群安装期间，安装程序创建以下默认的ConfigMaps:
+
+- `node-config-master`
+- `node-config-infra`
+- `node-config-compute`
+
+还创建了以下ConfigMaps, 将节点标记为多个角色:
+
+- `node-config-all-in-one`
+- `node-config-master-infra`
+
+下面的ConfigMaps是每个现有默认节点组的 *CRI-O* 变体:
+
+- `node-config-master-crio`
+- `node-config-infra-crio`
+- `node-config-compute-crio`
+- `node-config-all-in-one-crio`
+- `node-config-master-infra-crio`
+
+[IMPORTANT]
+====
+不能修改节点主机的
+*_/etc/origin/node/node-config.yaml_* 文件。任何更改都被节点使用的 ConfigMap中定义的配置覆盖。
+====
+
+[[configuring-inventory-node-group-definitions]]
+=== 节点组定义
+
+安装了最新的 *openshift-ansible* 包之后， 您可以在
+*_{pb-prefix}roles/openshift_facts/defaults/main.yml_* 文件中查看YAML格式的缺省节点组定义集:
+
+----
+openshift_node_groups:
+  - name: node-config-master <1>
+    labels:
+      - 'node-role.kubernetes.io/master=true' <2>
+    edits: [] <3>
+  - name: node-config-infra
+    labels:
+      - 'node-role.kubernetes.io/infra=true'
+    edits: []
+  - name: node-config-compute
+    labels:
+      - 'node-role.kubernetes.io/compute=true'
+    edits: []
+  - name: node-config-master-infra
+    labels:
+      - 'node-role.kubernetes.io/infra=true,node-role.kubernetes.io/master=true'
+    edits: []
+  - name: node-config-all-in-one
+    labels:
+      - 'node-role.kubernetes.io/infra=true,node-role.kubernetes.io/master=true,node-role.kubernetes.io/compute=true'
+    edits: []
+----
+<1> 节点组名称
+<2> 与节点组关联的节点标签列表。 请查看
+xref:configuring-node-host-labels[节点主机标签] 获取详细信息。
+<3> 对节点组配置的任何编辑。
+
+如果您没有在库存文件的`[OSEv3:vars]` 组中设置`openshift_node_groups`变量，就使用这些默认值。
+但是，如果想要设置自定义节点组，必须在清单文件中定义整个`openshift_node_groups` 
+结构，包括所有计划的节点组。
+
+这个`openshift_node_groups` 的值没有与默认值合并，您必须将YAML定义翻译成Python字典。
+然后，您可以使用`edits`字段通过指定键值对来修改任何节点配置变量。 
+
+[NOTE]
+====
+参考
+xref:../install_config/master_node_configuration.adoc#node-configuration-files[主机和节点配置文件] 用于参考可配置节点变量。
+====
+
+例如, 目录文件中的以下条目定义了名为`node-config-master`, `node-config-infra`, 和 `node-config-compute`的组。
+
+----
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true']}]
+----
+
+您还可以使用其他标签定义新的节点组名，目录文件中的以下条目定义了名为
+`node-config-master`, `node-config-infra`, `node-config-compute` 和 `node-config-compute-storage`的组。
+
+----
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true']}, {'name': 'node-config-compute-storage', 'labels': ['node-role.kubernetes.io/compute-storage=true']}]
+----
+
+在目录文件中设置条目时，还可以编辑节点组的ConfigMap:
+
+* 您可以使用列表, 比如修改 `node-config-compute` 来设置`kubeletArguments.pods-per-core` 到 `20`:
+
+----
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}]
+----
+
+* 您可以使用列表来修改多个键值对，例如修改`node-config-compute` 组，向`kubelet`添加两个参数:
+
+----
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.experimental-allocatable-ignore-eviction','value': ['true']}, {'key': 'kubeletArguments.eviction-hard', 'value': ['memory.available<1Ki']}]}]
+----
+
+* 您也可以使用字典作为值， 例如修改`node-config-compute` 组，将 `perFSGroup`值设置为 `512Mi`:
+
+----
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'volumeConfig.localQuota','value': {'perFSGroup':'512Mi'}}]}]
+----
+
+每当 *_openshift_node_group.yml_* 机器正在运行时， 在`edits`字段定义的更改将更新相关的ConfigMap (本例中为`node-config-compute`),
+这将最终影响主机上节点的配置文件。
+
+[[configuring-inventory-mapping-hosts-to-node-groups]]
+=== 将主机映射到节点组
+
+To map which ConfigMap to use for which node host, all hosts defined in the
+`[nodes]` group of your inventory must be assigned to a _node group_ using the
+`openshift_node_group_name` variable.
+
+[IMPORTANT]
+====
+Setting `openshift_node_group_name` per host to a node group is required for all
+cluster installations whether you use the default node group definitions
+and ConfigMaps or are customizing your own.
+====
+
+The value of `openshift_node_group_name` is used to select the ConfigMap that
+configures each node. For example:
+
+----
+[nodes]
+master[1:3].example.com openshift_node_group_name='node-config-master'
+infra-node1.example.com openshift_node_group_name='node-config-infra'
+infra-node2.example.com openshift_node_group_name='node-config-infra'
+node1.example.com openshift_node_group_name='node-config-compute'
+node2.example.com openshift_node_group_name='node-config-compute'
+----
+
+If other custom ConfigMaps have been defined in `openshift_node_groups` they can also be used. For exmaple:
+
+----
+[nodes]
+master[1:3].example.com openshift_node_group_name='node-config-master'
+infra-node1.example.com openshift_node_group_name='node-config-infra'
+infra-node2.example.com openshift_node_group_name='node-config-infra'
+node1.example.com openshift_node_group_name='node-config-compute'
+node2.example.com openshift_node_group_name='node-config-compute'
+gluster[1:6].example.com openshift_node_group_name='node-config-compute-storage'
+----
+
+[[configuring-node-host-labels]]
+=== Node Host Labels
+
+You can assign xref:../architecture/core_concepts/pods_and_services.adoc#labels[Labels]
+to node hosts during cluster installation. You can use these labels to
+determine the placement of pods onto nodes using the
+xref:../admin_guide/scheduling/scheduler.adoc#configurable-predicates[scheduler].
+
+You must create your own
+custom node groups if you want to modify the default labels that are assigned to
+node hosts. You can no longer set the `openshift_node_labels` variable to change
+labels. See xref:configuring-inventory-node-group-definitions[Node Group Definitions]
+to modify the default node groups.
+
+Other than `node-role.kubernetes.io/infra=true` (hosts using this group are also referred to as
+_dedicated infrastructure nodes_ and discussed further in
+xref:configuring-dedicated-infrastructure-nodes[Configuring Dedicated
+Infrastructure Nodes]), the actual label names and values are arbitrary and can
+be assigned however you see fit per your cluster's requirements.
+
+[[marking-masters-as-unschedulable-nodes]]
+==== Pod Schedulability on Masters
+
+Configure all hosts that you designate as masters during the installation process
+as nodes. By doing so, the masters are configured as part of the
+xref:../architecture/networking/network_plugins.adoc#openshift-sdn[OpenShift SDN].
+You must add entries for the master hosts to the `[nodes]` section:
+
+----
+[nodes]
+master[1:3].example.com openshift_node_group_name='node-config-master'
+----
+
+If you want to change the schedulability of a host post-installation, see
+xref:../admin_guide/manage_nodes.adoc#marking-nodes-as-unschedulable-or-schedulable[Marking Nodes as Unschedulable or Schedulable].
+
+
+[[configuring-node-host-labels-pod-schedulability-nodes]]
+==== Pod Schedulability on Nodes
+
+Masters are marked as schedulable nodes by default, so the default node selector
+is set by default during cluster installations. The default node selector is
+defined in the master configuration file's `projectConfig.defaultNodeSelector`
+field to determine which node projects will use by default when placing pods. It
+is set to `node-role.kubernetes.io/compute=true` unless overridden using the
+`osm_default_node_selector` variable.
+
+[IMPORTANT]
+====
+If you accept the default node selector of
+`node-role.kubernetes.io/compute=true` during installation, ensure that you do
+not only have dedicated infrastructure nodes as the non-master nodes defined in
+your cluster. In that scenario, application pods fail to deploy because no
+nodes with the `node-role.kubernetes.io/compute=true` label are available
+to match the default node selector when scheduling pods for projects.
+====
+
+See
+xref:../admin_guide/managing_projects.adoc#setting-the-cluster-wide-default-node-selector[Setting the Cluster-wide Default Node Selector]
+for steps on adjusting this setting post-installation if needed.
+
+[[configuring-dedicated-infrastructure-nodes]]
+==== Configuring Dedicated Infrastructure Nodes
+
+It is recommended for production environments that you maintain dedicated
+infrastructure nodes where the registry and router pods can run separately from
+pods used for user applications.
+
+The `openshift_router_selector` and `openshift_registry_selector` Ansible
+settings determine the label selectors used when placing registry and router
+pods. They are set to `node-role.kubernetes.io/infra=true` by default:
+
+----
+# default selectors for router and registry services
+# openshift_router_selector='node-role.kubernetes.io/infra=true'
+# openshift_registry_selector='node-role.kubernetes.io/infra=true'
+----
+
+The registry and router are only able to run on node hosts with the
+`node-role.kubernetes.io/infra=true` label, which are then considered dedicated
+infrastructure nodes. Ensure that at least one node host in your {product-title}
+environment has the `node-role.kubernetes.io/infra=true` label; you can use the
+default *node-config-infra*, which sets this label:
+
+----
+[nodes]
+infra-node1.example.com openshift_node_group_name='node-config-infra'
+----
+
+[IMPORTANT]
+====
+If there is not a node in the `[nodes]` section that matches the selector
+settings, the default router and registry will be deployed as failed with
+`Pending` status.
+====
+
+If you do not intend to use {product-title} to manage the registry and router,
+configure the following Ansible settings:
+
+----
+openshift_hosted_manage_registry=false
+openshift_hosted_manage_router=false
+----
+
+If you use an image registry other than the default
+`registry.redhat.io`, you must
+xref:advanced-install-configuring-registry-location[specify the registry]
+in the  *_/etc/ansible/hosts_* file.
+
+As described in xref:marking-masters-as-unschedulable-nodes[Configuring Schedulability on Masters],
+master hosts are marked schedulable by default. If
+you label a master host with `node-role.kubernetes.io/infra=true` and have no other dedicated
+infrastructure nodes, the master hosts must also be marked as schedulable.
+Otherwise, the registry and router pods cannot be placed anywhere.
+
+You can use the default *node-config-master-infra* node group to achieve this:
+
+----
+[nodes]
+master.example.com openshift_node_group_name='node-config-master-infra'
+----
+
+[[configuring-host-port]]
+== Configuring Master API Port
+
+To configure the default ports used by the master API, configure the following
+variables in the *_/etc/ansible/hosts_* file:
+
+[[advanced-master-ports]]
+.Master API Port
+[options="header"]
+|===
+
+|Variable |Purpose
+|`openshift_master_api_port`
+|This variable sets the port number to access the {product-title} API.
+|===
+
+For example:
+
+----
+openshift_master_api_port=3443
+----
+
+The web console port setting (`openshift_master_console_port`) must match the
+API server port (`openshift_master_api_port`).
+
+[[configuring-cluster-pre-install-checks]]
+== Configuring Cluster Pre-install Checks
+
+Pre-install checks are a set of diagnostic tasks that run as part of the
+*openshift_health_checker* Ansible role. They run prior to an Ansible
+installation of {product-title}, ensure that required inventory values are set,
+and identify potential issues on a host that can prevent or interfere with a
+successful installation.
+
+The following table describes available pre-install checks that will run before
+every Ansible installation of {product-title}:
+
+[[configuring-cluster-pre-install-checks-pre-install-checks]]
+.Pre-install Checks
+[options="header"]
+|===
+
+|Check Name |Purpose
+
+|`memory_availability`
+|This check ensures that a host has the recommended amount of memory for the
+specific deployment of {product-title}. Default values have been derived from
+the
+xref:prerequisites.adoc#system-requirements[latest
+installation documentation]. A user-defined value for minimum memory
+requirements might be set by setting the `openshift_check_min_host_memory_gb`
+cluster variable in your inventory file.
+
+|`disk_availability`
+|This check only runs on etcd, master, and node hosts. It ensures that the mount
+path for an {product-title} installation has sufficient disk space remaining.
+Recommended disk values are taken from the
+xref:prerequisites.adoc#system-requirements[latest
+installation documentation]. A user-defined value for minimum disk space
+requirements might be set by setting `openshift_check_min_host_disk_gb` cluster
+variable in your inventory file.
+
+|`docker_storage`
+|Only runs on hosts that depend on the *docker* daemon (nodes and system
+container installations). Checks that *docker*'s total usage does not exceed a
+user-defined limit. If no user-defined limit is set, *docker*'s maximum usage
+threshold defaults to 90% of the total size available. The threshold limit for
+total percent usage can be set with a variable in your inventory file:
+`max_thinpool_data_usage_percent=90`. A user-defined limit for maximum thinpool
+usage might be set by setting the `max_thinpool_data_usage_percent` cluster
+variable in your inventory file.
+
+|`docker_storage_driver`
+|Ensures that the *docker* daemon is using a storage driver supported by
+{product-title}. If the `devicemapper` storage driver is being used, the check
+additionally ensures that a loopback device is not being used. For more
+information, see
+link:https://docs.docker.com/storage/storagedriver/device-mapper-driver/[Docker's
+Use the Device Mapper Storage Driver guide].
+
+|`docker_image_availability`
+|Attempts to ensure that images required by an {product-title} installation are
+available either locally or in at least one of the configured container image
+registries on the host machine.
+
+|`package_version`
+|Runs on `yum`-based systems determining if multiple releases of a required
+{product-title} package are available. Having multiple releases of a package
+available during an `enterprise` installation of OpenShift suggests that there
+are multiple `yum` repositories enabled for different releases, which might lead
+to installation problems.
+
+|`package_availability`
+|Runs prior to RPM installations of {product-title}. Ensures that
+RPM packages required for the current installation are available.
+
+|`package_update`
+|Checks whether a `yum` update or package installation will succeed, without
+actually performing it or running `yum` on the host.
+|===
+
+To disable specific pre-install checks, include the variable
+`openshift_disable_check` with a comma-delimited list of check names in your
+inventory file. For example:
+
+----
+openshift_disable_check=memory_availability,disk_availability
+----
+
+[NOTE]
+====
+A similar set of health checks meant to run for diagnostics on existing clusters
+can be found in
+xref:../admin_guide/diagnostics_tool.adoc#admin-guide-health-checks-via-ansible-playbook[Ansible-based Health Checks]. Another set of checks for checking certificate expiration can be
+found in
+xref:../install_config/redeploying_certificates.adoc#install-config-redeploying-certificates[Redeploying Certificates].
+====
+
+[[advanced-install-configuring-registry-location]]
+== Configuring a Registry Location
+
+If you use an image registry other than the default at
+`registry.redhat.io`, specify the registry in the
+*_/etc/ansible/hosts_* file.
+
+----
+oreg_url=example.com/openshift3/ose-${component}:${version}
+openshift_examples_modify_imagestreams=true
+----
+
+.Registry Variables
+[options="header"]
+|===
+
+|Variable |Purpose
+|`oreg_url`
+|Set to the alternate image location. Necessary if you are not using the default
+registry at `registry.redhat.io`. The default component inherits the image
+prefix and version from the `oreg_url` value. For the default registry, and registries
+that require authentication, you need to specify `oreg_auth_user` and
+`oreg_auth_password`.
+
+|`openshift_examples_modify_imagestreams`
+|Set to `true` if pointing to a registry other than the default. Modifies the
+image stream location to the value of `oreg_url`.
+
+|`oreg_auth_user`
+|If `oreg_url` points to a registry requiring authentication, use the `oreg_auth_user`
+variable to provide your user name. You must also provide your password as the
+`oreg_auth_password` parameter value. If you use the default registry, specify a
+user that can access `registry.redhat.io`.
+
+|`oreg_auth_password`
+|If `oreg_url` points to a registry requiring authentication, use the `oreg_auth_password`
+variable to provide your password. You must also provide your user name as the
+`oreg_auth_user` parameter value. If you use the default registry, specify the
+password or token for that user.
+|===
+
+[NOTE]
+====
+The default registry requires an authentication token. For more information,
+see xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[Accessing and Configuring the Red Hat Registry]
+====
+
+For example:
+----
+oreg_url=example.com/openshift3/ose-${component}:${version}
+oreg_auth_user=${user_name}
+oreg_auth_password=${password}
+openshift_examples_modify_imagestreams=true
+----
+
+[[advanced-install-configuring-docker-route]]
+== Configuring a Registry Route
+
+To allow users to push and pull images to the internal container image registry from
+outside of the {product-title} cluster, configure the registry route in the
+*_/etc/ansible/hosts_* file. By default, the registry route is
+*_docker-registry-default.router.default.svc.cluster.local_*.
+
+
+.Registry Route Variables
+[options="header"]
+|===
+
+|Variable |Purpose
+|`openshift_hosted_registry_routehost`
+|Set to the value of the desired registry route. The route contains either
+a name that resolves to an infrastructure node where a router manages
+communication or the subdomain that you set as the default application subdomain
+wildcard value. For example, if you set the `openshift_master_default_subdomain`
+parameter to `apps.example.com` and `.apps.example.com` resolves to
+infrastructure nodes or a load balancer, you might use
+`registry.apps.example.com` as the registry route.
+
+|`openshift_hosted_registry_routecertificates`
+a|Set the paths to the registry certificates. If you do not provide values for
+the certificate locations, certificates are generated. You can define locations
+for the following certificates:
+
+* `certfile`
+* `keyfile`
+* `cafile`
+
+|`openshift_hosted_registry_routetermination`
+a| Set to one of the following values:
+
+* Set to `reencrypt` to terminate encryption at the edge
+router and re-encrypt it with a new certificate supplied by the destination.
+* Set to `passthrough` to terminate encryption at
+the destination. The destination is responsible for decrypting traffic.
+|===
+
+For example:
+----
+openshift_hosted_registry_routehost=<path>
+openshift_hosted_registry_routetermination=reencrypt
+openshift_hosted_registry_routecertificates= "{'certfile': '<path>/org-cert.pem', 'keyfile': '<path>/org-privkey.pem', 'cafile': '<path>/org-chain.pem'}"
+
+----
+
+[[install-configuring-router-sharding]]
+== Configuring Router Sharding
+
+xref:../architecture/networking/routes.adoc#router-sharding[Router sharding]
+support is enabled by supplying the correct data to the inventory. The variable
+`openshift_hosted_routers` holds the data, which is in the form of a list. If no
+data is passed, then a default router is created. There are multiple
+combinations of router sharding. The following example supports routers on
+separate nodes:
+
+----
+openshift_hosted_routers=[{'name': 'router1', 'certificate': {'certfile': '/path/to/certificate/abc.crt',
+'keyfile': '/path/to/certificate/abc.key', 'cafile':
+'/path/to/certificate/ca.crt'}, 'replicas': 1, 'serviceaccount': 'router',
+'namespace': 'default', 'stats_port': 1936, 'edits': [], 'images':
+'openshift3/ose-${component}:${version}', 'selector': 'type=router1', 'ports':
+['80:80', '443:443']},
+
+{'name': 'router2', 'certificate': {'certfile': '/path/to/certificate/xyz.crt',
+'keyfile': '/path/to/certificate/xyz.key', 'cafile':
+'/path/to/certificate/ca.crt'}, 'replicas': 1, 'serviceaccount': 'router',
+'namespace': 'default', 'stats_port': 1936, 'edits': [{'action': 'append',
+'key': 'spec.template.spec.containers[0].env', 'value': {'name': 'ROUTE_LABELS',
+'value': 'route=external'}}], 'images':
+'openshift3/ose-${component}:${version}', 'selector': 'type=router2', 'ports':
+['80:80', '443:443']}]
+----
+
+[[advanced-install-glusterfs-persistent-storage]]
+== Configuring {gluster} Persistent Storage
+
+include::install/topics/glusterfs_intro.adoc[]
+
+Additional information and examples, including the ones below, can be found at
+xref:../install_config/persistent_storage/persistent_storage_glusterfs.adoc#install-config-persistent-storage-persistent-storage-glusterfs[Persistent Storage Using {gluster}].
+
+[[advanced-install-containerized-glusterfs-persistent-storage]]
+=== Configuring {gluster-native}
+
+[IMPORTANT]
+====
+See
+xref:host_preparation.adoc#prereq-glusterfs[{gluster-native} Considerations]
+for specific host preparations and prerequisites.
+====
+
+include::install_config/persistent_storage/topics/glusterfs_example_basic.adoc[]
+
+[[advanced-install-external-glusterfs-persistent-storage]]
+=== Configuring {gluster-external}
+
+include::install_config/persistent_storage/topics/glusterfs_example_basic_external.adoc[]
+
+[[advanced-install-registry]]
+== Configuring an OpenShift Container Registry
+
+An integrated
+xref:../architecture/infrastructure_components/image_registry.adoc#integrated-openshift-registry[OpenShift Container Registry]
+can be deployed using the installer.
+
+[[advanced-install-registry-storage]]
+=== Configuring Registry Storage
+
+If no registry storage options are used, the default OpenShift Container
+Registry is ephemeral and all data will be lost when the pod no longer exists.
+
+[IMPORTANT]
+====
+Testing shows issues with using the RHEL NFS server as a storage backend
+for the container image registry. This includes the OpenShift Container Registry and Quay.
+Therefore, using the RHEL NFS server to back PVs used by core services is not recommended.
+
+Other NFS implementations on the marketplace might not have these issues. Contact
+the individual NFS implementation vendor for more information on any
+testing that was possibly completed against these OpenShift core components.
+====
+
+There are several options for enabling registry storage when using the advanced
+installer:
+
+[discrete]
+[[advanced-install-registry-storage-nfs-host-group]]
+==== Option A: NFS Host Group
+
+When the following variables are set, an NFS volume is created during cluster
+installation with the path *_<nfs_directory>/<volume_name>_* on the host in
+the `[nfs]` host group. For example, the volume path using these options is
+be *_/exports/registry_*:
+
+----
+[OSEv3:vars]
+
+openshift_hosted_registry_storage_kind=nfs
+openshift_hosted_registry_storage_access_modes=['ReadWriteMany']
+openshift_hosted_registry_storage_nfs_directory=/exports
+openshift_hosted_registry_storage_nfs_options='*(rw,root_squash)'
+openshift_hosted_registry_storage_volume_name=registry
+openshift_hosted_registry_storage_volume_size=10Gi
+----
+
+[discrete]
+[[advanced-install-registry-storage-external-nfs]]
+==== Option B: External NFS Host
+
+To use an external NFS volume, one must already exist with a path of
+*_<nfs_directory>/<volume_name>_* on the storage host. The remote volume path
+using the following options is *_nfs.example.com:/exports/registry_*.
+
+----
+[OSEv3:vars]
+
+openshift_hosted_registry_storage_kind=nfs
+openshift_hosted_registry_storage_access_modes=['ReadWriteMany']
+openshift_hosted_registry_storage_host=nfs.example.com
+openshift_hosted_registry_storage_nfs_directory=/exports
+openshift_hosted_registry_storage_volume_name=registry
+openshift_hosted_registry_storage_volume_size=10Gi
+----
+
+[discrete]
+[[advanced-install-cluster-registry-storage-upgrade-nfs]]
+==== Upgrading or Installing {product-title} with NFS
+
+[discrete]
+[[advanced-install-registry-storage-openstack]]
+==== Option C: OpenStack Platform
+
+An OpenStack storage configuration must already exist.
+
+----
+[OSEv3:vars]
+
+openshift_hosted_registry_storage_kind=openstack
+openshift_hosted_registry_storage_access_modes=['ReadWriteOnce']
+openshift_hosted_registry_storage_openstack_filesystem=ext4
+openshift_hosted_registry_storage_openstack_volumeID=3a650b4f-c8c5-4e0a-8ca5-eaee11f16c57
+openshift_hosted_registry_storage_volume_size=10Gi
+----
+
+[discrete]
+[[advanced-install-registry-storage-aws]]
+==== Option D: AWS or Another S3 Storage Solution
+
+The simple storage solution (S3) bucket must already exist.
+
+----
+[OSEv3:vars]
+
+#openshift_hosted_registry_storage_kind=object
+#openshift_hosted_registry_storage_provider=s3
+#openshift_hosted_registry_storage_s3_accesskey=access_key_id
+#openshift_hosted_registry_storage_s3_secretkey=secret_access_key
+#openshift_hosted_registry_storage_s3_bucket=bucket_name
+#openshift_hosted_registry_storage_s3_region=bucket_region
+#openshift_hosted_registry_storage_s3_chunksize=26214400
+#openshift_hosted_registry_storage_s3_rootdirectory=/registry
+#openshift_hosted_registry_pullthrough=true
+#openshift_hosted_registry_acceptschema2=true
+#openshift_hosted_registry_enforcequota=true
+----
+
+If you use a different S3 service, such as Minio or ExoScale, also add the
+region endpoint parameter:
+
+----
+openshift_hosted_registry_storage_s3_regionendpoint=https://myendpoint.example.com/
+----
+
+[discrete]
+[[advanced-install-registry-storage-glusterfs]]
+==== Option E: {gluster-native}
+
+Similar to
+xref:advanced-install-containerized-glusterfs-persistent-storage[configuring {gluster-native}],
+{gluster} can be configured to provide storage for an OpenShift Container
+Registry during the initial installation of the cluster to offer redundant and
+reliable storage for the registry.
+
+[IMPORTANT]
+====
+See
+xref:host_preparation.adoc#prereq-glusterfs[{gluster-native} Considerations]
+for specific host preparations and prerequisites.
+====
+
+include::install_config/persistent_storage/topics/glusterfs_example_registry.adoc[]
+
+[discrete]
+[[advanced-install-registry-storage-gce]]
+==== Option F: Google Cloud Storage (GCS) bucket on Google Compute Engine (GCE)
+
+A GCS bucket must already exist.
+
+----
+[OSEv3:vars]
+
+openshift_hosted_registry_storage_provider=gcs
+openshift_hosted_registry_storage_gcs_bucket=bucket01
+openshift_hosted_registry_storage_gcs_keyfile=test.key
+openshift_hosted_registry_storage_gcs_rootdirectory=/registry
+----
+
+[discrete]
+[[advanced-install-registry-storage-vsphere]]
+==== Option G: vSphere Volume with vSphere Cloud Provider (VCP)
+
+The vSphere Cloud Provider must be configured with a datastore accessible by the
+{product-title} nodes.
+
+When using vSphere volume for the registry, you must set the storage access mode
+to `ReadWriteOnce` and the replica count to `1`:
+
+----
+[OSEv3:vars]
+
+openshift_hosted_registry_storage_kind=vsphere
+openshift_hosted_registry_storage_access_modes=['ReadWriteOnce']
+openshift_hosted_registry_storage_annotations=['volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/vsphere-volume']
+openshift_hosted_registry_replicas=1
+----
+
+[[advanced-install-configuring-global-proxy]]
+== Configuring Global Proxy Options
+
+If your hosts require use of a HTTP or HTTPS proxy in order to connect to
+external hosts, there are many components that must be configured to use the
+proxy, including masters, Docker, and builds. Node services only connect to the
+master API requiring no external access and therefore do not need to be
+configured to use a proxy.
+
+In order to simplify this configuration, the following Ansible variables can be
+specified at a cluster or host level to apply these settings uniformly across
+your environment.
+
+[NOTE]
+====
+See xref:../install_config/build_defaults_overrides.adoc#install-config-build-defaults-overrides[Configuring
+Global Build Defaults and Overrides] for more information on how the proxy
+environment is defined for builds.
+====
+
+.Cluster Proxy Variables
+[options="header"]
+|===
+
+|Variable |Purpose
+
+|`openshift_http_proxy`
+|This variable specifies the `HTTP_PROXY` environment variable for masters and
+the Docker daemon.
+
+|`openshift_https_proxy`
+|This variable specifices the `HTTPS_PROXY` environment variable for masters
+and the Docker daemon.
+
+|`openshift_no_proxy`
+a|This variable is used to set the `NO_PROXY` environment variable for masters
+and the Docker daemon. Provide a comma-separated list of host names, domain
+names, or wildcard host names that do not use the defined proxy. By default,
+this list is augmented with the list of all defined {product-title} host names.
+
+The host names that do not use the defined proxy include:
+
+* Master and node host names. You must include the domain suffix.
+* Other internal host names. You must include the domain suffix.
+* etcd IP addresses. You must provide the IP address because etcd access is managed by IP address.
+* The container image registry IP address.
+* The Kubernetes IP address. This value is `172.30.0.1` by default and the
+`openshift_portal_net` parameter value if you provided one.
+* The `cluster.local` Kubernetes internal domain suffix.
+* The `svc` Kubernetes internal domain suffix.
+
+|`openshift_generate_no_proxy_hosts`
+|This boolean variable specifies whether or not the names of all defined
+OpenShift hosts and `pass:[*.cluster.local]` are automatically appended to
+the `NO_PROXY` list. Defaults to `true`; set it to `false` to override this
+option.
+
+|`openshift_builddefaults_http_proxy`
+|This variable defines the `HTTP_PROXY` environment variable inserted into
+builds using the `BuildDefaults` admission controller. If you do not define
+this parameter but define the `openshift_http_proxy` parameter, the
+`openshift_http_proxy` value is used. Set the
+`openshift_builddefaults_http_proxy` value to `False` to disable default
+http proxy for builds regardless of the `openshift_http_proxy` value.
+
+|`openshift_builddefaults_https_proxy`
+|This variable defines the `HTTPS_PROXY` environment variable inserted into
+builds using the `BuildDefaults` admission controller. If you do not define
+this parameter but define the `openshift_http_proxy` parameter, the
+`openshift_https_proxy` value is used. Set the
+`openshift_builddefaults_https_proxy` value to `False` to disable default
+https proxy for builds regardless of the `openshift_https_proxy` value.
+
+|`openshift_builddefaults_no_proxy`
+|This variable defines the `NO_PROXY` environment variable inserted into
+builds using the `BuildDefaults` admission controller. Set the
+`openshift_builddefaults_no_proxy` value to `False` to disable default no proxy
+settings for builds regardless of the `openshift_no_proxy` value.
+
+|`openshift_builddefaults_git_http_proxy`
+|This variable defines the HTTP proxy used by `git clone` operations during a
+build, defined using the `BuildDefaults` admission controller. Set the
+`openshift_builddefaults_git_http_proxy` value to `False` to disable default
+http proxy for `git clone` operations during a build regardless of the
+`openshift_http_proxy` value.
+
+|`openshift_builddefaults_git_https_proxy`
+|This variable defines the HTTPS proxy used by `git clone` operations during a
+build, defined using the `BuildDefaults` admission controller. Set the
+`openshift_builddefaults_git_https_proxy` value to `False` to disable default
+https proxy for `git clone` operations during a build regardless of the
+`openshift_https_proxy` value.
+|===
+
+
+ifdef::openshift-enterprise,openshift-origin[]
+[[advanced-install-configuring-firewalls]]
+== Configuring the Firewall
+
+[IMPORTANT]
+====
+* If you are changing the default firewall, ensure that each host in your cluster
+is using the same firewall type to prevent inconsistencies.
+* Do not use firewalld with the {product-title} installed on Atomic Host. firewalld is not supported on Atomic host.
+====
+
+[NOTE]
+====
+While iptables is the default firewall, firewalld is recommended for new
+installations.
+====
+
+{product-title} uses iptables as the default firewall, but you can configure
+your cluster to use firewalld during the install process.
+
+Because iptables is the default firewall, {product-title} is designed to have it
+configured automatically. However, iptables rules can break {product-title} if
+not configured correctly. The advantages of firewalld include allowing multiple
+objects to safely share the firewall rules.
+
+To use firewalld as the firewall for an {product-title} installation, add the
+`os_firewall_use_firewalld` variable to the list of configuration variables in
+the Ansible host file at install:
+
+----
+[OSEv3:vars]
+os_firewall_use_firewalld=True <1>
+----
+<1> Setting this variable to `true` opens the required ports and adds rules to
+the default zone, ensuring that firewalld is configured correctly.
+
+[NOTE]
+====
+Using the firewalld default configuration comes with limited configuration
+options, and cannot be overridden. For example, while you can set up a storage
+network with interfaces in multiple zones, the interface that nodes communicate
+on must be in the default zone.
+====
+
+endif::[]
+
+[[advanced-install-session-options]]
+== Configuring Session Options
+
+xref:../install_config/configuring_authentication.adoc#session-options[Session
+options] in the OAuth configuration are configurable in the inventory file. By
+default, Ansible populates a `sessionSecretsFile` with generated
+authentication and encryption secrets so that sessions generated by one master
+can be decoded by the others. The default location is
+*_/etc/origin/master/session-secrets.yaml_*, and this file will only be
+re-created if deleted on all masters.
+
+You can set the session name and maximum number of seconds with
+`openshift_master_session_name` and `openshift_master_session_max_seconds`:
+
+----
+openshift_master_session_name=ssn
+openshift_master_session_max_seconds=3600
+----
+
+If provided, `openshift_master_session_auth_secrets` and
+`openshift_master_encryption_secrets` must be equal length.
+
+For `openshift_master_session_auth_secrets`, used to authenticate sessions
+using HMAC, it is recommended to use secrets with 32 or 64 bytes:
+
+----
+openshift_master_session_auth_secrets=['DONT+USE+THIS+SECRET+b4NV+pmZNSO']
+----
+
+For `openshift_master_encryption_secrets`, used to encrypt sessions, secrets
+must be 16, 24, or 32 characters long, to select AES-128, AES-192, or AES-256:
+
+----
+openshift_master_session_encryption_secrets=['DONT+USE+THIS+SECRET+b4NV+pmZNSO']
+----
+
+[[advanced-install-custom-certificates]]
+== Configuring Custom Certificates
+
+xref:../install_config/certificate_customization.adoc#install-config-certificate-customization[Custom serving
+certificates] for the public host names of the {product-title} API and
+xref:../architecture/infrastructure_components/web_console.adoc#architecture-infrastructure-components-web-console[web console]
+can be deployed during cluster installation and are configurable in the
+inventory file.
+
+[NOTE]
+====
+Configure custom certificates for the host name associated with
+the `*publicMasterURL*`, which you set as the
+`*openshift_master_cluster_public_hostname*` parameter value. Using a custom serving certificate
+for the host name associated with the `*masterURL*`
+(`openshift_master_cluster_hostname`) results in TLS errors because
+infrastructure components attempt to contact the master API using the
+internal `*masterURL*` host.
+====
+
+Certificate and key file paths can be configured using the
+`openshift_master_named_certificates` cluster variable:
+
+----
+openshift_master_named_certificates=[{"certfile": "/path/to/custom1.crt", "keyfile": "/path/to/custom1.key", "cafile": "/path/to/custom-ca1.crt"}]
+----
+
+File paths must be local to the system where Ansible will be run. Certificates
+are copied to master hosts and are deployed in the
+*_/etc/origin/master/named_certificates/_* directory.
+
+Ansible detects a certificate's `Common Name` and `Subject Alternative Names`.
+Detected names can be overridden by providing the `"names"` key when setting
+`openshift_master_named_certificates`:
+
+----
+openshift_master_named_certificates=[{"certfile": "/path/to/custom1.crt", "keyfile": "/path/to/custom1.key", "names": ["public-master-host.com"], "cafile": "/path/to/custom-ca1.crt"}]
+----
+
+Certificates configured using `openshift_master_named_certificates` are cached
+on masters, meaning that each additional Ansible run with a different set of
+certificates results in all previously deployed certificates remaining in place
+on master hosts and in the master configuration file.
+
+If you want to overwrite `*openshift_master_named_certificates*` with
+the provided value (or no value), specify the
+`openshift_master_overwrite_named_certificates` cluster variable:
+
+----
+openshift_master_overwrite_named_certificates=true
+----
+
+For a more complete example, consider the following cluster variables in an
+inventory file:
+
+----
+openshift_master_cluster_method=native
+openshift_master_cluster_hostname=lb-internal.openshift.com
+openshift_master_cluster_public_hostname=custom.openshift.com
+----
+
+To overwrite the certificates on a subsequent Ansible run, set the
+following parameter values:
+
+----
+openshift_master_named_certificates=[{"certfile": "/root/STAR.openshift.com.crt", "keyfile": "/root/STAR.openshift.com.key", "names": ["custom.openshift.com"]}]
+openshift_master_overwrite_named_certificates=true
+----
+
+[[advanced-install-config-certificate-validity]]
+== Configuring Certificate Validity
+
+By default, the certificates used to govern the etcd, master, and kubelet expire
+after two to five years. The validity (length in days until they expire) for the
+auto-generated registry, CA, node, and master certificates can be configured
+during installation using the following variables (default values shown):
+
+----
+[OSEv3:vars]
+
+openshift_hosted_registry_cert_expire_days=730
+openshift_ca_cert_expire_days=1825
+openshift_node_cert_expire_days=730
+openshift_master_cert_expire_days=730
+etcd_ca_default_days=1825
+----
+
+These values are also used when
+xref:../install_config/redeploying_certificates.adoc#install-config-redeploying-certificates[redeploying certificates] via Ansible post-installation.
+
+[[advanced-install-monitoring]]
+== Configuring Cluster Monitoring
+
+Prometheus Cluster Monitoring is set to automatically deploy. To prevent its
+automatic deployment, set the following:
+
+----
+[OSEv3:vars]
+
+openshift_cluster_monitoring_operator_install=false
+----
+
+For more information on Prometheus Cluster Monitoring and its configuration, see
+xref:../install_config/prometheus_cluster_monitoring.adoc#prometheus-cluster-monitoring[Prometheus
+Cluster Monitoring documentation].
+
+[[advanced-install-cluster-metrics]]
+== Configuring Cluster Metrics
+
+Cluster metrics are not set to automatically deploy. Set the following to enable
+cluster metrics during cluster installation:
+
+----
+[OSEv3:vars]
+
+openshift_metrics_install_metrics=true
+----
+
+The metrics public URL can be set during cluster
+installation using the `openshift_metrics_hawkular_hostname` Ansible variable,
+which defaults to:
+
+`\https://hawkular-metrics.{{openshift_master_default_subdomain}}/hawkular/metrics`
+
+If you alter this variable, ensure the host name is accessible via your router.
+
+`openshift_metrics_hawkular_hostname=hawkular-metrics.{{openshift_master_default_subdomain}}`
+
+[IMPORTANT]
+====
+In accordance with upstream Kubernetes rules, metrics can be collected only on the default interface of `eth0`.
+====
+
+[NOTE]
+====
+You must set an `openshift_master_default_subdomain` value to deploy metrics.
+====
+
+[[advanced-install-cluster-metrics-storage]]
+=== Configuring Metrics Storage
+
+The `openshift_metrics_cassandra_storage_type` variable must be set in order to
+use persistent storage for metrics. If
+`openshift_metrics_cassandra_storage_type` is not set, then cluster metrics data
+is stored in an `emptyDir` volume, which will be deleted when the Cassandra pod
+terminates.
+
+[IMPORTANT]
+====
+Testing shows issues with using the RHEL NFS server as a storage backend
+for the container image registry. This includes Cassandra for metrics storage.
+Therefore, using the RHEL NFS server to back PVs used by core services is not recommended.
+
+Cassandra is designed to provide redundancy via multiple independent, instances.
+For this reason, using NFS or a SAN for data directories is an antipattern and
+is not recommended.
+
+However, NFS/SAN implementations on the marketplace might not have issues backing
+or providing storage to this component. Contact the individual NFS/SAN
+implementation vendor for more information on any testing that was possibly completed
+against these OpenShift core components.
+====
+
+There are three options for enabling cluster metrics storage during cluster
+installation:
+
+[discrete]
+[[advanced-install-cluster-metrics-storage-dynamic]]
+==== Option A: Dynamic
+
+If your {product-title} environment supports
+xref:../install_config/persistent_storage/dynamically_provisioning_pvs.adoc#install-config-persistent-storage-dynamically-provisioning-pvs[dynamic volume provisioning]
+for your cloud provider, use the following variable:
+
+----
+[OSEv3:vars]
+
+openshift_metrics_cassandra_storage_type=dynamic
+----
+
+If there are multiple default dynamically provisioned volume types, such as
+gluster-storage and glusterfs-storage-block, you can specify the
+provisioned volume type by variable. Use the following variables:
+
+----
+[OSEv3:vars]
+
+openshift_metrics_cassandra_storage_type=pv
+openshift_metrics_cassandra_pvc_storage_class_name=glusterfs-storage-block
+----
+
+Check
+xref:../install_config/master_node_configuration.adoc#master-node-config-volume-config[Volume
+Configuration] for more information on using `DynamicProvisioningEnabled` to
+enable or disable dynamic provisioning.
+
+[discrete]
+[[advanced-install-cluster-metrics-storage-nfs-host-group]]
+==== Option B: NFS Host Group
+
+When the following variables are set, an NFS volume is created during cluster
+installation with path *_<nfs_directory>/<volume_name>_* on the host in the
+`[nfs]` host group. For example, the volume path using these options is
+*_/exports/metrics_*:
+
+----
+[OSEv3:vars]
+
+openshift_metrics_storage_kind=nfs
+openshift_metrics_storage_access_modes=['ReadWriteOnce']
+openshift_metrics_storage_nfs_directory=/exports
+openshift_metrics_storage_nfs_options='*(rw,root_squash)'
+openshift_metrics_storage_volume_name=metrics
+openshift_metrics_storage_volume_size=10Gi
+----
+
+[discrete]
+[[advanced-install-cluster-metrics-storage-external-nfs]]
+==== Option C: External NFS Host
+
+To use an external NFS volume, one must already exist with a path of
+*_<nfs_directory>/<volume_name>_* on the storage host.
+
+----
+[OSEv3:vars]
+
+openshift_metrics_storage_kind=nfs
+openshift_metrics_storage_access_modes=['ReadWriteOnce']
+openshift_metrics_storage_host=nfs.example.com
+openshift_metrics_storage_nfs_directory=/exports
+openshift_metrics_storage_volume_name=metrics
+openshift_metrics_storage_volume_size=10Gi
+----
+
+The remote volume path using the following options is
+*_nfs.example.com:/exports/metrics_*.
+
+[discrete]
+[[advanced-install-cluster-metrics-storage-upgrade-nfs]]
+==== Upgrading or Installing {product-title} with NFS
+
+The use of NFS for the core {product-title} components is not recommended, as NFS
+(and the NFS Protocol) does not provide the proper consistency needed for the
+applications that make up the {product-title} infrastructure.
+
+As a result, the installer and update playbooks require an option to enable the use
+of NFS with core infrastructure components.
+
+----
+# Enable unsupported configurations, things that will yield a partially
+# functioning cluster but would not be supported for production use
+#openshift_enable_unsupported_configurations=false
+----
+
+If you see the following messages when upgrading or installing your cluster,
+then an additional step is required.
+
+----
+TASK [Run variable sanity checks] **********************************************
+fatal: [host.example.com]: FAILED! => {"failed": true, "msg": "last_checked_host: host.example.com, last_checked_var: openshift_hosted_registry_storage_kind;nfs is an unsupported type for openshift_hosted_registry_storage_kind. openshift_enable_unsupported_configurations=True mustbe specified to continue with this configuration."}
+----
+
+In your Ansible inventory file, specify the following parameter:
+----
+[OSEv3:vars]
+openshift_enable_unsupported_configurations=True
+----
+
+[[advanced-install-cluster-logging]]
+== Configuring Cluster Logging
+
+Cluster logging is not set to automatically deploy by default. Set the following
+to enable cluster logging during cluster installation:
+
+----
+[OSEv3:vars]
+
+openshift_logging_install_logging=true
+----
+
+[[advanced-installation-logging-storage]]
+=== Configuring Logging Storage
+
+The `openshift_logging_es_pvc_dynamic` variable must be set in order to use
+persistent storage for logging. If `openshift_logging_es_pvc_dynamic` is
+not set, then cluster logging data is stored in an `emptyDir` volume, which will
+be deleted when the Elasticsearch pod terminates.
+
+[IMPORTANT]
+====
+Testing shows issues with using the RHEL NFS server as a storage backend
+for the container image registry. This includes ElasticSearch for logging storage.
+Therefore, using the RHEL NFS server to back PVs used by core services is not recommended.
+
+Due to ElasticSearch not implementing a custom deletionPolicy, the use of NFS
+storage as a volume or a persistent volume is not supported for Elasticsearch
+storage, as Lucene and the default deletionPolicy, relies on file system behavior
+that NFS does not supply. Data corruption and other problems can occur.
+
+NFS implementations on the marketplace might not have these issues. Contact
+the individual NFS implementation vendor for more information on any testing they
+might have performed against these OpenShift core components.
+====
+
+There are three options for enabling cluster logging storage during cluster
+installation:
+
+[discrete]
+[[advanced-installation-logging-storage-dynamic]]
+==== Option A: Dynamic
+
+If your {product-title} environment has dynamic volume provisioning, it could be configured
+either via the cloud provider or by an independent storage provider. For instance, the cloud provider
+could have a StorageClass with provisioner `kubernetes.io/gce-pd` on GCE, and an
+independent storage provider such as GlusterFS could have a `StorageClass` with provisioner
+`kubernetes.io/glusterfs`. In either case, use the following variable:
+
+----
+[OSEv3:vars]
+
+openshift_logging_es_pvc_dynamic=true
+----
+
+For additional information on dynamic provisioning, see
+xref:../install_config/persistent_storage/dynamically_provisioning_pvs.adoc#install-config-persistent-storage-dynamically-provisioning-pvs[Dynamic provisioning and creating storage classes].
+
+
+If there are multiple default dynamically provisioned volume types, such as
+gluster-storage and glusterfs-storage-block, you can specify the
+provisioned volume type by variable. Use the following variables:
+
+----
+[OSEv3:vars]
+
+openshift_logging_elasticsearch_storage_type=pvc
+openshift_logging_es_pvc_storage_class_name=glusterfs-storage-block
+----
+
+Check
+xref:../install_config/master_node_configuration.adoc#master-node-config-volume-config[Volume
+Configuration] for more information on using `DynamicProvisioningEnabled` to
+enable or disable dynamic provisioning.
+
+[discrete]
+[[advanced-installation-logging-storage-nfs-host-group]]
+==== Option B: NFS Host Group
+
+When the following variables are set, an NFS volume is created during cluster
+installation with path *_<nfs_directory>/<volume_name>_* on the host in the
+`[nfs]` host group. For example, the volume path using these options is
+*_/exports/logging_*:
+
+----
+[OSEv3:vars]
+
+openshift_logging_storage_kind=nfs
+openshift_logging_storage_access_modes=['ReadWriteOnce']
+openshift_logging_storage_nfs_directory=/exports
+openshift_logging_storage_nfs_options='*(rw,root_squash)'
+openshift_logging_storage_volume_name=logging
+openshift_logging_storage_volume_size=10Gi
+----
+
+[discrete]
+[[advanced-installation-logging-storage-external-nfs]]
+==== Option C: External NFS Host
+
+To use an external NFS volume, one must already exist with a path of
+*_<nfs_directory>/<volume_name>_* on the storage host.
+
+----
+[OSEv3:vars]
+
+openshift_logging_storage_kind=nfs
+openshift_logging_storage_access_modes=['ReadWriteOnce']
+openshift_logging_storage_host=nfs.example.com
+openshift_logging_storage_nfs_directory=/exports
+openshift_logging_storage_volume_name=logging
+openshift_logging_storage_volume_size=10Gi
+----
+
+The remote volume path using the following options is
+*_nfs.example.com:/exports/logging_*.
+
+[discrete]
+[[advanced-install-cluster-logging-storage-upgrade-nfs]]
+==== Upgrading or Installing {product-title} with NFS
+
+The use of NFS for the core {product-title} components is not recommended, as NFS
+(and the NFS Protocol) does not provide the proper consistency needed for the
+applications that make up the {product-title} infrastructure.
+
+As a result, the installer and update playbooks require an option to enable the use
+of NFS with core infrastructure components.
+
+----
+# Enable unsupported configurations, things that will yield a partially
+# functioning cluster but would not be supported for production use
+#openshift_enable_unsupported_configurations=false
+----
+
+If you see the following messages when upgrading or installing your cluster,
+then an additional step is required.
+
+----
+TASK [Run variable sanity checks] **********************************************
+fatal: [host.example.com]: FAILED! => {"failed": true, "msg": "last_checked_host: host.example.com, last_checked_var: openshift_hosted_registry_storage_kind;nfs is an unsupported type for openshift_hosted_registry_storage_kind. openshift_enable_unsupported_configurations=True mustbe specified to continue with this configuration."}
+----
+
+In your Ansible inventory file, specify the following parameter:
+----
+[OSEv3:vars]
+openshift_enable_unsupported_configurations=True
+----
+
+[[enabling-service-catalog]]
+== Customizing Service Catalog Options
+
+The
+xref:../architecture/service_catalog/index.adoc#architecture-additional-concepts-service-catalog[service catalog]
+is enabled by default during installation. Enabling the service broker allows
+you to register service brokers with the catalog. When the service catalog is
+enabled, the OpenShift Ansible broker and template service broker are both
+installed as well; see
+xref:configuring-openshift-ansible-broker[Configuring the OpenShift Ansible Broker]
+and xref:configuring-template-service-broker[Configuring the Template Service Broker]
+for more information.
+If you disable the service catalog, the OpenShift Ansible broker and template
+service broker are not installed.
+
+To disable automatic deployment of the service catalog, set the following
+cluster variable in your inventory file:
+
+----
+openshift_enable_service_catalog=false
+----
+
+If you use your own registry, you must add:
+
+* `openshift_service_catalog_image_prefix`: When pulling the service catalog
+image, force the use of a specific prefix (for example, `registry`). You must
+provide the full registry name up to the image name.
+
+* `openshift_service_catalog_image_version`: When pulling the service catalog
+image, force the use of a specific image version.
+
+For example:
+
+----
+openshift_service_catalog_image="docker-registry.default.example.com/openshift/ose-service-catalog:${version}"
+openshift_service_catalog_image_prefix="docker-registry-default.example.com/openshift/ose-"
+openshift_service_catalog_image_version="v3.9.30"
+template_service_broker_selector={"role":"infra"}
+----
+
+[[configuring-openshift-ansible-broker]]
+=== Configuring the OpenShift Ansible Broker
+
+The
+xref:../architecture/service_catalog/ansible_service_broker.adoc#arch-ansible-service-broker[OpenShift Ansible broker]
+(OAB) is enabled by default during installation.
+
+If you do not want to install the OAB, set the `ansible_service_broker_install`
+parameter value to `false` in the inventory file:
+
+----
+ansible_service_broker_install=false
+----
+
+.Service broker customization variables
+[options="header"]
+|===
+|Variable |Purpose
+
+|`openshift_service_catalog_image_prefix`
+|Specify the prefix for the service catalog component image.
+
+|===
+
+[[configuring-oab-storage]]
+==== Configuring Persistent Storage for the OpenShift Ansible Broker
+
+The OAB deploys its own etcd instance separate from the etcd used by the rest of
+the {product-title} cluster. The OAB's etcd instance requires separate storage
+using persistent volumes (PVs) to function. If no PV is available, etcd will
+wait until the PV can be satisfied. The OAB application will enter a `CrashLoop`
+state until its etcd instance is available.
+
+Some Ansible playbook bundles (APBs) also require a PV for their own usage in
+order to deploy. For example, each of the database APBs have two plans: the
+Development plan uses ephemeral storage and does not require a PV, while the
+Production plan is persisted and does require a PV.
+
+[options="header"]
+|===
+|APB |PV Required?
+
+|*postgresql-apb*
+|Yes, but only for the Production plan
+
+|*mysql-apb*
+|Yes, but only for the Production plan
+
+|*mariadb-apb*
+|Yes, but only for the Production plan
+
+|*mediawiki-apb*
+|Yes
+
+|===
+
+To configure persistent storage for the OAB:
+
+[NOTE]
+====
+The following example shows usage of an NFS host to provide the required PVs,
+but
+xref:../install_config/persistent_storage/index.adoc#install-config-persistent-storage-index[other persistent storage providers] can be used instead.
+====
+
+. In your inventory file, add `nfs` to the `[OSEv3:children]` section to enable
+the `[nfs]` group:
++
+----
+[OSEv3:children]
+masters
+nodes
+nfs
+----
+
+. Add a `[nfs]` group section and add the host name for the system that will
+be the NFS host:
++
+----
+[nfs]
+master1.example.com
+----
+
+. Add the following in the `[OSEv3:vars]` section:
++
+----
+openshift_hosted_etcd_storage_kind=nfs
+openshift_hosted_etcd_storage_nfs_options="*(rw,root_squash,sync,no_wdelay)"
+openshift_hosted_etcd_storage_nfs_directory=/opt/osev3-etcd <1>
+openshift_hosted_etcd_storage_volume_name=etcd-vol2 <1>
+openshift_hosted_etcd_storage_access_modes=["ReadWriteOnce"]
+openshift_hosted_etcd_storage_volume_size=1G
+openshift_hosted_etcd_storage_labels={'storage': 'etcd'}
+
+ifdef::openshift-origin[]
+ansible_service_broker_registry_url=registry.redhat.io
+ansible_service_broker_registry_user=<user_name> <2>
+ansible_service_broker_registry_password=<password> <2>
+ansible_service_broker_registry_organization=<organization> <2>
+endif::[]
+----
+<1> An NFS volume will be created with path `<nfs_directory>/<volume_name>` on the
+host in the `[nfs]` group. For example, the volume path using these options
+is *_/opt/osev3-etcd/etcd-vol2_*.
+ifdef::openshift-origin[]
+<2> Only required if `ansible_service_broker_registry_url` is set to a registry that
+requires authentication for pulling APBs.
+endif::[]
++
+These settings create a persistent volume that is attached to the OAB's etcd
+instance during cluster installation.
+
+[[configuring-oab-local-apb-devel]]
+==== Configuring the OpenShift Ansible Broker for Local APB Development
+
+In order to do xref:../apb_devel/index.adoc#apb-devel-intro[APB development]
+with the OpenShift Container Registry in conjunction with the OAB, a whitelist
+of images the OAB can access must be defined. If a whitelist is not defined, the
+broker will ignore APBs and users will not see any APBs available.
+
+By default, the whitelist is empty so that a user cannot add APB images to the
+broker without a cluster administrator configuring the broker. To whitelist all
+images that end in `-apb`:
+
+. In your inventory file, add the following to the `[OSEv3:vars]` section:
++
+----
+ansible_service_broker_local_registry_whitelist=['.*-apb$']
+----
+
+[[configuring-template-service-broker]]
+=== Configuring the Template Service Broker
+
+The
+xref:../architecture/service_catalog/template_service_broker.adoc#arch-template-service-broker[template service broker]
+(TSB) is enabled by default during installation.
+
+If you do not want to install the TSB, set the `template_service_broker_install`
+parameter value to `false`:
+----
+template_service_broker_install=false
+----
+
+To configure the TSB, one or more projects must be defined as the broker's
+source namespace(s) for loading templates and image streams into the service
+catalog. Set the source projects by modifying the following in your inventory
+file's `[OSEv3:vars]` section:
+
+----
+openshift_template_service_broker_namespaces=['openshift','myproject']
+----
+
+By default, the TSB uses the nodeselector `{"node-role.kubernetes.io/infra":"true"}` for deploying its pods.
+You can set a different nodeselector in your inventory file's
+`[OSEv3:vars]` section:
+
+----
+template_service_broker_selector={"node-role.kubernetes.io/infra":"true"}
+----
+
+.Template service broker customization variables
+[options="header"]
+|===
+|Variable |Purpose
+
+|`template_service_broker_prefix`
+|Specify the prefix for the template service broker component image.
+
+|`ansible_service_broker_image_prefix`
+|Specify the prefix for the ansible service broker component image.
+
+|===
+
+[[configuring-web-console-customization]]
+== Configuring Web Console Customization
+
+The following Ansible variables set master configuration options for customizing
+the web console. See
+xref:../install_config/web_console_customization.adoc#install-config-web-console-customization[Customizing the Web Console] for more details on these customization options.
+
+.Web Console Customization Variables
+[options="header"]
+|===
+
+|Variable |Purpose
+
+|`openshift_web_console_install`
+|Determines whether to install the web console. Can be set to `true` or `false`. Defaults to `true`.
+
+|`openshift_web_console_prefix`
+|Specify the prefix for the web console images.
+
+|`openshift_master_logout_url`
+|Sets `clusterInfo.logoutPublicURL` in the web console configuration. See xref:../install_config/web_console_customization.adoc#changing-the-logout-url[Changing the Logout URL] for details. Example value: `\https://example.com/logout`
+
+|`openshift_web_console_extension_script_urls`
+|Sets `extensions.scriptURLs` in the web console configuration. See xref:../install_config/web_console_customization.adoc#loading-custom-scripts-and-stylesheets[Loading Extension Scripts and Stylesheets] for details. Example value: `['https://example.com/scripts/menu-customization.js','https://example.com/scripts/nav-customization.js']`
+
+|`openshift_web_console_extension_stylesheet_urls`
+|Sets `extensions.stylesheetURLs` in the web console configuration. See xref:../install_config/web_console_customization.adoc#loading-custom-scripts-and-stylesheets[Loading Extension Scripts and Stylesheets] for details. Example value: `['https://example.com/styles/logo.css','https://example.com/styles/custom-styles.css']`
+
+|`openshift_master_oauth_template`
+|Sets the OAuth template in the master configuration. See xref:../install_config/web_console_customization.adoc#customizing-the-login-page[Customizing the Login Page] for details. Example value: `['/path/to/login-template.html']`
+
+|`openshift_master_metrics_public_url`
+|Sets `metricsPublicURL` in the master configuration. See xref:../install_config/cluster_metrics.adoc#install-setting-the-metrics-public-url[Setting the Metrics Public URL] for details. Example value: `\https://hawkular-metrics.example.com/hawkular/metrics`
+
+|`openshift_master_logging_public_url`
+|Sets `loggingPublicURL` in the master configuration. See xref:../install_config/aggregate_logging.adoc#aggregate-logging-kibana[Kibana] for details. Example value: `\https://kibana.example.com`
+
+|`openshift_web_console_inactivity_timeout_minutes`
+|Configurate the web console to log the user out automatically after a period of inactivity. Must be a whole number greater than or equal to 5, or 0 to disable the feature. Defaults to 0 (disabled).
+
+|`openshift_web_console_cluster_resource_overrides_enabled`
+|Boolean value indicating if the cluster is configured for overcommit. When `true`, the web console will hide fields for CPU request, CPU limit, and memory request when editing resource limits because you must set these values with the cluster resource override configuration.
+
+|`openshift_web_console_enable_context_selector`
+|Enable the context selector in the web console and admin console mastheads for quickly switching between the two consoles. Defaults to `true` when both consoles are installed.
+
+|===
+
+[[configuring-the-admin-console]]
+== Configuring the Cluster Console
+
+The cluster console is an additional web interface like the web console, but
+focused on admin tasks. The cluster console supports many of the same common
+{product-title} resources as the web console, but it also allows you to view
+metrics about the cluster and manage cluster-scoped resources such as nodes,
+persistent volumes, cluster roles, and custom resource definitions. The
+following variables can be used to customize the cluster console.
+
+.Cluster Console Customization Variables
+[options="header"]
+|===
+
+|Variable |Purpose
+
+|`openshift_console_install`
+|Determines whether to install the cluster console. Can be set to `true` or `false`. Defaults to `true`.
+
+|`openshift_console_hostname`
+|Sets the host name of the cluster console. Defaults to `console.<openshift_master_default_subdomain>`. If you alter this variable, ensure the host name is accessible via your router.
+
+|`openshift_console_cert`
+|Optional certificate to use for the cluster console route. This is only needed if using a custom host name.
+
+|`openshift_console_key`
+|Optional key to use for the cluster console route. This is only needed if using a custom host name.
+
+|`openshift_console_ca`
+|Optional CA to use for the cluster console route. This is only needed if using a custom host name.
+
+|`openshift_base_path`
+|Optional base path for the cluster console. If set, it should begin and end with a slash like `/console/`. Defaults to `/` (no base path).
+
+|`openshift_console_auth_ca_file`
+|Optional CA file to use to connect to the OAuth server. Defaults to `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`. Typically this does not need to be changed.
+
+|===
+
+[[configuring-the-operator-lifecycle-manager]]
+== Configuring the Operator Lifecycle Manager
+
+ifdef::openshift-enterprise[]
+[IMPORTANT]
+====
+The Operator Framework is a Technology Preview feature.
+Technology Preview features are not supported with Red Hat production service
+level agreements (SLAs), might not be functionally complete, and Red Hat does
+not recommend to use them for production. These features provide early access to
+upcoming product features, enabling customers to test functionality and provide
+feedback during the development process.
+
+For more information on Red Hat Technology Preview features support scope, see
+https://access.redhat.com/support/offerings/techpreview/.
+====
+endif::[]
+
+The Technology Preview
+link:https://coreos.com/blog/introducing-operator-framework[Operator Framework]
+includes the Operator Lifecycle Manager (OLM). You can optionally install the
+OLM during cluster installation by setting the following variables in your
+inventory file:
+
+[NOTE]
+====
+Alternatively, the Technology Preview Operator Framework can be installed after
+cluster installation. See
+xref:../install_config/installing-operator-framework.adoc#installing-olm-using-ansible_installing-operator-framework[Installing Operator Lifecycle Manager using Ansible] for separate
+instructions.
+====
+
+. Add the `openshift_enable_olm` variable in the `[OSEv3:vars]` section,
+setting it to `true`:
++
+----
+openshift_enable_olm=true
+----
+
+. Add the `openshift_additional_registry_credentials` variable in the
+`[OSEv3:vars]` section, setting credentials required to pull the Operator
+containers:
++
+----
+openshift_additional_registry_credentials=[{'host':'registry.connect.redhat.com','user':'<your_user_name>','password':'<your_password>','test_image':'mongodb/enterprise-operator:0.3.2'}]
+----
++
+Set `user` and `password` to the credentials that you use to log in to the Red
+Hat Customer Portal at link:https://access.redhat.com[].
++
+The `test_image` represents an image that will be used to test the credentials
+you provided.
+
+After your cluster installation has completed successful, see
+xref:../install_config/installing-operator-framework.adoc#launching-your-first-operator_installing-operator-framework[Launching your first Operator] for further steps on using the OLM as a cluster administrator during this Technology Preview phase.

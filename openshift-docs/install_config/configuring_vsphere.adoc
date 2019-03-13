@@ -1,0 +1,64 @@
+[[install-config-configuring-vsphere]]
+= Configuring for VMware vSphere
+{product-author}
+{product-version}
+:data-uri:
+:icons:
+:experimental:
+:toc: macro
+:toc-title:
+:context: configuring-for-vsphere
+
+toc::[]
+
+
+You can configure {product-title} to access
+link:https://www.vmware.com/au/products/vsphere.html[VMware vSphere] VMDK
+Volumes. This includes
+xref:../install_config/persistent_storage/persistent_storage_vsphere.adoc#install-config-persistent-storage-persistent-storage-vsphere[using
+VMware vSphere VMDK Volumes as persistent storage] for application data.
+
+The vSphere Cloud Provider allows using vSphere managed storage within {product-title} and supports:
+
+* Volumes
+* Persistent volumes
+* Storage classes and provisioning volumes
+
+[[configuring-vsphere-prerequisites]]
+== Before you begin
+
+include::install_config/topics/vsphere_prerequisites.adoc[leveloffset=+2]
+
+[[vsphere-configuring-masters]]
+== Configuring {product-title} for vSphere
+
+You can configure {product-title} for vSphere in two ways:
+
+- xref:vsphere-configuring-masters-ansible_configuring-for-vsphere[Using Ansible]
+- xref:vsphere-configuring-masters-manual_configuring-for-vsphere[Manually by modifying the *_master-config.yaml_* file]
+
+include::install_config/topics/configuring_for_vsphere.adoc[leveloffset=+2]
+
+include::install_config/topics/manually_configuring_for_vsphere.adoc[leveloffset=+2]
+
+include::install_config/topics/applying_configuration_changes.adoc[leveloffset=+2]
+
+include::install_config/topics/configuring_for_vsphere_storage.adoc[leveloffset=+2]
+
+include::install_config/topics/red_hat_openshift_container_storage.adoc[leveloffset=+2]
+
+include::install_config/topics/configuring_for_vsphere_registry.adoc[leveloffset=+2]
+
+[[vsphere-backup]]
+== Backup of persistent volumes
+{product-title} provisions new volumes as *independent persistent disks* to
+freely attach and detach the volume on any node in the cluster. As a consequence,
+link:https://docs.vmware.com/en/VMware-vSphere/6.7/com.vmware.vsphere.vm_admin.doc/GUID-53F65726-A23B-4CF0-A7D5-48E584B88613.html[it is not possible to back up volumes that use snapshots].
+
+To create a backup of PVs:
+
+. Stop the application using the PV.
+. Clone the persistent disk.
+. Restart the application.
+. Create a backup of the cloned disk.
+. Delete the cloned disk.

@@ -1,0 +1,16 @@
+[[removing_service-mesh]]
+= Removing {ProductName}
+
+The following command removes the {ProductShortName} from an existing installation. Log in as a cluster admin and run these commands from any host with access to the cluster.
+
+. Remove the custom resource by running the following command:
++
+```
+$ oc delete -n istio-operator installation istio-installation
+```
++
+. Remove the operator by running the following command:
++
+```
+$ oc process -f istio_product_operator_template.yaml | oc delete -f -
+```
