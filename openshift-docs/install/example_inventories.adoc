@@ -18,7 +18,7 @@ include::_snippets/glusterfs.adoc[]
 
 toc::[]
 
-== Overview
+== 概述
 
 After getting to know the basics of
 xref:configuring_inventory_file.adoc#install-config-configuring-inventory-file[configuring your own inventory file],
