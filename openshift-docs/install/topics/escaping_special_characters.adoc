@@ -1,5 +1,5 @@
 ////
-Escaping special characters in ansible variables file
+转义ansible variables文件中的特殊字符
 
 This module included in the following assemblies:
 * install_config/configuring_openstack.adoc
@@ -8,11 +8,9 @@ This module included in the following assemblies:
 
 [IMPORTANT]
 ====
-If a parameter value in the Ansible inventory file contains special characters,
-such as `pass:[#]`, `{` or `}`, you must double-escape the value (that is
-enclose the value in both single and double quotation marks). For example, to
-use `pass:[mypasswordwith###hashsigns]` as a value for the variable
-`openshift_cloudprovider_openstack_password`, declare it as
-`openshift_cloudprovider_openstack_password='"mypasswordwith###hashsigns"'` in
-the Ansible host inventory file.
+如果Ansible inventory文件中的参数值包含特殊字符，
+例如`pass:[#]`, `{` or `}`, 您必须对值进行双转义(即用单引号和双引号括住值)。
+例如，要使用`pass:[mypasswordwith###hashsigns]`作为变量
+`openshift_cloudprovider_openstack_password`的值，请将其声明为在
+`openshift_cloudprovider_openstack_password='"mypasswordwith###hashsigns"'`Ansible主机库存文件中。
 ====

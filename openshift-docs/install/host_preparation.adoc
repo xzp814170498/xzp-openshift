@@ -12,18 +12,15 @@ include::_snippets/glusterfs.adoc[]
 
 toc::[]
 
-Before you install {product-title}, you must prepare the node hosts. They must
-meet the following requirements.
+在安装{product-title}之前，必须准备节点主机。它们必须满足以下要求。
 
 ifdef::openshift-enterprise[]
 
 [[software-prerequisites]]
-== Operating system requirements
+== 操作系统需求
 
-Master and node hosts must use a base installation of Red Hat Enterprise Linux
-(RHEL) 7.4 or later with the latest packages from the Extras
-channel or RHEL Atomic Host 7.4.2 or later. See the following documentation for
-the respective installation instructions, if required:
+主主机和节点主机必须使用Red Hat Enterprise Linux (RHEL) 7.4或更高版本的基础安装，
+以及Extras通道或RHEL原子主机7.4.2或更高版本的最新包。如有需要，请参阅以下有关安装指引的文件:
 
 - https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/index.html[Red Hat Enterprise Linux 7 Installation Guide]
 - https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/version-7/installation-and-configuration-guide/[Red Hat Enterprise Linux Atomic Host 7 Installation and Configuration Guide]
@@ -31,33 +28,32 @@ the respective installation instructions, if required:
 endif::[]
 
 [[setting-path]]
-== Setting PATH
+== 设置路径
 
-The `PATH` for the root user on each host must contain the following directories:
+每个主机上的根用户的`路径`必须包含以下目录:
 
 - *_/bin_*
 - *_/sbin_*
 - *_/usr/bin_*
 - *_/usr/sbin_*
 
-These directories set by default in a new RHEL 7.x installation.
+这些目录在新的RHEL 7.x默认安装。
 
 [[ensuring-host-access]]
-== Ensuring host access
+== 确保主机访问
 
-The {product-title} installer requires a user that has access to all hosts. If
-you want to run the installer as a non-root user, first configure passwordless
-*sudo* rights each host:
+{product-title}安装程序需要一个可以访问所有主机的用户。如果你想以非root用户的身份运行安装程序，
+首先配置无密码的*sudo*权限给每台主机:
 
-. Generate an SSH key on the host you run the installation playbook on:
+. 在运行安装剧本的主机上生成SSH密钥:
 +
 ----
 # ssh-keygen
 ----
 +
-Do *not* use a password.
+*不要*使用密码。
 
-. Distribute the key to the other cluster hosts. You can use a `bash` loop:
+. 将密钥分发给其他集群主机。你可以使用一个' bash '循环:
 +
 ----
 # for host in master.example.com \ <1>
@@ -66,45 +62,40 @@ Do *not* use a password.
     do ssh-copy-id -i ~/.ssh/id_rsa.pub $host; \
     done
 ----
-<1> Provide the host name for each cluster host.
+<1> 为每个集群主机提供主机名。
 
-. Confirm that you can access each host that is listed in the loop through SSH.
+. 确认您可以通过SSH访问循环中列出的每个主机。
 
 [[setting-proxy-overrides]]
-== Setting proxy overrides
+== 设置代理覆盖
 
-If the *_/etc/environment_* file on your nodes contains either an `http_proxy`
-or `https_proxy` value, you must also set a `no_proxy` value in that file to
-allow open communication between {product-title} components.
-
-[NOTE]
-====
-The `no_proxy` parameter in *_/etc/environment_* file is not the same value as
-the global proxy values that you set in your inventory file. The global proxy
-values configure specific {product-title} services with your proxy settings.
-See
-xref:configuring_inventory_file.adoc#advanced-install-configuring-global-proxy[Configuring Global Proxy Options]
-for details.
-====
-
-If the *_/etc/environment_* file contains proxy values, define the following
-values in the `no_proxy` parameter of that file on each node:
-
-* Master and node host names or their domain suffix.
-* Other internal host names or their domain suffix.
-* Etcd IP addresses. You must provide IP addresses and not host names because *etcd* access is controlled by IP address.
-* Kubernetes IP address, by default `172.30.0.1`. Must be the value set in the
-xref:configuring_inventory_file.adoc#advanced-install-networking-variables-table[`openshift_portal_net`] parameter in your inventory file.
-* Kubernetes internal domain suffix, `cluster.local`.
-* Kubernetes internal domain suffix, `.svc`.
+如果节点上的*_/etc/environment_*文件包含`http_proxy`或`https_proxy`值，
+则必须在该文件中设置`no_proxy`值，以允许{product-title}组件之间打开通信。
 
 [NOTE]
 ====
-Because `no_proxy` does not support CIDR, you can use domain suffixes.
+*_/etc/environment_*文件中的`no_proxy`参数与您在目录文件中设置的全局代理值不同。
+全局代理值使用代理设置配置特定的{product-title}服务。
+更多详细信息，请查看
+xref:configuring_inventory_file.adoc#advanced-install-configuring-global-proxy[配置全局代理选项]。
 ====
 
-If you use either an `http_proxy` or `https_proxy` value, your `no_proxy`
-parameter value resembles the following example:
+如果*_/etc/environment_*文件包含代理值，则在每个节点上该文件的`no_proxy`参数中定义以下值:
+
+* 主主机名和节点主机名或它们的域后缀。
+* 其他内部主机名或其域后缀。
+* Etcd IP地址。您必须提供IP地址而不是主机名，因为*etcd*访问由IP地址控制。
+* Kubernetes的IP地址，默认为`172.30.0.1`。必须设置的值
+xref:configuring_inventory_file.adoc#advanced-install-networking-variables-table[`openshift_portal_net`]目录文件中的参数。
+* 内部域名后缀 `cluster.local`。
+* 内部域名后缀，`.svc`.
+
+[NOTE]
+====
+因为`no_proxy`不支持CIDR, 所以可以使用域后缀。
+====
+
+如果您使用`http_proxy`或`https_proxy`值，您的`no_proxy`参数值类似于以下示例：
 
 ----
 no_proxy=.internal.example.com,10.0.0.1,10.0.0.2,10.0.0.3,.cluster.local,.svc,localhost,127.0.0.1,172.30.0.1
@@ -113,18 +104,17 @@ no_proxy=.internal.example.com,10.0.0.1,10.0.0.2,10.0.0.3,.cluster.local,.svc,lo
 ifdef::openshift-enterprise[]
 
 [[host-registration]]
-== Registering hosts
+== 注册主机
 
-To access the installation packages, you must register each host with Red Hat
-Subscription Manager (RHSM) and attach an active {product-title} subscription.
+要访问安装包，必须向Red Hat Subscription Manager (RHSM)注册每个主机，并附加一个活动的{product-title}订阅。
 
-. On each host, register with RHSM:
+. 在每个主机上，注册RHSM:
 +
 ----
 # subscription-manager register --username=<user_name> --password=<password>
 ----
 
-. Pull the latest subscription data from RHSM:
+. 从RHSM获取最新订阅数据:
 +
 ----
 # subscription-manager refresh
@@ -136,26 +126,26 @@ Subscription Manager (RHSM) and attach an active {product-title} subscription.
 # subscription-manager list --available --matches '*OpenShift*'
 ----
 
-. In the output for the previous command, find the pool ID for an {product-title} subscription and attach it:
+. 在前一个命令的输出中，找到一个{product-title}订阅的池ID，并将其附加:
 +
 ----
 # subscription-manager attach --pool=<pool_id>
 ----
 
-. Disable all yum repositories:
-.. Disable all the enabled RHSM repositories:
+. 禁用所有yum存储库:
+.. 禁用所有启用的RHSM存储库:
 +
 ----
 # subscription-manager repos --disable="*"
 ----
 
-.. List the remaining yum repositories and note their names under `repo id`, if any:
+.. 列出剩余的yum存储库，并在`repo id`下记下它们的名称, 如果有的话:
 +
 ----
 # yum repolist
 ----
 
-.. Use `yum-config-manager` to disable the remaining yum repositories:
+.. 使用`yum-config-manager`禁用剩余的yum存储库:
 +
 ----
 # yum-config-manager --disable <repo_id>
@@ -167,9 +157,9 @@ Alternatively, disable all repositories:
  yum-config-manager --disable \*
 ----
 +
-Note that this might take a few minutes if you have a large number of available repositories
+注意，如果您有大量可用的存储库，这可能需要几分钟
 
-. Enable only the repositories required by {product-title} 3.11:
+. 只启用{product-title} 3.11所需的存储库:
 +
 ----
 # subscription-manager repos \
@@ -181,29 +171,27 @@ Note that this might take a few minutes if you have a large number of available 
 endif::[]
 
 [[installing-base-packages]]
-== Installing base packages
+== 安装基础包
 
 [IMPORTANT]
 ====
-If your hosts use RHEL 7.5 and you want to accept {product-title}'s
-default *docker* configuration (using OverlayFS storage and all default logging
-options), do not manually install these packages. These packages
-are installed when you run the *prerequisites.yml* playbook during
-xref:running_install.adoc#running-the-installation-playbooks[installation].
+如果您的主机使用RHEL 7.5，并且您希望接受{product-title}的默认*docker*
+配置(使用OverlayFS存储和所有默认日志选项)，
+则不需要手动安装这些包。这些包是在运行*prerequisites.yml*期间安装
+xref:running_install.adoc#running-the-installation-playbooks[安装]。
 
-If your hosts use RHEL 7.4 or if they use RHEL 7.5 and you want
-to customize the *docker* configuration, install these packages.
+如果您的主机使用RHEL 7.4或RHEL 7.5，并且您想定制*docker*配置，请安装这些包。
 ====
 
-.For RHEL 7 systems:
+.RHEL 7系统:
 
-. Install the following base packages:
+. 安装以下基本软件包:
 +
 ----
 # yum install wget git net-tools bind-utils yum-utils iptables-services bridge-utils bash-completion kexec-tools sos psacct
 ----
 
-. Update the system to the latest packages:
+. 更新系统到最新的软件包:
 +
 ----
 # yum update
@@ -211,56 +199,53 @@ to customize the *docker* configuration, install these packages.
 ----
 
 
-. Install packages that are required for your installation method:
-** If you plan to use the
-xref:running_install.adoc#running-the-advanced-installation-system-container[containerized installer],
-install the following package:
+. 安装方法所需的安装包:
+** 如果你打算用
+xref:running_install.adoc#running-the-advanced-installation-system-container[容器化安装程序],
+安装以下软件包：
 +
 ----
 # yum install atomic
 ----
 
 ifdef::openshift-enterprise[]
-** If you plan to use the
-xref:running_install.adoc#running-the-advanced-installation-rpm[RPM-based installer],
-install the following package:
+** 如果你打算用
+xref:running_install.adoc#running-the-advanced-installation-rpm[基于RPM的安装程序],
+安装以下软件包：
 +
 ----
 # yum install openshift-ansible
 ----
 +
-This package provides installer utilities and pulls in other packages that the
-cluster installation process needs, such as Ansible, playbooks, and related
-configuration files
+这个包提供安装程序实用程序，并引入集群安装过程需要的其他包，
+如Ansible、playbook和相关配置文件
 endif::[]
 ifdef::openshift-origin[]
-** If you plan to use the
-xref:running_install.adoc#running-the-advanced-installation-rpm[RPM-based installer]:
+** 如果你准备使用
+xref:running_install.adoc#running-the-advanced-installation-rpm[基于RPM的安装程序]:
 
-.. Install Ansible. To use EPEL as a package source for Ansible:
+.. 安装Ansible。使用EPEL作为Ansible的包源:
 
-... Install the EPEL repository:
+... 安装EPEL存储库:
 +
 ----
 # yum -y install \
     https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 ----
 
-... Disable the EPEL repository globally so that it is not accidentally used during
-later steps of the installation:
+... 全局禁用EPEL存储库，以便在安装的后续步骤中不会意外使用:
 +
 ----
 # sed -i -e "s/^enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
 ----
 
-... Install the packages for Ansible:
+... 安装Ansible的软件包:
 +
 ----
 # yum -y --enablerepo=epel install ansible pyOpenSSL
 ----
 
-.. Clone the *openshift/openshift-ansible* repository from GitHub, which provides
-the required playbooks and configuration files:
+.. 从GitHub克隆*openshift/openshift-ansible*，它提供了所需的剧本和配置文件：
 +
 ----
 # cd ~
@@ -271,163 +256,137 @@ the required playbooks and configuration files:
 +
 [NOTE]
 ====
-Be sure to use the release branch of the *openshift-ansible* repository that
-corresponds to your {product-title} version. Use the *master* branch to install
-the version of {product-title} in development.
+确保使用*openshift-ansible*的发布分支，它对应于您的{product-title}版本。
+使用*master*分支在开发中安装{product-title}版本。
 ====
 endif::[]
 
-.For RHEL Atomic Host 7 systems:
+.RHEL 7原子主机系统:
 
-. Ensure the host is up to date by upgrading to the latest Atomic tree if one is
-available:
+. 如果有最新的原子树，请升级到最新的原子树，以确保主机是最新的:
 +
 ----
-# atomic host upgrade
+# 原子主机升级
 ----
 
-. After the upgrade is completed and prepared for the next boot, reboot the
-host:
+. 升级完成并为下一次引导做好准备后，重启主机:
 +
 ----
-# reboot
+# 重启
 ----
 
 [[installing-docker]]
-== Installing Docker
+== 安装Docker
 
-At this point, install Docker on all master and node hosts. This
-allows you to configure your xref:configuring-docker-storage[Docker storage
-options] before you install {product-title}.
+此时，在所有主主机和节点主机上安装Docker。
+这允许您在安装{product-title}之前配置您的xref:configuring-docker-storage[Docker存储选项]。
 
 [NOTE]
 ====
-The cluster installation process automatically modifies
-the *_/etc/sysconfig/docker_* file.
+集群安装过程自动修改*_/etc/sysconfig/docker_*文件。
 ====
 
-.For RHEL 7 systems:
+.RHEL 7系统:
 
-. Install Docker 1.13:
+. 安装Docker 1.13:
 +
 ----
 # yum install docker-1.13.1
 ----
 
-. Verify that version 1.13 was installed:
+. 验证版本1.13是否已安装:
 +
 ----
 # rpm -V docker-1.13.1
 # docker version
 ----
 
-.For RHEL Atomic Host 7 systems:
-No action is required. Docker is installed, configured, and running by default.
+.对于RHEL 7原子主机系统:
+不需要任何操作。默认情况下安装、配置和运行Docker。
 
 [[configuring-docker-storage]]
-== Configuring Docker Storage
+== Docker配置存储
 
-Containers and the images they are created from are stored in Docker's storage
-back end. This storage is ephemeral and separate from any
+容器及其创建的映像存储在Docker的存储后端。这个存储是临时的，与任何
 xref:../install_config/persistent_storage/index.adoc#install-config-persistent-storage-index[persistent
-storage] allocated to meet the needs of your applications. With _Ephemeral
-storage_, container-saved data is lost when the container is removed. With
-_persistent storage_, container-saved data remains if the container is removed.
+storage]分配以满足您的应用程序的需要。使用 _临时存储_,
+当容器被删除时，容器保存的数据将丢失。使用
+_持久存储_, 如果容器被删除，容器保存的数据将保留下来。
 
-You must configure storage for all master and node hosts because by default each
-system runs a container daemon. For containerized installations, you need
-storage on masters. Also, by default, the web console and etcd, which require
-storage, run in containers on masters. Containers run on nodes, so storage is
-always required on them.
+必须为所有主主机和节点主机配置存储，因为默认情况下每个系统运行一个容器守护进程。
+对于容器化安装，您需要在主服务器上存储。另外，默认情况下，
+Web控制台和etcd(需要存储)在主机上的容器中运行。容器在节点上运行，因此总是需要在节点上存储。
 
-The size of storage depends on workload, number of containers, the
-size of the containers being run, and the containers' storage requirements.
+存储的大小取决于工作负载、容器的数量、正在运行的容器的大小以及容器的存储需求。
 
 [IMPORTANT]
 ====
-If your hosts use RHEL 7.5 and you want to accept {product-title}'s
-default *docker* configuration (using OverlayFS storage and all default logging
-options), do not manually install these packages. These packages
-are installed when you run the *prerequisites.yml* playbook during
-xref:running_install.adoc#running-the-installation-playbooks[installation].
+如果您的主机使用RHEL 7.5，并且希望接受{product-title}的默认*docker*配置
+(使用OverlayFS存储和所有默认日志选项)，
+则不需要手动安装这些包，这些包是在运行*prerequisites.yml*先前安装的。
+xref:running_install.adoc#running-the-installation-playbooks[安装]。
 
-If your hosts use RHEL 7.4 or if they use RHEL 7.5 and you want
-to customize the *docker* configuration, install these packages.
+如果您的主机使用RHEL 7.4或RHEL 7.5，并且您想定制*docker*配置，
+请安装这些包。
 ====
 
-.For RHEL 7 systems:
+.对于RHEL 7体系:
 
-The default storage back end for Docker on RHEL 7 is a thin pool on loopback
-devices, which is not supported for production use and only appropriate for
-proof of concept environments. For production environments, you must create a
-thin pool logical volume and re-configure Docker to use that volume.
+RHEL 7上Docker的默认存储后端是环回设备上的一个瘦池，它不支持生产使用，只适合证明概念环境。
+对于生产环境，您必须创建一个瘦池逻辑卷，并重新配置Docker以使用该卷。
 
-Docker stores images and containers in a graph driver, which is a pluggable storage technology, such as *DeviceMapper*,
-*OverlayFS*, and *Btrfs*. Each has advantages and disadvantages. For example, OverlayFS is faster than DeviceMapper
-at starting and stopping containers but is not Portable Operating System Interface for Unix (POSIX) compliant
-because of the architectural limitations of a union file system. See the
-link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/?version=7[Red Hat Enterprise Linux] release notes
-for information on using OverlayFS with your version of RHEL.
+Docker在图形驱动程序中存储图像和容器，这是一种可插入的存储技术，例如*DeviceMapper*,
+*OverlayFS*, 和 *Btrfs*。每种方法都有优点和缺点。例如，在启动和停止容器时，OverlayFS比DeviceMapper更快，
+但由于union文件系统的体系结构限制，它不是兼容Unix(POSIX)的可移植操作系统接口。参见链接:
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/?version=7[Red Hat Enterprise Linux]
+发布关于在RHEL版本中使用OverlayFS的信息。
 
-For more information about the benefits and limitations of DeviceMapper and OverlayFS,
-see xref:../scaling_performance/optimizing_storage.adoc#choosing-a-graph-driver[Choosing a Graph Driver].
+有关DeviceMapper和OverlayFS的优点和限制的更多信息，请参见
+see xref:../scaling_performance/optimizing_storage.adoc#choosing-a-graph-driver[选择一个图形驱动程序]。
 
-.For RHEL Atomic Host 7 systems:
+.RHEL 7原子主机系统:
 
-The default storage back end for Docker on RHEL Atomic Host is a thin pool
-logical volume, which is supported for production environments. You must ensure
-that enough space is allocated for this volume per the Docker storage
-requirements mentioned in
-xref:prerequisites.adoc#system-requirements[System
-Requirements].
+RHEL原子主机上Docker的默认存储后端是一个瘦池逻辑卷，它支持生产环境。
+您必须确保根据xref:prerequisites.adoc#system-requirements[系统需求]中提到的Docker存储需求为这个卷分配了足够的空间需求。
 
-If you do not have enough space allocated, see
-link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/managing_containers/#managing_storage_with_docker_formatted_containers[Managing Storage with Docker Formatted Containers]
-for details about using *docker-storage-setup* and basic instructions on storage
-management in RHEL Atomic Host.
+如果没有分配足够的空间，请参见链接:
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/managing_containers/#managing_storage_with_docker_formatted_containers[使用Docker格式的容器管理存储]
+了解有关使用*docker-storage-setup*和RHEL原子主机中存储管理的基本说明。
 
 
 [[configuring-docker-overlayfs]]
-=== Configuring OverlayFS
+=== 配置OverlayFS
 
-OverlayFS is a type of union file system. It allows you to overlay one file system on top of another.
-Changes are recorded in the upper file system, while the lower file system remains unmodified.
+OverlayFS是联合文件系统的一种类型。它允许您将一个文件系统覆盖在另一个文件系统之上。
+更改记录在上层文件系统中，而下层文件系统保持不变。
 
-xref:../scaling_performance/optimizing_storage.adoc#comparing-overlay-graph-drivers[Comparing the Overlay Versus Overlay2 Graph Drivers]
-has more information about the *overlay* and *overlay2* drivers.
+xref:../scaling_performance/optimizing_storage.adoc#comparing-overlay-graph-drivers[比较覆盖图驱动程序]
+有关*覆盖*和*覆盖2*驱动程序的更多信息。
 
-For information about enabling the OverlayFS storage driver for the Docker service, see the
-link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/managing_containers/#using_the_overlay_graph_driver[Red Hat Enterprise Linux Atomic Host documentation].
+有关为Docker服务启用OverlayFS存储驱动程序的信息，请参见
+link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/managing_containers/#using_the_overlay_graph_driver[Red Hat Enterprise Linux原子主机文档]。
 
 
 [[configuring-docker-thin-pool]]
-=== Configuring thin pool storage
+=== 配置瘦池存储
 
-You can use the *docker-storage-setup* script included with Docker to create a
-thin pool device and configure Docker's storage driver. You can do this after
-you install Docker and must do it before you create images or containers. The
-script reads configuration options from the
-*_/etc/sysconfig/docker-storage-setup_* file and supports three options for
-creating the logical volume:
+您可以使用Docker中包含的*docker-storage-setup*脚本创建一个瘦池设备并配置Docker的存储驱动程序。
+您可以在安装Docker之后这样做，并且必须在创建映像或容器之前这样做。
+脚本从*_/etc/sysconfig/docker-storage-setup_*文件中读取配置选项，并支持创建逻辑卷的三个选项:
 
-- Use an additional block device.
-- Use an existing, specified volume group.
-- Use the remaining free space from the volume group where your root
-file system is located.
+- 使用额外的块设备。
+- 使用现有的指定卷组。
+- 使用根文件系统所在卷组中的剩余空闲空间。
 
-Using an additional block device is the most robust option, but it requires adding another
-block device to your host before you configure Docker storage. The other options
-both require leaving free space available when you provision your host. Using
-the remaining free space in the root file system volume group
-is known to cause issues with some applications, for example Red Hat Mobile
-Application Platform (RHMAP).
+使用额外的块设备是最健壮的选项，但它要求在配置Docker存储之前向主机添加另一个块设备。
+其他选项都要求在提供主机时留出空闲空间。使用根文件系统卷组中剩余的空闲空间会导致
+某些应用程序出现问题，例如Red Hat Mobile Application Platform (RHMAP)。
 
-. Create the *docker-pool* volume using one of the following three options:
+. 使用以下三个选项之一创建*docker-pool*卷:
 
-** To use an additional block device:
-.. *_/etc/sysconfig/docker-storage-setup_*, set *DEVS* to the path of the block
-device to use. Set *VG* to the volume group name to create, such as
-*docker-vg*. For example:
+** 要使用额外的块设备:
+.. *_/etc/sysconfig/docker-storage-setup_*, 将*DEVS*设置为要使用的块设备的路径。
+将*VG*设置为要创建的卷组名称，例如*docker-vg*。例如:
 +
 ----
 # cat <<EOF > /etc/sysconfig/docker-storage-setup
@@ -435,13 +394,12 @@ DEVS=/dev/vdc
 VG=docker-vg
 EOF
 ----
-.. Run *docker-storage-setup* and review the output to ensure the
-*docker-pool* volume was created:
+.. 运行*docker-storage-setup*并检查输出，确保创建了*docker-pool*卷:
 +
 ----
 # docker-storage-setup                                                                                                                                                                                                                                [5/1868]
 0
-Checking that no-one is using this disk right now ...
+检查是否有人正在使用这个磁盘 ...
 OK
 
 Disk /dev/vdc: 31207 cylinders, 16 heads, 63 sectors/track
@@ -461,67 +419,61 @@ Units: sectors of 512 bytes, counting from 0
 Warning: partition 1 does not start at a cylinder boundary
 Warning: partition 1 does not end at a cylinder boundary
 Warning: no primary partition is marked bootable (active)
-This does not matter for LILO, but the DOS MBR will not boot this disk.
-Successfully wrote the new partition table
+这对LILO来说无关紧要，但是DOS MBR不会引导这个磁盘。成功地编写了新的分区表
 
-Re-reading the partition table ...
+重新读取分区表 ...
 
-If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)
-to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1
+如果您创建或更改了一个DOS分区， /dev/foo7, say, 那么使用dd(1)
+将前512字节变为零:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1
 (See fdisk(8).)
-  Physical volume "/dev/vdc1" successfully created
-  Volume group "docker-vg" successfully created
-  Rounding up size to full physical extent 16.00 MiB
-  Logical volume "docker-poolmeta" created.
-  Logical volume "docker-pool" created.
-  WARNING: Converting logical volume docker-vg/docker-pool and docker-vg/docker-poolmeta to pool's data and metadata volumes.
-  THIS WILL DESTROY CONTENT OF LOGICAL VOLUME (filesystem etc.)
-  Converted docker-vg/docker-pool to thin pool.
-  Logical volume "docker-pool" changed.
+  成功创建物理卷"/dev/vdc1"。
+  成功创建卷组"docker-vg"
+  四舍五入大小到整个物理范围16.00 MiB
+  创建逻辑卷"docker-poolmeta"。
+  创建逻辑卷"docker-pool"。
+  警告: 将逻辑卷docker-vg/docker-pool和docker-vg/docker-poolmeta转换为池的数据和元数据卷。
+  这将破坏逻辑卷(文件系统等)的内容。
+  将docker-vg/docker-pool转换为瘦池。
+  逻辑卷"docker-pool"更改。
 ----
 
-** To use an existing, specified volume group:
-.. In *_/etc/sysconfig/docker-storage-setup_*, set *VG* to the volume
-group. For example:
+** 若要使用现有的指定卷组，请:
+.. 在*_/etc/sysconfig/docker-storage-setup_*中，将*VG*设置为卷组，例如：
 +
 ----
 # cat <<EOF > /etc/sysconfig/docker-storage-setup
 VG=docker-vg
 EOF
 ----
-.. Then run *docker-storage-setup* and review the output to ensure the
-*docker-pool* volume was created:
+.. 然后运行*docker-storage-setup*，检查输出，确保创建了*docker-pool*卷:
++
+----
+# docker-存储-设置
+  四舍五入大小到整个物理范围16.00 MiB
+  创建逻辑卷"docker-poolmeta"。
+  创建逻辑卷"docker-pool"。
+  警告: 将逻辑卷docker-vg/docker-pool和docker-vg/docker-poolmeta转换为池的数据和元数据卷。
+  这将破坏逻辑卷(文件系统等)的内容。
+  将docker-vg/docker-pool转换为瘦池。
+  逻辑卷"docker-pool"更改。
+----
+
+** 要使用根文件系统所在卷组的剩余空闲空间:
+.. 验证根文件系统所在的卷组具有所需的空闲空间，然后运行*docker-storage-setup*并检查输出，确保创建了*docker-pool*卷:
 +
 ----
 # docker-storage-setup
-  Rounding up size to full physical extent 16.00 MiB
-  Logical volume "docker-poolmeta" created.
-  Logical volume "docker-pool" created.
-  WARNING: Converting logical volume docker-vg/docker-pool and docker-vg/docker-poolmeta to pool's data and metadata volumes.
-  THIS WILL DESTROY CONTENT OF LOGICAL VOLUME (filesystem etc.)
-  Converted docker-vg/docker-pool to thin pool.
-  Logical volume "docker-pool" changed.
+  四舍五入大小到整个物理范围32.00 MiB
+  创建逻辑卷"docker-poolmeta"。
+  创建逻辑卷"docker-pool"。
+  警告:将逻辑卷rhel/docker-pool和rhel/docker-poolmeta转换为池的数据和元数据卷。
+  这将破坏逻辑卷(文件系统等)的内容。
+  将rhel/docker-pool转换为瘦池。
+  逻辑卷"docker-pool"更改。
 ----
 
-** To use the remaining free space from the volume  group where your root file
-system is located:
-.. Verify that the volume group where your root file system resides has the required
-free space, then run *docker-storage-setup* and review the output to ensure the
-*docker-pool* volume was created:
-+
-----
-# docker-storage-setup
-  Rounding up size to full physical extent 32.00 MiB
-  Logical volume "docker-poolmeta" created.
-  Logical volume "docker-pool" created.
-  WARNING: Converting logical volume rhel/docker-pool and rhel/docker-poolmeta to pool's data and metadata volumes.
-  THIS WILL DESTROY CONTENT OF LOGICAL VOLUME (filesystem etc.)
-  Converted rhel/docker-pool to thin pool.
-  Logical volume "docker-pool" changed.
-----
-
-. Verify your configuration. Confirm that the *_/etc/sysconfig/docker-storage_*
-file has *dm.thinpooldev* and *docker-pool* logical volume values:
+. 验证您的配置。确认*_/etc/sysconfig/docker-storage_*文件具有
+*dm.thinpooldev*和*docker-pool*逻辑卷值：
 +
 ----
 # cat /etc/sysconfig/docker-storage
@@ -534,15 +486,12 @@ DOCKER_STORAGE_OPTIONS="--storage-driver devicemapper --storage-opt dm.fs=xfs --
 +
 [IMPORTANT]
 ====
-Before using Docker or {product-title}, verify that the *docker-pool* logical volume
-is large enough to meet your needs. Make the *docker-pool* volume 60% of
-the available volume group; it will grow to fill the volume group through LVM
-monitoring.
+在使用Docker或{product-title}之前，请验证*docker-pool*逻辑卷是否足够大以满足您的需求。
+使*docker-pool*卷占可用卷组的60%，它将通过LVM监视填充卷组。
 ====
 
-. Start or restart Docker.
-** If Docker has never run on the host, enable and start the
-service, then verify that it is running:
+. 启动或重启Docker.
+** 如果Docker从未在主机上运行过，启用并启动服务，然后验证它正在运行:
 +
 ----
 # systemctl enable docker
@@ -554,7 +503,7 @@ service, then verify that it is running:
 +
 [WARNING]
 ====
-This will destroy any containers or images currently on the host.
+这将破坏当前主机上的任何容器或映像。
 ====
 +
 ----
@@ -562,76 +511,68 @@ This will destroy any containers or images currently on the host.
 # rm -rf /var/lib/docker/*
 # systemctl restart docker
 ----
-.. Delete any content in the *_/var/lib/docker/_* folder.
+.. 删除*_/var/lib/docker/_*文件夹中的任何内容。
 
 [[reconfiguring-docker-storage]]
-=== Reconfiguring Docker storage
+=== 重新配置Docker存储
 
-If you need to reconfigure Docker storage after you create the
-*docker-pool*:
+如果创建*docker-pool*后需要重新配置Docker存储:
 
-. Remove the *docker-pool* logical volume.
+. 删除*docker-pool*逻辑卷。
 
-. If you use a dedicated volume group, remove the volume group and
-any associated physical volumes
+. 如果使用专用卷组，请删除卷组和任何关联的物理卷
 
-. Run *docker-storage-setup* again.
+. 再次运行*docker-storage-setup*。
 
-See
-link:https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Logical_Volume_Manager_Administration/index.html[Logical Volume Manager Administration]
-for more detailed information about LVM management.
+请查看
+link:https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Logical_Volume_Manager_Administration/index.html[逻辑卷管理器管理]
+有关LVM管理的更详细信息。
 
 [[enabling-image-signature-support]]
-=== Enabling image signature support
+=== 启用图像签名支持
 
-{product-title} is capable of cryptographically verifying that images are from
-trusted sources. The
-xref:../security/deployment.adoc#security-deployment-from-where-images-deployed[Container Security Guide]
-provides a high-level description of how image signing works.
+{product-title}能够加密验证图像来自可信源。
+xref:../security/deployment.adoc#security-deployment-from-where-images-deployed[容器安全指南]
+提供了对映像签名工作原理的高级描述。
 
-You can configure image signature verification using the `atomic` command line
-interface (CLI), version 1.12.5 or greater.
+您可以使用1.12.5或更高版本的`原子`命令行接口(CLI)配置图像签名验证。
 ifdef::openshift-enterprise[]
-The `atomic` CLI is pre-installed on RHEL Atomic Host systems.
+`原子`的CLI预先安装在RHEL原子主机系统上。
 
 [NOTE]
 ====
-For more on the `atomic` CLI, see the
-link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/cli_reference/prerequisites[Atomic CLI documentation].
+有关`原子` CLI的更多信息，请参见链接:
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/cli_reference/prerequisites[原子CLI文档].
 ====
 endif::[]
 
-The following files and directories comprise the trust configuration of a host:
+以下文件和目录组成主机的信任配置:
 
 - *_/etc/containers/registries.d/*_*
 - *_/etc/containers/policy.json_*
 
-You can manage trust configuration directly on each node or manage the files on
-a separate host distribute them to the appropriate nodes using
-Ansible, for example. See the
-link:https://access.redhat.com/articles/2750891#automating-cluster-configuration[Container
-Image Signing Integration Guide] for an example of automating file distribution
-with Ansible.
+例如，您可以直接管理每个节点上的信任配置，或者管理单独主机上的文件，
+使用Ansible将这些文件分发到适当的节点。查看链接:
+https://access.redhat.com/articles/2750891#automating-cluster-configuration
+[容器映像签名集成指南]了解使用Ansible自动化文件分发的示例。
 
-. Install the *atomic* package if it is not installed on the host system:
+. 安装*原子*包，如果它没有安装在主机系统：
 +
 ----
 $ yum install atomic
 ----
 
-. View the current trust configuration:
+. 查看当前信任配置:
 +
 ----
 $ atomic trust show
 * (default)                         accept
 ----
 +
-The default configuration is to whitelist all registries, which means that no
-signature verification is configured.
+默认配置是将所有注册中心白名单，这意味着没有配置任何签名验证。
 
-. Customize your trust configuration. In the following example, you whitelist
-one registry or namespace, blacklist (reject) untrusted registries, and require signature
-verification on a vendor registry:
+. 自定义信任配置。在下面的示例中，您将一个注册表或名称空间、
+黑名单(拒绝)不受信任的注册表列入白名单，并要求对供应商注册表进行签名验证:
 +
 ----
 $ atomic trust add --type insecureAcceptAnything 172.30.1.1:5000
@@ -656,7 +597,7 @@ $ atomic trust add --sigstoretype web \
 registry.redhat.io                  signed security@redhat.com,security@redhat.com
 ----
 
-. You can further harden nodes by adding a global `reject` default trust:
+. 您可以通过添加全局`拒绝`默认信任来进一步加固节点:
 +
 ----
 $ atomic trust default reject
@@ -668,53 +609,48 @@ $ atomic trust show
 registry.redhat.io                  signed security@redhat.com,security@redhat.com
 ----
 
-. Optionally, review the `atomic` man page `man atomic-trust` for more configuration
-options.
+. 可以通过查看`原子`手册页`man atomic-trust`以获得更多配置选项。
 
 [[managing-docker-container-logs]]
-=== Managing container logs
+=== 容器管理日志
 
-To prevent a container's log file, the
-*_/var/lib/docker/containers/<hash>/<hash>-json.log_* file on the node where the
-container is running, from increasing to a problematic size, you can
-configure Docker's `json-file` logging driver to restrict the size and number
-of log files.
+为了防止容器的日志文件，
+*_/var/lib/docker/containers/<hash>/<hash>-json.log_* 在容器运行的节点上，
+从增加到有问题的大小，您可以配置Docker的`json-file`日志驱动程序来限制日志文件的大小和数量。
 
 [options="header"]
 |===
 
-|Option |Purpose
+|选项 |目的
 
 |`--log-opt max-size`
-|Sets the size at which a new log file is created.
+|设置创建新日志文件的大小。
 
 |`--log-opt max-file`
-|Sets the maximum number of log files to be kept per host.
+|设置每个主机要保存的日志文件的最大数量。
 |===
 
-. To configure the log file, edit the *_/etc/sysconfig/docker_* file. For
-example, to set the maximum file size to 1 MB and always keep the last three
-log files, append `max-size=1M` and `max-file=3` to the `OPTIONS=` line,
-ensuring that the values maintain the single quotation mark formatting:
+. 要配置日志文件，请编辑*_/etc/sysconfig/docker_*文件。例如，要将最大文件大小设置为
+1MB，并始终保留最后三个日志文件，请在`OPTIONS=`行中添加`max-size=1M`和`max-file=3`，
+确保值保持单引号格式：
 +
 ----
 OPTIONS='--insecure-registry=172.30.0.0/16 --selinux-enabled --log-opt max-size=1M --log-opt max-file=3'
 ----
 +
-See Docker's documentation for additional information on how to
-link:https://docs.docker.com/engine/admin/logging/overview/#/options[configure logging drivers].
+有关如何链接的更多信息，请参见Docker的文档：
+https://docs.docker.com/engine/admin/logging/overview/#/options[配置日志驱动程序]。
 
-. Restart the Docker service:
+. 重启Docker服务:
 +
 ----
 # systemctl restart docker
 ----
 
 [[viewing-available-container-logs]]
-=== Viewing available container logs
+=== 查看可用的容器日志
 
-You can view the container logs in the *_/var/lib/docker/containers/<hash>/_*
-directory on the node where the container is running. For example:
+您可以在容器运行的节点上的*_/var/lib/docker/containers/<hash>/_*目录中查看容器日志。例如：
 ----
 # ls -lh /var/lib/docker/containers/f088349cceac173305d3e2c2e4790051799efe363842fdab5732f51f5b001fd8/
 total 2.6M
@@ -727,31 +663,26 @@ drwx------. 2 root root    6 Nov 24 00:12 secrets
 ----
 
 [[blocking-local-volume-usage]]
-=== Blocking local volume usage
+=== 阻塞本地卷使用
 
-When a volume is provisioned using the `VOLUME` instruction in a *_Dockerfile_*
-or using the `docker run -v <volumename>` command, a host's storage space is
-used. Using this storage can lead to an unexpected out of space issue and can
-bring down the host.
+当使用*_Dockerfile_*中的`VOLUME`指令或使用`docker run -v <volumename>`
+命令供应商时，将使用主机的存储空间。使用此存储可能导致意外的空间不足问题，
+并可能导致主机宕机。
 
-In {product-title}, users trying to run their own images risk filling the entire
-storage space on a node host. One solution to this issue is to prevent users
-from running images with volumes. This way, the only storage a user has access
-to can be limited, and the cluster administrator can assign storage quota.
+在{product-title}中，试图运行自己的映像的用户可能会占用节点主机上的整个存储空间。
+这个问题的一个解决方案是防止用户运行带有卷的图像。这样，用户只能访问有限的存储，
+集群管理员可以分配存储配额。
 
-Using *docker-novolume-plugin* solves this issue by disallowing starting a
-container with local volumes defined. In particular, the plug-in blocks `docker run`
-commands that contain:
+使用*docker-novolume-plugin*通过禁止使用定义了本地卷的容器来解决这个问题。
+特别是，插件块`docker run`命令包括：
 
 - The `--volumes-from` option
-- Images that have `VOLUME`(s) defined
-- References to existing volumes that were provisioned with the `docker volume`
-command
+- 定义了`VOLUME`(s)的图像
+- 对`docker volume`提供现有卷的引用命令
 
-The plug-in does not block references to bind mounts.
+该插件不会阻塞绑定挂载的引用。
 
-To enable *docker-novolume-plugin*, perform the following steps on each node
-host:
+要启用*docker-novolume-plugin*，请在每个节点主机上执行以下步骤：
 
 . Install the *docker-novolume-plugin* package:
 +
@@ -759,28 +690,26 @@ host:
 $ yum install docker-novolume-plugin
 ----
 
-. Enable and start the *docker-novolume-plugin* service:
+. 启用并启动*docker-novolume-plugin*服务:
 +
 ----
 $ systemctl enable docker-novolume-plugin
 $ systemctl start docker-novolume-plugin
 ----
 
-. Edit the *_/etc/sysconfig/docker_* file and append the following to the
-`OPTIONS` list:
+. 编辑*_/etc/sysconfig/docker_*文件，并在`选项`列表中添加以下内容:
 +
 ----
 --authorization-plugin=docker-novolume-plugin
 ----
 
-. Restart the *docker* service:
+. 重启*docker*服务:
 +
 ----
 $ systemctl restart docker
 ----
 
-After you enable this plug-in, containers with local volumes defined fail to
-start and show the following error message:
+启用此插件后，定义了本地卷的容器无法启动，并显示以下错误消息:
 
 ----
 runContainer: API error (500): authorization denied by plugin
@@ -788,26 +717,25 @@ docker-novolume-plugin: volumes are not allowed
 ----
 
 [[prereq-glusterfs]]
-== {gluster} Software Requirements
+== {gluster}软件需求
 
-include::install_config/persistent_storage/topics/glusterfs_prereqs_software.adoc[]
+包括::install_config/persistent_storage/topics/glusterfs_prereqs_software.adoc[]
 
 [[host-prep-whats-next]]
-== Next steps
+== 下一个步骤
 
 ifdef::openshift-enterprise[]
-After you finish preparing your hosts, if you are installing {product-title},
-xref:configuring_inventory_file.adoc#configuring-ansible[configure your inventory file].
-If you are installing a stand-alone registry, continue instead to
-xref:stand_alone_registry.adoc#install-config-installing-stand-alone-registry[Installing a stand-alone registry].
+在您准备好主机之后，如果您正在安装{product-title}，
+xref:configuring_inventory_file.adoc#configuring-ansible[配置你的库存文件]。
+如果正在安装独立注册表，请继续
+xref:stand_alone_registry.adoc#install-config-installing-stand-alone-registry[安装独立注册表].
 endif::[]
 
 ifdef::openshift-origin[]
-If you came here from
-xref:../getting_started/administrators.adoc#getting-started-administrators[Getting
-Started for Administrators], you can now continue there by choosing an
-xref:../getting_started/administrators.adoc#installation-methods[installation
-method]. Alternatively, you can install {product-title} using the standard
-cluster installation process by proceeding to
-xref:configuring_inventory_file.adoc#configuring-ansible[configure your inventory file].
+如果您是从
+xref:../getting_started/administrators.adoc#getting-started-administrators[管理员入门],
+您现在可以继续选择
+xref:../getting_started/administrators.adoc#installation-methods[安装方法]. 
+或者，您也可以使用标准集群安装过程安装{product-title}，
+方法是继续安装到xref:configuring_inventory_file.adoc#configuring-ansible[配置您的库存文件].
 endif::[]

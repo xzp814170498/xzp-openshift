@@ -1,5 +1,4 @@
-{gluster} can be configured to provide
-xref:../architecture/additional_concepts/storage.adoc#architecture-additional-concepts-storage[persistent storage]
-and dynamic provisioning for {product-title}. It can be used both containerized
-within {product-title} (*{gluster-native}*) and non-containerized on its own
-nodes (*{gluster-external}*).
+{gluster}可以提供配置
+xref:../architecture/additional_concepts/storage.adoc#architecture-additional-concepts-storage[持久存储]
+和{product-title}的动态供应。它既可以在{product-title} (*{gluster-native}*)内使用容器，
+也可以在它自己的节点上使用非容器(*{gluster-external}*)。

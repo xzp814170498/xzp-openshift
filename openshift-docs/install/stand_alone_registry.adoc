@@ -11,169 +11,151 @@
 
 toc::[]
 
-{product-title} is a fully-featured enterprise solution that includes an
-integrated container image registry called
-xref:../architecture/infrastructure_components/image_registry.adoc#integrated-openshift-registry[OpenShift
-Container Registry] (OCR). Instead of deploying {product-title} as a full
-Platform-as-a-Service environment for developers, you can install OCR as a
-stand-alone container image registry to run on-site or in the cloud.
+{product-title}是一个功能齐全的企业解决方案，它包括一个集成的容器映像注册表
+xref:../architecture/infrastructure_components/image_registry.adoc#integrated-openshift-registry
+[OpenShift容器注册表] (OCR). 您可以将OCR安装为独立的容器映像注册表，以便在现场或云中运行，
+而不是将{product-title}部署为开发人员的完整平台即服务环境。
 
-When installing a stand-alone deployment of OCR, a cluster of masters and nodes
-is still installed, similar to a typical {product-title} installation. Then, the
-container image registry is deployed to run on the cluster. This stand-alone
-deployment option is useful for administrators that want a container image registry
-but do not require the full {product-title} environment that includes the
-developer-focused web console and application build and deployment tools.
+在安装OCR的独立部署时，仍然安装了一个主节点和节点集群，类似于典型的{product-title}安装。
+然后，将容器映像注册表部署到集群上运行。这个独立的部署选项对于希望使用容器映像注册表
+但不需要完整的{product-title}环境的管理员非常有用，该环境包括以开发人员
+为中心的Web控制台和应用程序构建和部署工具。
 
-OCR provides the following capabilities:
+OCR提供以下功能:
 
-- A user-focused registry web console, link:http://cockpit-project.org/[Cockpit].
-- xref:../install_config/registry/securing_and_exposing_registry.adoc#securing-the-registry[Secured traffic]
-by default, served via TLS.
-- Global
-xref:../install_config/configuring_authentication.adoc#install-config-configuring-authentication[identity provider authentication].
-- A
-xref:../architecture/core_concepts/projects_and_users.adoc#architecture-core-concepts-projects-and-users[project namespace]
-model to enable teams to collaborate through
-xref:../architecture/additional_concepts/authorization.adoc#architecture-additional-concepts-authorization[role-based access control (RBAC)]
-authorization.
-- A
-xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#architecture-infrastructure-components-kubernetes-infrastructure[Kubernetes-based cluster]
-to manage services.
-- An image abstraction called
-xref:../architecture/core_concepts/builds_and_image_streams.adoc#image-streams[image streams]
-to enhance image management.
+- 一个以用户为中心的注册表web控制台，链接:http://cockpit-project.org/[Cockpit].
+- xref:../install_config/registry/securing_and_exposing_registry.adoc#securing-the-registry[交通安全]
+默认情况下，通过TLS提供服务。
+- 全球变量
+xref:../install_config/configuring_authentication.adoc#install-config-configuring-authentication[身份提供商的身份验证].
+- 一个
+xref:../architecture/core_concepts/projects_and_users.adoc#architecture-core-concepts-projects-and-users[项目名称]
+模型以实现团队合作
+xref:../architecture/additional_concepts/authorization.adoc#architecture-additional-concepts-authorization[基于角色的访问控制(RBAC)]授权。
+- 一个
+xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#architecture-infrastructure-components-kubernetes-infrastructure[基于Kubernetes的集群]
+用于管理服务。
+- 一个叫做
+xref:../architecture/core_concepts/builds_and_image_streams.adoc#image-streams[图像流]来增强图像管理。
 
-Administrators can deploy a stand-alone OCR to manage a registry
-separately that supports multiple {product-title} clusters. A stand-alone OCR
-also enables administrators to separate their registry to satisfy their own
-security or compliance requirements.
+管理员可以部署一个独立的OCR来单独管理支持多个{product-title}集群的注册表。
+独立的OCR还允许管理员将注册表分开，以满足自己的安全性或遵从性需求。
 
 [[registry-minimum-hardware-requirements]]
-== Minimum hardware requirements
+== 最低硬件要求
 
-Installing a stand-alone OCR has the following hardware requirements:
+安装独立OCR的硬件要求如下:
 
-- Physical or virtual system or an instance running on a public or private IaaS.
-- Base OS:
+- 运行在公共或私有IaaS上的物理或虚拟系统或实例。
+- 相应的操作系统:
 ifdef::openshift-origin[]
 Fedora 21, CentOS 7.4, or
 endif::[]
-RHEL 7.4 or 7.5 with the "Minimal" installation option and the latest packages from the
-RHEL 7 Extras channel, or RHEL Atomic Host 7.4.5 or later.
-- NetworkManager 1.0 or later.
+RHEL 7.4或7.5带有"最小"安装选项，以及来自RHEL 7 Extras通道或RHEL原子主机7.4.5或更高版本的最新包。
+- NetworkManager1.0或更高版本
 - 2 vCPU.
-- Minimum 16 GB RAM.
-- Minimum 15 GB hard disk space for the file system containing *_/var/_*.
-- An additional minimum 15 GB unallocated space for Docker's storage back end;
-see xref:host_preparation.adoc#configuring-docker-storage[Configuring Docker Storage]
-for details.
+- 最小16 GB RAM。
+- 包含*_/var/_*文件系统的至少需要15GB的硬盘空间。
+- 为Docker的存储后端增加至少15GB的未分配空间;
+请查看xref:host_preparation.adoc#configuring-docker-storage[Docker配置存储]
+获取详细信息。
 
 [IMPORTANT]
 ====
-{product-title} only supports servers with x86_64 architecture.
+{product-title}只支持x86_64架构的服务器。
 ====
 
 [NOTE]
 ====
-To meet the *_/var/_* file system sizing requirements in RHEL Atomic Host
-you must modify the default configuration. See
-https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/version-7/getting-started-with-containers/#managing_storage_in_red_hat_enterprise_linux_atomic_host[Managing
-Storage in Red Hat Enterprise Linux Atomic Host] for instructions on configuring
-this during or after installation.
+要满足PHEL原子主机中的*_/var/_*文件系统大小要求，必须修改默认配置。请查看
+https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/version-7/getting-started-with-containers/#managing_storage_in_red_hat_enterprise_linux_atomic_host
+[管理存储在Red Hat Enterprise Linux原子主机]以获得安装过程中或安装后配置此功能的说明。
 ====
 
 [[registry-supported-system-topologies]]
-== Supported system topologies
+== 支持系统拓扑
 
-The following system topologies are supported for stand-alone OCR:
+独立OCR支持以下系统拓扑:
 
 [horizontal]
 All-in-one::
-A single host that includes the master, node, and registry components.
-Multiple masters (Highly-Available)::
-Three hosts with all components, master, node, and registry, included on each
-with the masters configured for native high-availability.
+包含主、节点和注册表组件的单一主机。
+多个masters(高可用)::
+包含所有组件(主组件、节点和注册表)的三个主机，每个主机上都配置了用于本机高可用性的主机。
 
 [[registry-installing]]
-== Installing the OpenShift Container Registry
+== 安装OpenShift容器注册表
 
-. Review the full cluster installation process, starting with
-xref:index.adoc#install-planning[Planning Your Installation]. Installing OCR
-uses the same process but requires a few specific settings in the inventory
-file. The installation documentation includes a comprehensive list of available
-Ansible variables for the inventory file.
+. 查看完整的安装过程，从
+xref:index.adoc#install-planning[Planning Your Installation]开始一起规划您的安装。
+安装OCR使用相同的过程，但需要在库存文件中进行一些特定的设置。
+安装文档包括库存文件可用的Ansible变量的全面列表。
 
-. Complete the 
-xref:host_preparation.adoc#install-config-install-host-preparation[host preparation]
-steps.
+. 完成
+xref:host_preparation.adoc#install-config-install-host-preparation[主机准备]步骤。
 
-. Create an
-xref:../install/configuring_inventory_file.adoc#install-config-configuring-inventory-file[inventory file]
-in the *_/etc/ansible/hosts_* directory:
+. 创建一个
+xref:../install/configuring_inventory_file.adoc#install-config-configuring-inventory-file[库存文件]
+安装在*_/etc/ansible/hosts_*目录下:
 +
 [IMPORTANT]
 ====
-To install a standalone OCR, you must set `deployment_subtype=registry` in the
-inventory file in the `[OSEv3:vars]` section.
+要安装一个独立的OCR，您必须在`[OSEv3:vars]`部分的库存文件中设置`deployment_subtype=registry`。
 ====
 +
-Use the following example inventory files for the different supported system
-topologies:
+对于不同支持的系统拓扑使用以下示例库存文件:
 +
-.All-in-one stand-alone OpenShift Container Registry inventory file
+.所有在一个独立的OpenShift容器注册表库存文件
 ----
-# Create an OSEv3 group that contains the masters and nodes groups
+# 创建包含主节点组和节点组的OSEv3组
 [OSEv3:children]
 masters
 nodes
 etcd
 
-# Set variables common for all OSEv3 hosts
+# 为所有OSEv3主机设置通用变量
 [OSEv3:vars]
-# SSH user, this user should allow ssh based auth without requiring a password
-ansible_ssh_user=root
+# SSH用户，该用户应该允许基于SSH的身份验证，而不需要密码ansible_ssh_user=root
 
 openshift_master_default_subdomain=apps.test.example.com
 
-# If ansible_ssh_user is not root, ansible_become must be set to true
+# 如果ansible_ssh_user不是根用户，则必须将ansible_become设置为true。
 #ansible_become=true
 
 openshift_deployment_type=openshift-enterprise
 deployment_subtype=registry <1>
 openshift_hosted_infra_selector="" <2>
 
-# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+# 取消下面的注释以启用htpasswd身份验证；默认为DenyAllPasswordIdentityProvider
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
-# host group for masters
+# master主机组
 [masters]
 registry.example.com
 
-# host group for etcd
+# etcd主机组
 [etcd]
 registry.example.com
 
-# host group for nodes
+# 节点主机组
 [nodes]
 registry.example.com openshift_node_group_name='node-config-all-in-one'
 ----
-<1> Set `deployment_subtype=registry` to ensure installation of stand-alone OCR and
-not a full {product-title} environment.
-<2> Allows the registry and its web console to be scheduled on the single host.
+<1> 设置`deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
+<2> 允许在单个主机上调度注册表及其web控制台。
 +
 .Multiple masters (highly-available) stand-alone OpenShift Container Registry inventory file
 ----
-# Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
-# The lb group lets Ansible configure HAProxy as the load balancing solution.
-# Comment lb out if your load balancer is pre-configured.
+# 创建一个包含主、节点、etcd和lb组的OSEv3组。
+# lb组允许Ansible将HAProxy配置为负载平衡解决方案。
+# 如果您的负载平衡器是预先配置好的，请注释lb out。
 [OSEv3:children]
 masters
 nodes
 etcd
 lb
 
-# Set variables common for all OSEv3 hosts
+# 为所有OSEv3主机设置通用变量
 [OSEv3:vars]
 ansible_ssh_user=root
 openshift_deployment_type=openshift-enterprise
@@ -181,78 +163,72 @@ deployment_subtype=registry <1>
 
 openshift_master_default_subdomain=apps.test.example.com
 
-# Uncomment the following to enable htpasswd authentication; defaults to
+# 取消下面的注释以启用htpasswd身份验证;默认为
 # DenyAllPasswordIdentityProvider.
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
-# Native high availability cluster method with optional load balancer.
-# If no lb group is defined installer assumes that a load balancer has
-# been preconfigured. For installation the value of
-# openshift_master_cluster_hostname must resolve to the load balancer
-# or to one or all of the masters defined in the inventory if no load
-# balancer is present.
+# 带有可选负载平衡器的本机高可用性集群方法。
+# 如果没有定义lb组，安装程序假定已经预先配置了负载平衡器。对于安装，
+# openshift_master_cluster_hostname的值必须解析为负载均衡器，
+# 如果没有负载均衡器，则解析为清单中定义的一个或所有主机。
 openshift_master_cluster_method=native
 openshift_master_cluster_hostname=openshift-internal.example.com
 openshift_master_cluster_public_hostname=openshift-cluster.example.com
 
-# apply updated node-config-compute group defaults
+# 应用更新的node-config-compute组默认值
 openshift_node_groups=[{'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true'], 'edits': [{'key': 'kubeletArguments.pods-per-core','value': ['20']}, {'key': 'kubeletArguments.max-pods','value': ['250']}, {'key': 'kubeletArguments.image-gc-high-threshold', 'value':['90']}, {'key': 'kubeletArguments.image-gc-low-threshold', 'value': ['80']}]}]
 
-# enable ntp on masters to ensure proper failover
+# 在主机上启用ntp，以确保正确的故障转移
 openshift_clock_enabled=true
 
-# host group for masters
+# master主机组
 [masters]
 master1.example.com
 master2.example.com
 master3.example.com
 
-# host group for etcd
+# etcd主机组
 [etcd]
 etcd1.example.com
 etcd2.example.com
 etcd3.example.com
 
-# Specify load balancer host
+# 指定负载平衡器主机
 [lb]
 lb.example.com
 
-# host group for nodes, includes region info
+# 节点的主机组，包括区域信息
 [nodes]
 master[1:3].example.com openshift_node_group_name='node-config-master-infra'
 node1.example.com       openshift_node_group_name='node-config-compute'
 node2.example.com       openshift_node_group_name='node-config-compute'
 ----
-<1> Set `deployment_subtype=registry` to ensure installation of stand-alone OCR and
-not a full {product-title} environment.
+<1> 设置`deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
 
-. Install the stand-alone OCR. The process is similar to a full 
-xref:index.adoc#install-planning[cluster installation] process.
+. 安装独立的OCR。这个过程类似于完整的xref:index.adoc#install-planning[集群安装]过程。
 +
 [IMPORTANT]
 ====
-The host that you run the Ansible playbook on must have at least 75MiB of free
-memory per host in the inventory file.
+运行Ansible playbook的主机在库存文件中每个主机必须至少有75MiB的空闲内存。
 ====
 +
-.. Before you deploy a new cluster, change to the cluster directory and run the *_prerequisites.yml_* playbook:
+.. 在部署新集群之前，请切换到集群目录并运行*_prerequisites.yml_*剧本:
 +
 ----
 $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook  [-i /path/to/inventory] \ <1>
     playbooks/prerequisites.yml
 ----
-<1> If your inventory file is not in the *_/etc/ansible/hosts_* directory, 
-specify `-i` and the path to the inventory file.
+<1> 如果您的库存文件不再*_/etc/ansible/hosts_*目录中，请指定`-i`和库存文件的路径。
 +
-You must run this playbook only one time.
+你只能运行这个剧本一次。
 
-.. To initiate installation, change to the playbook directory and run the *_deploy_cluster.yml_* playbook:
+.. 要启动安装，请切换到playbook目录并运行*_deploy_cluster.yml_*playbook:
 +
 ----
 $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook  [-i /path/to/inventory] \ <1>
     playbooks/deploy_cluster.yml
 ----
-<1> If your inventory file is not in the *_/etc/ansible/hosts_* directory, 
-specify `-i` and the path to the inventory file.
+<1> 如果您的库存文件不在*_/etc/ansible/hosts_* 目录中，
+请指定`-i`和库存文件的路径。

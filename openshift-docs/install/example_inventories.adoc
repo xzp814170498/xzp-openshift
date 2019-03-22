@@ -20,51 +20,43 @@ toc::[]
 
 == 概述
 
-After getting to know the basics of
-xref:configuring_inventory_file.adoc#install-config-configuring-inventory-file[configuring your own inventory file],
-you can review the following example inventories which describe various
-environment topographies, including xref:multiple-masters[using multiple
-masters] for high availability. You can choose an example that matches your
-requirements, modify it to match your own environment, and use it as your
-inventory file when
-xref:running_install.adoc#running-the-installation-playbooks[running the installation].
+在了解了
+xref:configuring_inventory_file.adoc#install-config-configuring-inventory-file[配置您自己的目录文件]，
+您可以查看下面的示例目录，它描述了各种环境拓扑，包括xref:multiple-masters[使用多个master]以获得可用性。
+您可以选择一个匹配您需求的示例，修改它以匹配您自己的环境，并在
+xref:running_install.adoc#running-the-installation-playbooks[运行安装]将其作为库存文件。
 
 [IMPORTANT]
 ====
-The following example inventories use the default set of node groups when
-setting `openshift_node_group_name` per host in the `[nodes]` group. To define
-and use your own custom node group definitions, set the `openshift_node_groups`
-variable in the inventory file. See
-xref:configuring_inventory_file.adoc#configuring-inventory-defining-node-group-and-host-mappings[Defining Node Groups and Host Mappings]
-for details.
+下列的示例清单在`[nodes]`组中为每台主机设置`openshift_node_group_name`时使用默认的节点组集。
+要定义和使用您自己的自定义节点组定义，请在清单中设置`openshift_node_groups`变量。
+有关详细信息，请查看
+xref:configuring_inventory_file.adoc#configuring-inventory-defining-node-group-and-host-mappings[定义节点组和主机映射]。
 ====
 
 [[single-master]]
-== Single Master Examples
+== 单个主例
 
-You can configure an environment with a single master and multiple nodes, and
-either a single or multiple number of etcd hosts.
+您可以使用单个主节点和多个节点，以及单个或多个etcd主机来配置环境。
 
 [NOTE]
 ====
-Moving from a single master cluster to multiple masters after installation is
-not supported.
+不支持在安装之后从单个主集群移动到多个主集群。
 ====
 
 [[single-master-multi-node-ai]]
-=== Single Master, Single etcd, and Multiple Nodes
+=== 单个主节点、单个etcd和多个节点
 
-The following table describes an example environment for a single
-xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[master]
-(with a single etcd instance running as a static pod on the same host), two
+下表中描述了单个xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[master]的运行环境。
+(同一主机上以静态pod的形式运行一个etcd实例), 两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-for hosting user applications, and two nodes with the `node-role.kubernetes.io/infra=true` label for hosting
-xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[dedicated infrastructure]:
+主机用户应用， 以及两个具有 `node-role.kubernetes.io/infra=true` 主机标签
+xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
 |===
 
-|Host Name |Component/Role(s) to Install
+|主机名 |要安装的组件/角色(年代)
 
 |*master.example.com*
 |Master, etcd, and node
@@ -80,23 +72,21 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 |*infra-node2.example.com*
 |===
 
-You can see these example hosts present in the *[masters]*, *[etcd]*, and
-*[nodes]* sections of the following example inventory file:
+你可以在以下示例库存文件的*[masters]*, *[etcd]*, 和*[nodes]* 小节中看到这些示例主机:
 
-.Single Master, Single etcd, and Multiple Nodes Inventory File
+.单个主目录、单个etcd和多个节点目录文件
 ----
-# Create an OSEv3 group that contains the masters, nodes, and etcd groups
+# 创建一个包含主机组、节点组和etcd组的OSEv3组
 [OSEv3:children]
 masters
 nodes
 etcd
 
-# Set variables common for all OSEv3 hosts
+# 为所有OSEv3主机设置通用变量
 [OSEv3:vars]
-# SSH user, this user should allow ssh based auth without requiring a password
-ansible_ssh_user=root
+# SSH用户，该用户应该允许基于SSH的身份验证，而不需要密码ansible_ssh_user=root
 
-# If ansible_ssh_user is not root, ansible_become must be set to true
+# 如果ansible_ssh_user不是根用户，则必须将ansible_become设置为true。
 #ansible_become=true
 
 ifdef::openshift-enterprise[]
@@ -107,10 +97,10 @@ openshift_deployment_type=origin
 endif::[]
 
 ifdef::openshift-origin[]
-# uncomment the following to enable htpasswd authentication; defaults to AllowAllPasswordIdentityProvider
+# 取消以下的注释以启用htpasswd身份验证；默认为AllowAllPasswordIdentityProvider
 endif::[]
 ifdef::openshift-enterprise[]
-# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+# 取消以下的注释以启用htpasswd身份验证；默认为DenyAllPasswordIdentityProvider
 endif::[]
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
@@ -134,34 +124,32 @@ infra-node2.example.com openshift_node_group_name='node-config-infra'
 // tag::exampleinventorynodelabel[]
 [IMPORTANT]
 ====
-See xref:configuring_inventory_file.adoc#configuring-node-host-labels[Configuring Node Host Labels] to ensure
-you understand the default node selector requirements and node label
-considerations beginning in {product-title} 3.9.
+请查看xref:configuring_inventory_file.adoc#configuring-node-host-labels[配置节点主机标签]，
+以确保您理解默认的节点选择器需求和节点标签注意事项从{product-title} 3.9开始。
 ====
 // end::exampleinventorynodelabel[]
 
-To use this example, modify the file to match your environment and
-specifications, and save it as *_/etc/ansible/hosts_*.
+要使用此实例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*。
 
 [[single-master-multi-etcd-multi-node-ai]]
-=== Single Master, Multiple etcd, and Multiple Nodes
+=== 单个主节点、多个etcd和多个节点
 
-The following table describes an example environment for a single
+下标描述了一个单个的示例环境
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[master],
-three
+三个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[etcd]
-hosts, two
+主机，两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-for hosting user applications, and two nodes with the `node-role.kubernetes.io/infra=true` label for hosting
-xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[dedicated infrastructure]:
+用于托管主机用户应用程序，以及两个具有`node-role.kubernetes.io/infra=true`的主机标签。
+xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
 |===
 
-|Host Name |Component/Role(s) to Install
+|主机名称 |安装的组件/角色
 
 |*master.example.com*
-|Master and node
+|主和节点
 
 |*etcd1.example.com*
 .3+.^|etcd
@@ -171,22 +159,21 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 |*etcd3.example.com*
 
 |*node1.example.com*
-.2+.^|Compute node
+.2+.^|运算节点
 
 |*node2.example.com*
 
 |*infra-node1.example.com*
-.2+.^|Dedicated infrastructure node
+.2+.^|专门的基础设施节点
 
 |*infra-node2.example.com*
 |===
 
-You can see these example hosts present in the *[masters]*, *[nodes]*, and
-*[etcd]* sections of the following example inventory file:
+您可以在以下示例库存文件的*[masters]*, *[nodes]*, 和 *[etcd]* 小节中看到这些示例主机:
 
-.Single Master, Multiple etcd, and Multiple Nodes Inventory File
+.单个主目录、多个etcd和多个节点目录文件
 ----
-# Create an OSEv3 group that contains the masters, nodes, and etcd groups
+# 创建一个包含主机组、节点组和etcd组的OSEv3组
 [OSEv3:children]
 masters
 nodes
@@ -203,24 +190,24 @@ openshift_deployment_type=origin
 endif::[]
 
 ifdef::openshift-origin[]
-# uncomment the following to enable htpasswd authentication; defaults to AllowAllPasswordIdentityProvider
+# 取消下面的注释以启用htpasswd身份验证；默认为AllowAllPasswordIdentityProvider
 endif::[]
 ifdef::openshift-enterprise[]
-# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+# 取消下面的注释以启用htpasswd身份验证；默认为DenyAllPasswordIdentityProvider
 endif::[]
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
-# host group for masters
+# master主机组
 [masters]
 master.example.com
 
-# host group for etcd
+# etcd主机组
 [etcd]
 etcd1.example.com
 etcd2.example.com
 etcd3.example.com
 
-# host group for nodes, includes region info
+# 节点的主机组，包括区域信息
 [nodes]
 master.example.com openshift_node_group_name='node-config-master'
 node1.example.com openshift_node_group_name='node-config-compute'
@@ -231,94 +218,82 @@ infra-node2.example.com openshift_node_group_name='node-config-infra'
 
 include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 
-To use this example, modify the file to match your environment and
-specifications, and save it as *_/etc/ansible/hosts_*.
+要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*.
 
 [[multiple-masters]]
-== Multiple Masters Examples
+== 多个Master例子
 
-You can configure an environment with multiple masters, multiple etcd hosts,
-and multiple nodes. Configuring
-xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#high-availability-masters[multiple
-masters for high availability] (HA) ensures that the cluster has no single point
-of failure.
+您可以配置一个包含多个主机、多个etcd主机和多个节点的环境。配置
+xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#high-availability-masters
+[多个高性能master] (HA) 确保集群没有单点故障。
 
 [NOTE]
 ====
-Moving from a single master cluster to multiple masters after installation is
-not supported.
+不支持在安装之后从单个主集群移动到多个主集群。
 ====
 
-When configuring multiple masters, the cluster installation process supports the
-`native` high availability (HA) method. This method leverages the native HA
-master capabilities built into {product-title} and can be combined with any load
-balancing solution.
+在配置多个主机时，集群安装过程支持“本机”高可用性(HA)方法。此方法利用内置在{product-title}中的本机HA主功能，
+并可以与任何负载平衡解决方案组合使用。
 
-If a host is defined in the *[lb]* section of the inventory file, Ansible
-installs and configures HAProxy automatically as the load balancing solution. If
-no host is defined, it is assumed you have pre-configured an external load
-balancing solution of your choice to balance the master API (port 8443) on all
-master hosts.
+如果主机在目录文件的*[lb]*部分中定义，Ansible将自动安装和配置HAProxy作为负载平衡解决方案。如果没有定义主机，
+则假定您已经预先配置了一个外部负载平衡解决方案，您可以选择在所有主机上平衡主API(端口8443)。
 
 [NOTE]
 ====
-This HAProxy load balancer is intended to demonstrate the API server's HA mode
-and is not recommended for production environments. If you are deploying to a
-cloud provider, Red Hat recommends deploying a cloud-native TCP-based load
-balancer or take other steps to provide a highly available load balancer.
+此HAProxy负载均衡器旨在演示API服务器的HA模式，不建议用于生产环境。如果要部署到云提供商，Red Hat建议部署
+基于云的本地tcp的负载平衡器，或者采取其他步骤来提供高可用的负载平衡器。
 ====
 
-For an external load balancing solution, you must have:
+对于外部负载平衡解决方案，您必须:
 
-* A pre-created load balancer virtual IP (VIP) configured for SSL passthrough.
-* A VIP listening on the port specified by the xref:advanced-master-ports[`openshift_master_api_port`]
-value (8443 by default) and proxying back to all master hosts on that port.
-* A domain name for VIP registered in DNS.
-** The domain name will become the value of both
-`openshift_master_cluster_public_hostname` and
-`openshift_master_cluster_hostname` in the {product-title} installer.
+* 预先创建的负载均衡器虚拟IP (VIP)，贯穿SSL配置。
+* VIP监听指定的端口xref:advanced-master-ports[`openshift_master_api_port`](默认情况下为8443) 
+并代理回该端口上的所有主机。
+* VIP在DNS中注册的域名。
+** 域名将成为{product-title}安装程序中`openshift_master_cluster_public_hostname`和
+`openshift_master_cluster_hostname`的值。
 
-See
-link:https://github.com/redhat-cop/openshift-playbooks/blob/master/playbooks/installation/load_balancing.adoc[the External Load Balancer Integrations example in Github] for more information. For more on the high
-availability master architecture, see
-xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[Kubernetes Infrastructure].
+请查看
+link:https://github.com/redhat-cop/openshift-playbooks/blob/master/playbooks/installation/load_balancing.adoc[Github中的外部负载均衡集成示例]了解更多信息，了解高可用
+性主架构，参见
+xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[Kubernetes基础设施]。
 
 [NOTE]
 ====
-The cluster installation process does not currently support multiple HAProxy
-load balancers in an active-passive setup. See the
-https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Load_Balancer_Administration/ch-lvs-overview-VSA.html[Load Balancer Administration documentation] for post-installation amendments.
+在主动-被动设置中，集群安装过程目前不支持多个HAProxy负载平衡器。请参考
+https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Load_Balancer_Administration/ch-lvs-overview-VSA.html[负载均衡器管理文档]
+用于安装后修改的html。
 ====
 
-To configure multiple masters, refer to
-xref:multi-masters-using-native-ha-ai[Multiple Masters with Multiple etcd]
+要配置多个master，请参考
+xref:multi-masters-using-native-ha-ai[多个etcd，多个Master]
 
 [[multi-masters-using-native-ha-ai]]
-=== Multiple Masters Using Native HA with External Clustered etcd
+=== 多个主机使用本机HA和外部集群etcd
 
-The following describes an example environment for three
+下面描述了三个示例环境：
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[masters]
-using the `native` HA method:, one HAProxy load balancer, three
+使用`原声` HA方法:, 一个HAProxy负载均衡器，三个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[etcd]
-hosts, two
+主机，两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-for hosting user applications, and two nodes with the `node-role.kubernetes.io/infra=true` label for hosting
-xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[dedicated infrastructure]:
+用于托管用户应用程序， 以及具有两个节点`node-role.kubernetes.io/infra=true`主机标签
+xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
 |===
 
-|Host Name |Component/Role(s) to Install
+|主机名 |要安装的组件/角色
 
 |*master1.example.com*
-.3+.^|Master (clustered using native HA) and node
+.3+.^|主节点(使用本机HA集群)
 
 |*master2.example.com*
 
 |*master3.example.com*
 
 |*lb.example.com*
-|HAProxy to load balance API master endpoints
+|用于负载平衡API主端点的HAProxy
 
 |*etcd1.example.com*
 .3+.^|etcd
@@ -328,31 +303,30 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 |*etcd3.example.com*
 
 |*node1.example.com*
-.2+.^|Compute node
+.2+.^|运算节点
 
 |*node2.example.com*
 
 |*infra-node1.example.com*
-.2+.^|Dedicated infrastructure node
+.2+.^|专门的基础设施节点
 
 |*infra-node2.example.com*
 |===
 
-You can see these example hosts present in the *[masters]*, *[etcd]*, *[lb]*,
-and *[nodes]* sections of the following example inventory file:
+您可以在以下示例库存文件的*[masters]*, *[etcd]*, *[lb]*,和 *[nodes]*小节中看到这些示例主机:
 
-.Multiple Masters Using HAProxy Inventory File
+.多个主机使用HAProxy库存文件
 ----
-# Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
-# The lb group lets Ansible configure HAProxy as the load balancing solution.
-# Comment lb out if your load balancer is pre-configured.
+# 创建一个包含主、节点、etcd和lb组的OSEv3组。
+# lb组允许Ansible将HAProxy配置为负载平衡解决方案。
+# 如果预配置了负载平衡器，请注释lb。
 [OSEv3:children]
 masters
 nodes
 etcd
 lb
 
-# Set variables common for all OSEv3 hosts
+# 为所有OSEv3主机设置通用变量
 [OSEv3:vars]
 ansible_ssh_user=root
 ifdef::openshift-enterprise[]
@@ -363,43 +337,42 @@ openshift_deployment_type=origin
 endif::[]
 
 ifdef::openshift-origin[]
-# uncomment the following to enable htpasswd authentication; defaults to AllowAllPasswordIdentityProvider
+# 取消下面的注释以启用htpasswd身份验证;默认为AllowAllPasswordIdentityProvider
 endif::[]
 ifdef::openshift-enterprise[]
-# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+# 取消下面的注释以启用htpasswd身份验证;默认为DenyAllPasswordIdentityProvider
 endif::[]
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
-# Native high availbility cluster method with optional load balancer.
-# If no lb group is defined installer assumes that a load balancer has
-# been preconfigured. For installation the value of
-# openshift_master_cluster_hostname must resolve to the load balancer
-# or to one or all of the masters defined in the inventory if no load
-# balancer is present.
+# 本机高可用性聚类方法，可选负载均衡器。
+# 如果没有定义lb组，安装程序假定已经预先配置了负载平衡器。
+# 对于安装
+# openshift_master_cluster_hostname的值必须解析为负载均衡器，如果
+# 没有负载均衡器，则解析为清单中定义的一个或所有主机。
 openshift_master_cluster_method=native
 openshift_master_cluster_hostname=openshift-internal.example.com
 openshift_master_cluster_public_hostname=openshift-cluster.example.com
 
-# apply updated node defaults
+# 应用更新的节点缺省值
 openshift_node_groups=[{'name': 'node-config-all-in-one', 'labels': ['node-role.kubernetes.io/master=true', 'node-role.kubernetes.io/infra=true', 'node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}]
 
-# host group for masters
+# master主机组
 [masters]
 master1.example.com
 master2.example.com
 master3.example.com
 
-# host group for etcd
+# etcd主机组
 [etcd]
 etcd1.example.com
 etcd2.example.com
 etcd3.example.com
 
-# Specify load balancer host
+# 指定负载平衡器主机
 [lb]
 lb.example.com
 
-# host group for nodes, includes region info
+# 节点的主机组，包括区域信息
 [nodes]
 master[1:3].example.com openshift_node_group_name='node-config-master'
 node1.example.com openshift_node_group_name='node-config-compute'
@@ -408,64 +381,61 @@ infra-node1.example.com openshift_node_group_name='node-config-infra'
 infra-node2.example.com openshift_node_group_name='node-config-infra'
 ----
 
-include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
+包括::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 
-To use this example, modify the file to match your environment and
-specifications, and save it as *_/etc/ansible/hosts_*.
+要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*.
 
 [[multi-masters-single-etcd-using-native-ha]]
-=== Multiple Masters Using Native HA with Co-located Clustered etcd
+=== 多个主机使用本机HA和共存的集群etcd
 
-The following describes an example environment for three
+下面描述了三个示例环境
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[masters]
-using the `native` HA method (with
+使用`原生` HA方法(with
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[etcd]
-running as a static pod on each host), one HAProxy load balancer, two
+在每一个主机上作为一个静态pod运行), 一个HAProxy负载均衡器， 两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-for hosting user applications, and two nodes with the `node-role.kubernetes.io/infra=true` label for hosting
-xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[dedicated infrastructure]:
+用于托管用户应用程序，以及具有`node-role.kubernetes.io/infra=true`的两个节点主机标签
+xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
 |===
 
-|Host Name |Component/Role(s) to Install
+|主机名称 |要安装的组件/角色
 
 |*master1.example.com*
-.3+.^|Master (clustered using native HA) and node with etcd running as a static
-pod on each host
+.3+.^|主节点(使用本机HA集群)和节点，etcd作为每个主机上的静态pod运行
 
 |*master2.example.com*
 
 |*master3.example.com*
 
 |*lb.example.com*
-|HAProxy to load balance API master endpoints
+|用于负载平衡API主端点的HAProxy
 
 |*node1.example.com*
-.2+.^|Compute node
+.2+.^|运算节点
 
 |*node2.example.com*
 
 |*infra-node1.example.com*
-.2+.^|Dedicated infrastructure node
+.2+.^|专用基础设施节点
 
 |*infra-node2.example.com*
 |===
 
-You can see these example hosts present in the *[masters]*, *[etcd]*, *[lb]*,
-and *[nodes]* sections of the following example inventory file:
+您可以在以下示例库存文件的*[masters]*, *[etcd]*, *[lb]*和*[nodes]*小节中看到这些示例主机:
 
 ----
-# Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
-# The lb group lets Ansible configure HAProxy as the load balancing solution.
-# Comment lb out if your load balancer is pre-configured.
+# 创建一个包含主、节点、etcd和lb组的OSEv3组。
+# lb组允许Ansible将HAProxy配置为负载平衡解决方案。
+# 如果预配置了负载平衡器，请注释lb。
 [OSEv3:children]
 masters
 nodes
 etcd
 lb
 
-# Set variables common for all OSEv3 hosts
+# 为所有OSEv3主机设置通用变量
 [OSEv3:vars]
 ansible_ssh_user=root
 ifdef::openshift-enterprise[]
@@ -476,40 +446,38 @@ openshift_deployment_type=origin
 endif::[]
 
 ifdef::openshift-origin[]
-# uncomment the following to enable htpasswd authentication; defaults to AllowAllPasswordIdentityProvider
+# 取消下面的注释以启用htpasswd身份验证;默认为AllowAllPasswordIdentityProvider
 endif::[]
 ifdef::openshift-enterprise[]
-# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+# 取消下面的注释以启用htpasswd身份验证;默认为DenyAllPasswordIdentityProvider
 endif::[]
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
-# Native high availability cluster method with optional load balancer.
-# If no lb group is defined installer assumes that a load balancer has
-# been preconfigured. For installation the value of
-# openshift_master_cluster_hostname must resolve to the load balancer
-# or to one or all of the masters defined in the inventory if no load
-# balancer is present.
+# 具有可选负载均衡器的本地高可用性集群方法。
+# 如果没有定义lb组，安装程序假定已经预先配置了负载平衡器。
+# 对于安装，openshift_master_cluster_hostname的值必须解析为负载均衡器，
+# 如果没有负载均衡器，则解析为清单中定义的一个或所有主机。
 openshift_master_cluster_method=native
 openshift_master_cluster_hostname=openshift-internal.example.com
 openshift_master_cluster_public_hostname=openshift-cluster.example.com
 
-# host group for masters
+# master主机组
 [masters]
 master1.example.com
 master2.example.com
 master3.example.com
 
-# host group for etcd
+# etcd主机组
 [etcd]
 master1.example.com
 master2.example.com
 master3.example.com
 
-# Specify load balancer host
+# 指定负载平衡器主机
 [lb]
 lb.example.com
 
-# host group for nodes, includes region info
+# 节点的主机组，包括区域信息
 [nodes]
 master[1:3].example.com openshift_node_group_name='node-config-master'
 node1.example.com openshift_node_group_name='node-config-compute'
@@ -518,7 +486,6 @@ infra-node1.example.com openshift_node_group_name='node-config-infra'
 infra-node2.example.com openshift_node_group_name='node-config-infra'
 ----
 
-include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
+包括::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 
-To use this example, modify the file to match your environment and
-specifications, and save it as *_/etc/ansible/hosts_*.
+要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*.
