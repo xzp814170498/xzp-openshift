@@ -251,7 +251,7 @@ xref:configuring-node-host-labels[配置节点主机标签] 获取详细信息�
 a|{product-title} 将指定的附加注册表或注册表添加到
 *docker* 配置中。 这些就是注册中心，如果需要访问 `80` 以外的端口, 那么需要访问的形式是 `<address>:<port>`。
 
-For example:
+例如:
 
 ----
 openshift_docker_additional_registries=example.com:443
@@ -292,7 +292,7 @@ openshift_docker_additional_registries=example.com:443
 如果在集群设置之后修改 `openshift_image_tag` 或 `openshift_pkg_version` 变量，则可以触发升级，
 从而导致停机。
 
-* 如果设置`openshift_image_tag`，它的值将用于系统容器环境中的所有主机，甚至包括那些安装了其他版本的主机。如果
+* 如果设置 `openshift_image_tag`，它的值将用于系统容器环境中的所有主机，甚至包括那些安装了其他版本的主机。如果
 * `openshift_pkg_version` 被设置， 它的值被用于基于RPM的环境中的所有主机，即使是那些安装了其他版本的主机。
 ====
 
@@ -301,7 +301,7 @@ openshift_docker_additional_registries=example.com:443
 [options="header"]
 |===
 
-|Variable |Purpose
+|变量 |目的
 
 |`openshift_master_default_subdomain`
 |此变量覆盖要用于公开的默认子域
@@ -315,7 +315,7 @@ xref:../architecture/networking/sdn.adoc#architecture-additional-concepts-sdn[Op
 
 |`osm_cluster_network_cidr`
 |这变量覆盖 SDN 集群网络的 CIDR 块。 这是分配 pod IPs 的网络。 指定一个私有块，该私有块不与
-基础设施中现有的网络冲突，而pod、节点或者主机可能需要访问这些网络块。默认值是`10.128.0.0/14`，
+基础设施中现有的网络冲突，而pod、节点或者主机可能需要访问这些网络块。默认值是 `10.128.0.0/14`，
 不能在部署后任意重新配置，不过可以在
 xref:../install_config/configuring_sdn.adoc#configuring-the-pod-network-on-masters[SDN主机配置].
 
@@ -327,7 +327,7 @@ xref:../architecture/networking/sdn.adoc#architecture-additional-concepts-sdn[{p
 指定一个不与任何冲突的私有块在您的基础结构中存在的网络块，其中包含pods，节点，
 或者主机可能需要访问，否则安装将失败。默认为
 `172.30.0.0/16`, a部署后将无法重新配置。
-如果默认值更改， 请避免*docker0*网桥默认使用的 `172.17.0.0/16` ， 或者修改 *docker0* 网络。
+如果默认值更改， 请避免 *docker0* 网桥默认使用的 `172.17.0.0/16` ， 或者修改 *docker0* 网络。
 
 |`osm_host_subnet_length`
 |此变量指定分配给 pod IP 的每个主机子网的大小
@@ -350,7 +350,7 @@ xref:../architecture/core_concepts/pods_and_services.adoc#service-proxy-mode[服
 xref:../install_config/configuring_sdn.adoc#using-flannel[Using Flannel]。
 
 |`openshift_use_openshift_sdn`
-|设置为`false` 用来禁用 OpenShift SDN插件。
+|设置为 `false` 用来禁用 OpenShift SDN插件。
 
 |`openshift_sdn_vxlan_port`
 |这个变量是设置 `集群网络` 的 `vxlan port` 号。默认为 `4789`。
@@ -844,8 +844,8 @@ openshift_examples_modify_imagestreams=true
 
 [NOTE]
 ====
-默认注册表需要一个身份验证令牌。有关更多信息，请参见
-xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[访问和配置Red Hat注册表]
+默认注册表需要一个身份验证令牌。有关更多信息,
+请参考 xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[访问和配置 Red Hat 注册表]
 ====
 
 例如:
