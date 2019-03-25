@@ -837,19 +837,18 @@ openshift_examples_modify_imagestreams=true
 如果使用默认注册表，可以指定一个访问 `registry.redhat.io` 的用户。
 
 |`oreg_auth_password`
-|If `oreg_url` points to a registry requiring authentication, use the `oreg_auth_password`
-variable to provide your password. You must also provide your user name as the
-`oreg_auth_user` parameter value. If you use the default registry, specify the
-password or token for that user.
+|如果 `oreg_url` 指向需要身份验证的注册表，则使用 `oreg_auth_password`
+变量提供您的密码. 还必须将用户名作为
+`oreg_auth_user` 参数值提供. 如果使用默认注册表，请为该用户指定密码或令牌.
 |===
 
 [NOTE]
 ====
-The default registry requires an authentication token. For more information,
-see xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[Accessing and Configuring the Red Hat Registry]
+默认注册表需要一个身份验证令牌。有关更多信息,
+请参考 xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[Accessing and Configuring the Red Hat Registry]
 ====
 
-For example:
+例如:
 ----
 oreg_url=example.com/openshift3/ose-${component}:${version}
 oreg_auth_user=${user_name}
@@ -887,8 +886,8 @@ a|设置注册中心证书的路径。如果不为证书位置提供值，将生
 |`openshift_hosted_registry_routetermination`
 a| 设置为下列值之一:
 
-* 设置为 `reencrypt` 以终止边缘路由器上的加密，并使用目的地提供的新证书重新加密。
-* 设置为 `passthrough` 以终止目的地的加密。目的地负责解密通信流。
+* 设置为 `reencrypt` 以终止边缘路由器上的加密，并使用目的地提供的新证书重新加密.
+* 设置为 `passthrough` 以终止目的地的加密.目的地负责解密通信流.
 |===
 
 例如:
@@ -998,7 +997,7 @@ openshift_hosted_registry_storage_volume_size=10Gi
 ==== 选项B: 外部NFS主机
 
 要使用外部的NFS卷，必须已经在存储主机上有 *_<nfs_directory>/<volume_name>_* 
-路径。 使用以下选项的远程卷路径是 *_nfs.example.com:/exports/registry_*。
+路径。 使用以下选项的远程卷路径是 *_nfs.example.com:/exports/registry_*.
 
 ----
 [OSEv3:vars]
@@ -1071,7 +1070,7 @@ xref:advanced-install-containerized-glusterfs-persistent-storage[配置{gluster-
 ====
 请查看
 xref:host_preparation.adoc#prereq-glusterfs[{gluster-native}注意事项]
-特定的主机准备和先决条件。
+特定的主机准备和先决条件.
 ====
 
 include::install_config/persistent_storage/topics/glusterfs_example_registry.adoc[]
@@ -1139,7 +1138,7 @@ xref:../install_config/build_defaults_overrides.adoc#install-config-build-defaul
 |`openshift_no_proxy`
 a|这个变量用于为master和Docker守护进程设置 `NO_PROXY` 环境变量。
 提供一个逗号分隔的主机名、域名或不使用已定义代理的通配符主机名列表。
-默认情况下，这个列表由所有已定义的{product-title}主机名列表扩展。
+默认情况下，这个列表由所有已定义的{product-title}主机名列表扩展.
 
 不使用已定义代理的主机名包括:
 
@@ -1180,7 +1179,7 @@ a|这个变量用于为master和Docker守护进程设置 `NO_PROXY` 环境变量
 |`openshift_builddefaults_git_https_proxy`
 |这个变量定义了 `git clone` 操作在构建期间使用的HTTPS代理，
 该代理使用 `BuildDefaults` 承认控制器定义。将 `openshift_builddefaults_git_https_proxy` 值设置为 False`，用来禁用
-构建过程中 `git clone` 操作的默认HTTP代理，而不管 `openshift_https_proxy` 的值是多少。
+构建过程中 `git clone` 操作的默认HTTP代理，而不管 `openshift_https_proxy` 的值是多少.
 |===
 
 
@@ -1191,12 +1190,12 @@ ifdef::openshift-enterprise,openshift-origin[]
 [IMPORTANT]
 ====
 * 如果要更改默认防火墙，请确保集群中的每个主机使用相同的防火墙类型，以防止不一致。
-* 不要使用在原子主机上安装了{product-title}的防火墙。原子主机不支持防火墙。
+* 不要使用在原子主机上安装了{product-title}的防火墙。原子主机不支持防火墙.
 ====
 
 [NOTE]
 ====
-虽然iptables是默认的防火墙，但是对于新安装，建议使用firewalld。
+虽然iptables是默认的防火墙，但是对于新安装，建议使用firewalld.
 ====
 
 {product-title}使用iptables作为默认防火墙，但是您可以在安装过程中配置您的集群使用firewalld。
@@ -1853,7 +1852,7 @@ xref:../install_config/web_console_customization.adoc#install-config-web-console
 |布尔值表示集群配置是否过量使用。 当 `true` 时, web控制台将在编辑资源限制时隐藏CPU请求、CPU限制和内存请求字段，因为必须使用集群资源覆盖配置设置这些值。
 
 |`openshift_web_console_enable_context_selector`
-| 在web控制台和管理控制台报头中启用上下文选择器，以便在两个控制台之间快速切换。两个控制台都安装后，默认值为 `true`。
+| 在web控制台和管理控制台报头中启用上下文选择器，以便在两个控制台之间快速切换。两个控制台都安装后，默认值为 `true`.
 
 |===
 
@@ -1890,7 +1889,7 @@ xref:../install_config/web_console_customization.adoc#install-config-web-console
 |集群控制台的可选路径，如果设置了，它应该以 `/console/` 这样的斜杠开始和结束。默认为 `/` (没有路径)。
 
 |`openshift_console_auth_ca_file`
-|可选的CA文件，用于连接到OAuth服务器。默认为 `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`。通常不需要更改。
+|可选的CA文件，用于连接到OAuth服务器。默认为 `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`。通常不需要更改.
 
 |===
 
