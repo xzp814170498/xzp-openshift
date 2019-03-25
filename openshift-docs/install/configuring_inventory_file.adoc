@@ -837,16 +837,15 @@ openshift_examples_modify_imagestreams=true
 如果使用默认注册表，可以指定一个访问 `registry.redhat.io` 的用户。
 
 |`oreg_auth_password`
-|If `oreg_url` points to a registry requiring authentication, use the `oreg_auth_password`
-variable to provide your password. You must also provide your user name as the
-`oreg_auth_user` parameter value. If you use the default registry, specify the
-password or token for that user.
+|如果 `oreg_url` 指向需要身份验证的注册表，则使用 `oreg_auth_password`
+变量提供您的密码。还必须将用户名作为
+`oreg_auth_user` 参数值提供。如果使用默认注册表，请为该用户指定密码或令牌.
 |===
 
 [NOTE]
 ====
-The default registry requires an authentication token. For more information,
-see xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[Accessing and Configuring the Red Hat Registry]
+默认注册表需要一个身份验证令牌。有关更多信息,
+请查看 xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[访问和配置 Red Hat 注册表]
 ====
 
 For example:
