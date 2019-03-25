@@ -845,11 +845,11 @@ password or token for that user.
 
 [NOTE]
 ====
-默认注册表需要一个身份验证令牌。有关更多信息,
-请参考 xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[访问和配置 Red Hat 注册表]
+The default registry requires an authentication token. For more information,
+see xref:../install_config/configuring_red_hat_registry.adoc#install-config-configuring-red-hat-registry[Accessing and Configuring the Red Hat Registry]
 ====
 
-例如:
+For example:
 ----
 oreg_url=example.com/openshift3/ose-${component}:${version}
 oreg_auth_user=${user_name}
@@ -891,7 +891,7 @@ a| 设置为下列值之一:
 * 设置为 `passthrough` 以终止目的地的加密.目的地负责解密通信流.
 |===
 
-例如:
+For example:
 ----
 openshift_hosted_registry_routehost=<path>
 openshift_hosted_registry_routetermination=reencrypt
