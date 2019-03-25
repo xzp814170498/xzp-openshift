@@ -221,7 +221,7 @@ include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*.
 
 [[multiple-masters]]
-== 多个Master例子
+== 多主机
 
 您可以配置一个包含多个主机、多个etcd主机和多个节点的环境。配置
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#high-availability-masters
