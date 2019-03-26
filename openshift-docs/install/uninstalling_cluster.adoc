@@ -1,5 +1,5 @@
 [[uninstalling_cluster]]
-= Uninstalling {product-title}
+= 卸载{product-title}
 {product-author}
 {product-version}
 :data-uri:
@@ -18,7 +18,7 @@ include::_snippets/glusterfs.adoc[]
 
 toc::[]
 
-您可以通过运行*_uninstall.yml_*去卸载您集群中的{product-title}主机剧本。
+您可以通过运行 *_uninstall.yml_* 去卸载您集群中的{product-title}主机剧本。
 本剧本删除安布尔安装的{product-title}内容，包括:
 
 - 配置
@@ -45,11 +45,11 @@ ifdef::openshift-origin[]
     ~/openshift-ansible/playbooks/adhoc/uninstall.yml
 endif::[]
 ----
-<1> 如果您的库存文件不在*_/etc/ansible/hosts_*目录中，请指定`-i`和库存文件的路径。
+<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，请指定 `-i` 和库存文件的路径。
 [[uninstalling-nodes]]
 === 卸载节点
 
-使用*_uninstall.yml_*从特定主机卸载节点组件。当只保留其余主机和集群时:
+使用 *_uninstall.yml_* 从特定主机卸载节点组件。当只保留其余主机和集群时:
 
 [WARNING]
 ====
@@ -82,7 +82,7 @@ node3.example.com openshift_node_group_name='node-config-infra' <2>
 <1> 只包含应用于要卸载的主机的部分。
 <2> 只包含要卸载的主机。
 
-. 切换到playbook目录并运行*_uninstall.yml_*剧本:
+. 切换到playbook目录并运行 *_uninstall.yml_* 剧本:
 +
 ----
 ifdef::openshift-enterprise[]

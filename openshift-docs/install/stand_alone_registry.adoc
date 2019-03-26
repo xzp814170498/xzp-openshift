@@ -1,5 +1,5 @@
 [[install-config-installing-stand-alone-registry]]
-= Installing a stand-alone deployment of OpenShift container image registry
+= 安装OpenShift容器映像注册表的独立部署
 {product-author}
 {product-version]
 :data-uri:
@@ -23,7 +23,7 @@ xref:../architecture/infrastructure_components/image_registry.adoc#integrated-op
 
 OCR提供以下功能:
 
-- 一个以用户为中心的注册表web控制台，链接:http://cockpit-project.org/[Cockpit].
+- 一个以用户为中心的注册表web控制台, link:http://cockpit-project.org/[Cockpit].
 - xref:../install_config/registry/securing_and_exposing_registry.adoc#securing-the-registry[交通安全]
 默认情况下，通过TLS提供服务。
 - 全球变量
@@ -57,7 +57,8 @@ RHEL 7.4或7.5带有"最小"安装选项，以及来自RHEL 7 Extras通道或RHE
 - 最小16 GB RAM。
 - 包含*_/var/_*文件系统的至少需要15GB的硬盘空间。
 - 为Docker的存储后端增加至少15GB的未分配空间;
-请查看xref:host_preparation.adoc#configuring-docker-storage[Docker配置存储]
+请查看
+xref:host_preparation.adoc#configuring-docker-storage[Docker配置存储]
 获取详细信息。
 
 [IMPORTANT]
@@ -67,9 +68,9 @@ RHEL 7.4或7.5带有"最小"安装选项，以及来自RHEL 7 Extras通道或RHE
 
 [NOTE]
 ====
-要满足PHEL原子主机中的*_/var/_*文件系统大小要求，必须修改默认配置。请查看
-https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/version-7/getting-started-with-containers/#managing_storage_in_red_hat_enterprise_linux_atomic_host
-[管理存储在Red Hat Enterprise Linux原子主机]以获得安装过程中或安装后配置此功能的说明。
+要满足PHEL原子主机中的 *_/var/_* 文件系统大小要求，必须修改默认配置。请查看
+https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/version-7/getting-started-with-containers/#managing_storage_in_red_hat_enterprise_linux_atomic_host[管理存储在
+Red Hat Enterprise Linux原子主机]以获得安装过程中或安装后配置此功能的说明。
 ====
 
 [[registry-supported-system-topologies]]
@@ -78,16 +79,16 @@ https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/
 独立OCR支持以下系统拓扑:
 
 [horizontal]
-All-in-one::
+一体化::
 包含主、节点和注册表组件的单一主机。
-多个masters(高可用)::
+多主机(高可用)::
 包含所有组件(主组件、节点和注册表)的三个主机，每个主机上都配置了用于本机高可用性的主机。
 
 [[registry-installing]]
 == 安装OpenShift容器注册表
 
 . 查看完整的安装过程，从
-xref:index.adoc#install-planning[Planning Your Installation]开始一起规划您的安装。
+xref:index.adoc#install-planning[规划您的安装]开始一起规划您的安装。
 安装OCR使用相同的过程，但需要在库存文件中进行一些特定的设置。
 安装文档包括库存文件可用的Ansible变量的全面列表。
 
@@ -96,11 +97,11 @@ xref:host_preparation.adoc#install-config-install-host-preparation[主机准备]
 
 . 创建一个
 xref:../install/configuring_inventory_file.adoc#install-config-configuring-inventory-file[库存文件]
-安装在*_/etc/ansible/hosts_*目录下:
+安装在 *_/etc/ansible/hosts_* 目录下:
 +
 [IMPORTANT]
 ====
-要安装一个独立的OCR，您必须在`[OSEv3:vars]`部分的库存文件中设置`deployment_subtype=registry`。
+要安装一个独立的OCR，您必须在 `[OSEv3:vars]` 部分的库存文件中设置 `deployment_subtype=registry`。
 ====
 +
 对于不同支持的系统拓扑使用以下示例库存文件:
@@ -141,7 +142,7 @@ registry.example.com
 [nodes]
 registry.example.com openshift_node_group_name='node-config-all-in-one'
 ----
-<1> 设置`deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
+<1> 设置 `deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
 <2> 允许在单个主机上调度注册表及其web控制台。
 +
 .Multiple masters (highly-available) stand-alone OpenShift Container Registry inventory file
@@ -203,32 +204,33 @@ master[1:3].example.com openshift_node_group_name='node-config-master-infra'
 node1.example.com       openshift_node_group_name='node-config-compute'
 node2.example.com       openshift_node_group_name='node-config-compute'
 ----
-<1> 设置`deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
+<1> 设置 `deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
 
-. 安装独立的OCR。这个过程类似于完整的xref:index.adoc#install-planning[集群安装]过程。
+. 安装独立的OCR。这个过程类似于完整的
+xref:index.adoc#install-planning[集群安装]过程。
 +
 [IMPORTANT]
 ====
 运行Ansible playbook的主机在库存文件中每个主机必须至少有75MiB的空闲内存。
 ====
 +
-.. 在部署新集群之前，请切换到集群目录并运行*_prerequisites.yml_*剧本:
+.. 在部署新集群之前，请切换到集群目录并运行 *_prerequisites.yml_* 剧本:
 +
 ----
 $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook  [-i /path/to/inventory] \ <1>
     playbooks/prerequisites.yml
 ----
-<1> 如果您的库存文件不再*_/etc/ansible/hosts_*目录中，请指定`-i`和库存文件的路径。
+<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，请指定 `-i` 和库存文件的路径。
 +
 你只能运行这个剧本一次。
 
-.. 要启动安装，请切换到playbook目录并运行*_deploy_cluster.yml_*playbook:
+.. 要启动安装，请切换到playbook目录并运行 *_deploy_cluster.yml_* playbook:
 +
 ----
 $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook  [-i /path/to/inventory] \ <1>
     playbooks/deploy_cluster.yml
 ----
-<1> 如果您的库存文件不在*_/etc/ansible/hosts_* 目录中，
-请指定`-i`和库存文件的路径。
+<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，
+请指定 `-i` 和库存文件的路径。

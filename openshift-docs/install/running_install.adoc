@@ -1,5 +1,5 @@
 [[install-running-installation-playbooks]]
-= Installing {product-title}
+= 安装{product-title}
 {product-author}
 {product-version}
 :data-uri:
@@ -35,11 +35,11 @@ xref:stand_alone_registry.adoc#install-config-installing-stand-alone-registry[�
 xref:prerequisites.adoc#install-config-install-prerequisites[系统和环境需求]。
 
 - 如果您有一个大型集群，有关优化安装时间的建议，请查看
-xref:../scaling_performance/install_practices.adoc#scaling-performance-install-best-practices[Scaling and Performance Guide]。
+xref:../scaling_performance/install_practices.adoc#scaling-performance-install-best-practices[缩放和性能指南]。
 
 - xref:host_preparation.adoc#install-config-install-host-preparation[一起准备你的主机]。
-这个过程包括验证每个组件类型的系统和环境需求，安装和配置*docker*服务，
-以及安装Ansible version 2.6或更高版本。您必须安装Ansible运行安装剧本。
+这个过程包括验证每个组件类型的系统和环境需求，安装和配置 *docker* 服务，
+以及安装Ansible 2.6或更高版本。您必须安装Ansible运行安装剧本。
 
 - xref:configuring_inventory_file.adoc#install-config-configuring-inventory-file[配置您的库存文件]
 来定义您的环境和{product-title}集群配置。
@@ -52,7 +52,7 @@ RHEL原子宿主系统需要系统容器方法。
 ////
 [IMPORTANT]
 ====
-从{product-title} 3.10开始，所有集群安装都需要将每个主机的`openshift_node_group_name`
+从{product-title} 3.10开始，所有集群安装都需要将每个主机的 `openshift_node_group_name`
 设置为一个节点组，无论您是使用默认节点组定义和ConfigMaps，还是自定义自己的节点组。
 如果您还没有设置节点组和主机映射，请参见
 xref:configuring_inventory_file.adoc#configuring-inventory-defining-node-group-and-host-mappings[定义节点组和主机映射]。
@@ -63,21 +63,22 @@ ifdef::openshift-origin[]
 [[advanced-cloud-providers]]
 === 云安装
 
-您可以在云环境中提供{product-title} vm。您可以使用Ansible playbook自动化云托管基础设施的定义，
+您可以在云环境中提供{product-title}VM。您可以使用Ansible剧本自动化云托管基础设施的定义，
 以及为受支持的云提供商提供后配置的应用程序。
 
 ==== OpenStack提供者
 
 您可以使用OpenStack CLI安装{product-title}。
 有关更多详细信息，请参见
-链接:https://access.redhat.com/documentation/en-us/reference_architectures/2017/html-single/deploying_and_managing_red_hat_openshift_container_platform_3.6_on_red_hat_openstack_platform_10[参考架构]
+link:https://access.redhat.com/documentation/en-us/reference_architectures/2017/html-single/deploying_and_managing_red_hat_openshift_container_platform_3.6_on_red_hat_openstack_platform_10[参考架构]
 用于{product-title} 3.6 和 Red Hat OpenStack Platform 10。 
 
 作为使用OpenStack CLI的先决条件，首先提供VM并配置云基础设施，如网络、存储、防火墙和安全组。有关这些配置任务的信息，请参见
-链接:prerequisites#prereq-cloud-provider-considerations[cloud provider considerations]
-和链接:https://github.com/openshift/openshift-ansible/tree/master/playbooks/openstack[Ansible playbooks]
+link:prerequisites#prereq-cloud-provider-considerations[云提供商的考虑]
+和
+link:https://github.com/openshift/openshift-ansible/tree/master/playbooks/openstack[Ansible剧本]
 来自动化它们。请参见
-xref:../install_config/configuring_openstack#install-config-configuring-openstack[Configuring for OpenStack]
+xref:../install_config/configuring_openstack#install-config-configuring-openstack[OpenStack的配置]
 和
 xref:configuring_inventory_file.adoc#configuring-ansible[配置您的库存文件]。
 
@@ -103,13 +104,13 @@ endif::[]
 
 [IMPORTANT]
 ====
-不要在`nohup`下运行OpenShift Ansible脚本。对剧本使用`nohup`会创建文件描述符，
+不要在 `nohup` 下运行OpenShift Ansible脚本。对剧本使用 `nohup` 会创建文件描述符，
 但不会关闭。因此，系统可能会耗尽要打开的文件，playbook也会失败。
 ====
 
 要运行基于RPM的安装程序:
 
-. 切换到playbook目录并运行*_prerequisites.yml_*剧本。这个剧本安装所需的软件包(如果有的话)，
+. 切换到playbook目录并运行 *_prerequisites.yml_* 剧本。这个剧本安装所需的软件包(如果有的话)，
 并修改容器运行时。除非需要配置容器运行时，否则在第一次部署集群之前，只运行此剧本一次:
 +
 ----
@@ -117,18 +118,18 @@ $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook [-i /path/to/inventory] \ <1>
   playbooks/prerequisites.yml
 ----
-<1> 如果您的库存文件不在*_/etc/ansible/hosts_*目录中，
-请指定`-i`和库存文件的路径。
+<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，
+请指定 `-i` 和库存文件的路径。
 
-. 切换到playbook目录并运行*_deploy_cluster.yml_* playbook启动集群安装:
+. 切换到playbook目录并运行 *_deploy_cluster.yml_* playbook启动集群安装:
 +
 ----
 $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook [-i /path/to/inventory] \
     playbooks/deploy_cluster.yml
 ----
-<1> 如果您的库存文件不在*_/etc/ansible/hosts_*目录中，
-请指定`-i`和库存文件的路径。
+<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，
+请指定 `-i` 和库存文件的路径。
 
 .
 ** 如果安装成功，
@@ -152,14 +153,14 @@ image是{product-title}安装程序的容器版本。这个安装程序映像提
 [[running-the-advanced-installation-system-container]]
 ==== 将安装程序作为系统容器运行
 
-安装程序映像可以用作链接:
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/running_system_containers[系统容器].
-系统容器存储并运行在传统的*docker*服务之外。这允许从目标主机之一
-运行安装程序映像，而不需要关心主机上的安装重新启动*docker*。
+安装程序映像可以用作一个
+link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/running_system_containers[系统容器].
+系统容器存储并运行在传统的 *docker* 服务之外。这允许从目标主机之一
+运行安装程序映像，而不需要关心主机上的安装重新启动 *docker*。
 
-要使用原子CLI作为一次运行的系统容器运行安装程序，请作为*root*用户执行以下步骤:
+要使用原子CLI作为一次运行的系统容器运行安装程序，请作为 *root* 用户执行以下步骤:
 
-. 运行*_prerequisites.yml_*剧本:
+. 运行 *_prerequisites.yml_* 剧本:
 +
 ----
 # atomic install --system \
@@ -176,9 +177,9 @@ endif::[]
 ----
 <1> 指定库存文件在本地主机上的位置。
 +
-该命令使用指定的目录文件和`根`用户的SSH配置运行一组prerequiste任务。
+该命令使用指定的目录文件和 `根` 用户的SSH配置运行一组prerequiste任务。
 
-. Run the *_deploy_cluster.yml_* playbook:
+. 运行 *_deploy_cluster.yml_* 剧本:
 +
 ----
 # atomic install --system \
@@ -196,10 +197,10 @@ endif::[]
 <1> 指定库存文件在本地主机上的位置。
 +
 该命令使用指定的目录文件和`根`用户的SSH配置启动集群安装。
-它将输出记录在终端上，并将其保存在*_/var/log/ansible.log_*文件。
+它将输出记录在终端上，并将其保存在 *_/var/log/ansible.log_* 文件。
 第一次运行这个命令时，将图像导入
-链接:https://access.redhat.com/documentation/en-us/red_hat_satellite/6.2/html/content_management_guide/managing_ostree_content[OSTree]
-存储(系统容器使用这个存储而不是*docker*守护进程存储)。在随后的运行中，它将重用存储的映像。
+link:https://access.redhat.com/documentation/en-us/red_hat_satellite/6.2/html/content_management_guide/managing_ostree_content[OSTree]
+存储(系统容器使用这个存储而不是 *docker* 守护进程存储)。在随后的运行中，它将重用存储的映像。
 +
 如果由于任何原因安装失败，在重新运行安装程序之前，请参阅
 xref:installer-known-issues[Known Issues]以检查任何特定的指令或解决方案。
@@ -207,8 +208,8 @@ xref:installer-known-issues[Known Issues]以检查任何特定的指令或解决
 [[running-the-advanced-installation-system-container-other-playbooks]]
 ==== 运行其他剧本
 
-您可以使用`PLAYBOOK_FILE`环境变量来指定要使用容器化安装程序运行的其他剧本。
-`PLAYBOOK_FILE`的默认值是
+您可以使用 `PLAYBOOK_FILE` 环境变量来指定要使用容器化安装程序运行的其他剧本。
+`PLAYBOOK_FILE` 的默认值是
 *_/usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml_*, 
 它是主集群安装剧本，但是您可以将它设置为容器内另一个剧本的路径。
 
@@ -229,18 +230,18 @@ ifdef::openshift-origin[]
     docker.io/openshift/origin-ansible:v3.11
 endif::[]
 ----
-<1> 将`PLAYBOOK_FILE`设置为从*_playbooks/_*目录开始的playbook的完整路径。
+<1> 将`PLAYBOOK_FILE`设置为从 *_playbooks/_* 目录开始的playbook的完整路径。
 Playbook与基于RPM的安装程序位于相同的位置。
-<2> 设置`OPTS`以向`ansible-playbook`添加命令行选项。
+<2> 设置 `OPTS` 以向 `ansible-playbook` 添加命令行选项。
 
 [[running-the-advanced-installation-docker]]
 ==== 将安装程序作为容器运行
 
-安装程序映像还可以作为*docker*容器在*docker*可以运行的任何地方运行。
+安装程序映像还可以作为 *docker* 容器在 *docker* 可以运行的任何地方运行。
 
 [WARNING]
 ====
-不能使用此方法在正在配置的主机上运行安装程序，因为安装程序可能在主机上重启*docker*并中断安装。
+不能使用此方法在正在配置的主机上运行安装程序，因为安装程序可能在主机上重启 *docker* 并中断安装。
 ====
 
 [NOTE]
@@ -249,15 +250,15 @@ Playbook与基于RPM的安装程序位于相同的位置。
 上下文运行，因此运行时参数不相同。
 ====
 
-至少，当安装程序作为一个*docker*容器运行时，您必须提供:
+至少，当安装程序作为一个 *docker* 容器运行时，您必须提供:
 
 * SSH密钥，以便Ansible可以到达您的主机。
 * 一个可能的库存文件。
 * 根据该目录运行的Ansible剧本的位置。
 
-下面是一个如何通过`docker`运行安装的例子，它必须由访问`docker`的非*root*用户运行：
+下面是一个如何通过`docker`运行安装的例子，它必须由访问 `docker` 的非 *root* 用户运行：
 
-. 首先，运行*_prerequisites.yml_*剧本:
+. 首先，运行 *_prerequisites.yml_* 剧本:
 +
 ----
 $ docker run -t -u `id -u` \ <1>
@@ -273,35 +274,35 @@ ifdef::openshift-origin[]
     docker.io/openshift/origin-ansible:v3.11
 endif::[]
 ----
-<1> `-u `id -u``使容器以与当前用户相同的UID运行，这允许该用户在容器中使用SSH密钥。
+<1> `-u `id -u`` 使容器以与当前用户相同的UID运行，这允许该用户在容器中使用SSH密钥。
 SSH私钥只能由其所有者读取。
-<2> `-v $HOME/.ssh/id_rsa:/opt/app-root/src/.ssh/id_rsa:Z`挂载SSH密钥，
-`$HOME/.ssh/id_rsa`,在容器用户的`$HOME/.ssh`目录下。
-*_/opt/app-root/src_*是容器中用户的`$HOME`。如果您将SSH密钥挂载在不同的位置，
+<2> `-v $HOME/.ssh/id_rsa:/opt/app-root/src/.ssh/id_rsa:Z` 挂载SSH密钥，
+`$HOME/.ssh/id_rsa`,在容器用户的 `$HOME/.ssh` 目录下。
+*_/opt/app-root/src_* 是容器中用户的 `$HOME`。如果您将SSH密钥挂载在不同的位置，
 请添加一个环境变量，其中
-`-e ANSIBLE_PRIVATE_KEY_FILE=/the/mount/point`或设置
-`ansible_ssh_private_key_file=/the/mount/point`作为目录中的一个变量，
-以指向它。注意，SSH密钥是用`:Z`标志挂载的。
+`-e ANSIBLE_PRIVATE_KEY_FILE=/the/mount/point` 或设置
+`ansible_ssh_private_key_file=/the/mount/point` 作为目录中的一个变量，
+以指向它。注意，SSH密钥是用 `:Z` 标志挂载的。
 需要此标志，以便容器可以在其受限制的SELinux上下文中读取SSH密钥。
-这也意味着您的原始SSH密钥文件将被重新标记为`system_u:object_r:container_file_t:s0:c113,c247`。
-有关`:Z`的更多细节，请查看`docker-run(1)`手册页。 在提供这些卷挂载规范时请记住这一点，
-因为这可能会产生意想不到的后果，例如，它将阻止主机的*sshd*访问您的公钥来登录。出于这个原因，
+这也意味着您的原始SSH密钥文件将被重新标记为 `system_u:object_r:container_file_t:s0:c113,c247`。
+有关 `:Z` 的更多细节，请查看 `docker-run(1)` 手册页。 在提供这些卷挂载规范时请记住这一点，
+因为这可能会产生意想不到的后果，例如，它将阻止主机的 *sshd* 访问您的公钥来登录。出于这个原因，
 您可能希望使用SSH密钥或目录的单独副本，以便原始文件标签保持不变。
-<3> `-v $HOME/ansible/hosts:/tmp/inventory:Z`和`-e INVENTORY_FILE=/tmp/inventory`
-将一个静态的Ansible存货文件作为*_/tmp/inventory_*挂载在容器中，并设置相应的环境变量指向该文件。
-与SSH密钥一样，可能需要通过使用`:Z`标志重新标记库存文件SELinux标签，以允许在容器中读取，
+<3> `-v $HOME/ansible/hosts:/tmp/inventory:Z` 和 `-e INVENTORY_FILE=/tmp/inventory`
+将一个静态的Ansible存货文件作为 *_/tmp/inventory_* 挂载在容器中，并设置相应的环境变量指向该文件。
+与SSH密钥一样，可能需要通过使用 `:Z` 标志重新标记库存文件SELinux标签，以允许在容器中读取，
 这取决于现有的标签。
-对于用户`$HOME`目录中的文件，可能需要这样做。您可能更愿意在挂载清单之前将其复制到专用位置。
-如果指定`INVENTORY_URL`环境变量，或者使用`DYNAMIC_SCRIPT_URL`参数指定提供动态清单的可执行脚本，
+对于用户 `$HOME` 目录中的文件，可能需要这样做。您可能更愿意在挂载清单之前将其复制到专用位置。
+如果指定`INVENTORY_URL`环境变量，或者使用 `DYNAMIC_SCRIPT_URL` 参数指定提供动态清单的可执行脚本，
 还可以从web服务器下载清单文件。
-<4> `-e PLAYBOOK_FILE=playbooks/prerequisites.yml`指定要从*openshift-ansible* 
+<4> `-e PLAYBOOK_FILE=playbooks/prerequisites.yml` 指定要从 *openshift-ansible*
 内容的顶层目录作为相对路径运行的剧本。
 在本例中，取决于先决条件playbook。
 您还可以指定从RPM或容器中的任何其他playbook文件的完整路径。
-<5> `-e OPTS="-v"`为容器内运行的`ansible-playbook`命令提供任意命令行选项。
-在本例中，指定以`-v`以增加冗长。
+<5> `-e OPTS="-v"`为容器内运行的 `ansible-playbook` 命令提供任意命令行选项。
+在本例中，指定以 `-v` 以增加冗长。
 
-. 接下来，运行*_deploy_cluster.yml_*剧本启动集群安装:
+. 接下来，运行 *_deploy_cluster.yml_* 剧本启动集群安装:
 +
 ----
 $ docker run -t -u `id -u` \
@@ -340,7 +341,7 @@ $ ansible-playbook --user openshift \
 安装程序使用模块化的剧本，以便管理员可以根据需要安装特定的组件。通过分解角色和剧本，
 可以更好地针对特定的管理任务。这将提高安装期间的控制水平，并节省时间。
 
-主安装剧本*_{pb-prefix}playbooks/deploy_cluster.yml_*以特定的顺序运行一组单独的组件剧本，
+主安装剧本 *_{pb-prefix}playbooks/deploy_cluster.yml_* 以特定的顺序运行一组单独的组件剧本，
 安装程序在最后报告您所经历的阶段。如果安装失败，您将被通知哪个阶段失败以及来自Ansible运行的错误。
 
 [IMPORTANT]
@@ -363,14 +364,16 @@ xref:running-the-advanced-installation-system-container[安装程序的容器版
 
 如果Ansible安装程序失败，您仍然可以安装{product-title}:
 
-. 检查xref:installer-known-issues[已知问题]，以检查任何特定的指令或工作区。
+. 检查
+xref:installer-known-issues[已知问题]，以检查任何特定的指令或工作区。
 
 . 解决安装过程中的错误。
 
 . 确定是否需要卸载、重新安装或重试安装:
 ** 如果您没有修改SDN配置或生成新的证书，请重试安装。
 ** 如果您修改了SDN配置，生成了新的证书，或者安装程序再次失败，您必须重新启动一个
-干净的系统安装，或者xref:../install/uninstalling_cluster.adoc#uninstalling[卸载]
+干净的系统安装，或者
+xref:../install/uninstalling_cluster.adoc#uninstalling[卸载]
 并重新安装。
 ** 如果使用虚拟机，请从一个新映像或
 xref:../install/uninstalling_cluster.adoc#uninstalling[卸载]卸载并重新安装。
@@ -379,7 +382,7 @@ xref:../install/uninstalling_cluster.adoc#uninstalling[卸载]卸载并重新安
 
 
 . 重试安装:
-** 您可以重新运行*_deploy_cluster.yml_*剧本了。
+** 您可以重新运行 *_deploy_cluster.yml_* 剧本了。
 ** 您可以运行其余的单独安装剧本。
 +
 如果您只想运行其余的剧本，首先运行失败阶段的剧本，然后按顺序运行其余的剧本。
@@ -469,7 +472,7 @@ xref:../install/uninstalling_cluster.adoc#uninstalling[卸载]卸载并重新安
 // tag::verifying-the-installation[]
 安装完成后:
 
-. 验证主服务器已启动，节点已注册，并报告处于*就绪*状态。_在主主机上_, 以root身份运行以下命令:
+. 验证主服务器已启动，节点已注册，并报告处于 *就绪* 状态。_在主主机上_, 以root身份运行以下命令:
 +
 ----
 # oc get nodes
@@ -479,10 +482,10 @@ node1.example.com      Ready     compute   7h        v1.9.1+a0ce1bc657
 node2.example.com      Ready     compute   7h        v1.9.1+a0ce1bc657
 ----
 
-. 要验证是否正确安装了web控制台，请使用主主机名和web控制台端口号使用web浏览器访问web控制台。
+. 要验证是否正确安装了Web控制台，请使用主主机名和web控制台端口号使用Web浏览器访问Web控制台。
 +
-例如，对于主机名为`master.openshift.com`并使用默认端口`8443`的主机，
-Web控制台URL为`\https://master.openshift.com:8443/console`.
+例如，对于主机名为 `master.openshift.com` 并使用默认端口 `8443` 的主机，
+Web控制台URL为 `\https://master.openshift.com:8443/console`.
 
 // end::verifying-the-installation[]
 
@@ -492,7 +495,7 @@ Web控制台URL为`\https://master.openshift.com:8443/console`.
 
 如果你安装了多个etcd主机:
 
-. 首先，验证安装了`etcdctl`命令的*etcd*包:
+. 首先，验证安装了 `etcdctl` 命令的 *etcd* 包:
 +
 ----
 # yum install etcd
@@ -527,7 +530,7 @@ Web控制台URL为`\https://master.openshift.com:8443/console`.
 ----
 http://<lb_hostname>:9000 <1>
 ----
-<1> 提供清单文件`[lb]`部分中列出的负载均衡器主机名。
+<1> 提供清单文件 `[lb]` 部分中列出的负载均衡器主机名。
 
 您可以通过查询
 https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Load_Balancer_Administration/ch-haproxy-setup-VSA.html[HAProxy配置文档]
@@ -536,7 +539,7 @@ https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Lo
 [[optionally-securing-builds]]
 == 可选保障构建
 
-运行`docker build`是一个特权进程，因此容器对节点的访问比在某些多租户环境中可能被认为可接受的多。
+运行 `docker build` 是一个特权进程，因此容器对节点的访问比在某些多租户环境中可能被认为可接受的多。
 如果不信任用户，可以在安装后配置更安全的选项。禁用Docker在集群上构建，
 并要求用户在集群外构建映像。有关此可选流程的更多信息，请查看
 xref:../admin_guide/securing_builds.adoc#admin-guide-securing-builds[通过策略保护构建]。
@@ -546,14 +549,17 @@ xref:../admin_guide/securing_builds.adoc#admin-guide-securing-builds[通过策�
 
 - 在多个主集群中进行故障转移时，控制器管理器可能会过度纠正，这将导致系统运行比预期更多的pod。
 然而，这是一个暂时的事件，系统会随着时间的推移而自我纠正。
-有关详细信息，请查看https://github.com/kubernetes/kubernetes/issues/10030。
+有关详细信息，请查看
+https://github.com/kubernetes/kubernetes/issues/10030。
 
 == 接下来是什么?
 
 现在您有了一个工作的{product-title}实例，您可以:
 
-- 部署一个xref:../install_config/registry/index.adoc#install-config-registry-overview[集成容器映像注册表]。
-- 部署一个xref:../install_config/router/index.adoc#install-config-router-overview[路由器]。
+- 部署一个
+xref:../install_config/registry/index.adoc#install-config-registry-overview[集成容器映像注册表]。
+- 部署一个
+xref:../install_config/router/index.adoc#install-config-router-overview[路由器]。
 ifdef::openshift-origin[]
 - xref:../install_config/imagestreams_templates.adoc#install-config-imagestreams-templates[填充您的{product-title}安装]
 提供了一组有用的Red hat提供的图像流和模板。

@@ -67,12 +67,12 @@ openshift_master_identity_providers=[{'name': 'htpasswd_auth',
 openshift_master_default_subdomain=apps.test.example.com
 ----
 
-包括::install/topics/escaping_special_characters.adoc[]
+include::install/topics/escaping_special_characters.adoc[]
 
 下面的表格描述了Ansible使用的全局集群变量的安装程序：
 
 [[cluster-variables-table]]
-.General Cluster Variables
+.集群一般变量
 [cols=".^5,.^5a",options="header"]
 |===
 
@@ -297,7 +297,7 @@ openshift_docker_additional_registries=example.com:443
 ====
 
 [[advanced-install-networking-variables-table]]
-.Networking Variables
+.网络变量
 [options="header"]
 |===
 

@@ -1,5 +1,5 @@
 ////
-转义ansible variables文件中的特殊字符
+转义Ansible变量文件中的特殊字符
 
 This module included in the following assemblies:
 * install_config/configuring_openstack.adoc
@@ -8,9 +8,9 @@ This module included in the following assemblies:
 
 [IMPORTANT]
 ====
-如果Ansible inventory文件中的参数值包含特殊字符，
-例如`pass:[#]`, `{` or `}`, 您必须对值进行双转义(即用单引号和双引号括住值)。
-例如，要使用`pass:[mypasswordwith###hashsigns]`作为变量
-`openshift_cloudprovider_openstack_password`的值，请将其声明为在
-`openshift_cloudprovider_openstack_password='"mypasswordwith###hashsigns"'`Ansible主机库存文件中。
+如果Ansible库存文件中的参数值包含特殊字符，
+例如 `pass:[#]`, `{` or `}`, 您必须对值进行双转义(即用单引号和双引号括住值)。
+例如，要使用 `pass:[mypasswordwith###hashsigns]` 作为变量
+`openshift_cloudprovider_openstack_password` 的值，请将其声明为在
+`openshift_cloudprovider_openstack_password='"mypasswordwith###hashsigns"'` Ansible主机库存文件中。
 ====
