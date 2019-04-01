@@ -21,24 +21,24 @@ toc::[]
 == 概述
 
 在了解了
-xref:configuring_inventory_file.adoc#install-config-configuring-inventory-file[配置您自己的目录文件],
-您可以查看下面的示例目录,它描述了各种环境拓扑,包括
+xref:configuring_inventory_file.adoc#install-config-configuring-inventory-file[配置您自己的目录文件]，
+您可以查看下面的示例目录，它描述了各种环境拓扑，包括
 xref:multiple-masters[使用多个主机]以获得可用性。
-您可以选择一个匹配您需求的示例,修改它以匹配您自己的环境,并在
+您可以选择一个匹配您需求的示例，修改它以匹配您自己的环境，并在
 xref:running_install.adoc#running-the-installation-playbooks[运行安装]将其作为库存文件。
 
 [IMPORTANT]
 ====
 下列的示例清单在 `[nodes]` 组中为每台主机设置 `openshift_node_group_name` 时使用默认的节点组集。
-要定义和使用您自己的自定义节点组定义,请在清单中设置 `openshift_node_groups` 变量。
-有关详细信息,请查看
+要定义和使用您自己的自定义节点组定义，请在清单中设置 `openshift_node_groups` 变量。
+有关详细信息，请查看
 xref:configuring_inventory_file.adoc#configuring-inventory-defining-node-group-and-host-mappings[定义节点组和主机映射]。
 ====
 
 [[single-master]]
 == 单个主例
 
-您可以使用单个主节点和多个节点,以及单个或多个etcd主机来配置环境。
+您可以使用单个主节点和多个节点，以及单个或多个etcd主机来配置环境。
 
 [NOTE]
 ====
@@ -46,13 +46,13 @@ xref:configuring_inventory_file.adoc#configuring-inventory-defining-node-group-a
 ====
 
 [[single-master-multi-node-ai]]
-=== 单个主节点,单个etcd和多个节点
+=== 单个主节点，单个etcd和多个节点
 
 下表中描述了单个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[master]的运行环境。
-(同一主机上以静态pod的形式运行一个etcd实例), 两个
+(同一主机上以静态pod的形式运行一个etcd实例)，两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-主机用户应用, 以及两个具有 `node-role.kubernetes.io/infra=true` 主机标签
+主机用户应用，以及两个具有 `node-role.kubernetes.io/infra=true` 主机标签
 xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
@@ -76,9 +76,9 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 
 你可以在以下示例库存文件的 *[masters]*, *[etcd]*, 和 *[nodes]* 小节中看到这些示例主机:
 
-.单个主目录,单个etcd和多个节点目录文件
+.单个主目录，单个etcd和多个节点目录文件
 ----
-# 创建一个包含主机组,节点组和etcd组的OSEv3组
+# 创建一个包含主机组，节点组和etcd组的OSEv3组
 [OSEv3:children]
 masters
 nodes
@@ -86,9 +86,9 @@ etcd
 
 # 为所有OSEv3主机设置通用变量
 [OSEv3:vars]
-# SSH用户,该用户应该允许基于SSH的身份验证,而不需要密码ansible_ssh_user=root
+# SSH用户，该用户应该允许基于SSH的身份验证，而不需要密码ansible_ssh_user=root
 
-# 如果ansible_ssh_user不是根用户,则必须将ansible_become设置为true。
+# 如果ansible_ssh_user不是根用户，则必须将ansible_become设置为true。
 #ansible_become=true
 
 ifdef::openshift-enterprise[]
@@ -126,23 +126,23 @@ infra-node2.example.com openshift_node_group_name='node-config-infra'
 // tag::exampleinventorynodelabel[]
 [IMPORTANT]
 ====
-请查看xref:configuring_inventory_file.adoc#configuring-node-host-labels[配置节点主机标签],
+请查看xref:configuring_inventory_file.adoc#configuring-node-host-labels[配置节点主机标签]，
 以确保您理解默认的节点选择器需求和节点标签注意事项从{product-title} 3.9开始。
 ====
 // end::exampleinventorynodelabel[]
 
-要使用此实例,请修改文件以匹配您的环境和规范,并将其保存为*_/etc/ansible/hosts_*。
+要使用此实例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*。
 
 [[single-master-multi-etcd-multi-node-ai]]
-=== 单个主节点,多个etcd和多个节点
+=== 单个主节点，多个etcd和多个节点
 
 下标描述了一个单个的示例环境
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[master],
 三个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[etcd]
-主机,两个
+主机，两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-用于托管主机用户应用程序,以及两个具有`node-role.kubernetes.io/infra=true`的主机标签。
+用于托管主机用户应用程序，以及两个具有`node-role.kubernetes.io/infra=true`的主机标签。
 xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
@@ -173,9 +173,9 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 
 您可以在以下示例库存文件的*[masters]*, *[nodes]*, 和 *[etcd]* 小节中看到这些示例主机:
 
-.单个主目录,多个etcd和多个节点目录文件
+.单个主目录，多个etcd和多个节点目录文件
 ----
-# 创建一个包含主机组,节点组和etcd组的OSEv3组
+# 创建一个包含主机组，节点组和etcd组的OSEv3组
 [OSEv3:children]
 masters
 nodes
@@ -209,7 +209,7 @@ etcd1.example.com
 etcd2.example.com
 etcd3.example.com
 
-# 节点的主机组,包括区域信息
+# 节点的主机组，包括区域信息
 [nodes]
 master.example.com openshift_node_group_name='node-config-master'
 node1.example.com openshift_node_group_name='node-config-compute'
@@ -220,12 +220,12 @@ infra-node2.example.com openshift_node_group_name='node-config-infra'
 
 include::install/example_inventories.adoc[tag=exampleinventorynodelabel].
 
-要使用此示例,请修改文件以匹配您的环境和规范,并将其保存为 *_/etc/ansible/hosts_*.
+要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为 *_/etc/ansible/hosts_*.
 
 [[multiple-masters]]
 == 多主机
 
-您可以配置一个包含多个主机,多个etcd主机和多个节点的环境。配置
+您可以配置一个包含多个主机，多个etcd主机和多个节点的环境。配置
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#high-availability-masters
 [多个高性能主机] (HA) 确保集群没有单点故障。
 
@@ -234,21 +234,21 @@ xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#hi
 不支持在安装之后从单个主集群移动到多个主集群。
 ====
 
-在配置多个主机时,集群安装过程支持 `本机` 高可用性(HA)方法。此方法利用内置在{product-title}中的本机HA主功能,
+在配置多个主机时，集群安装过程支持 `本机` 高可用性(HA)方法。此方法利用内置在{product-title}中的本机HA主功能，
 并可以与任何负载平衡解决方案组合使用。
 
-如果主机在目录文件的 *[lb]* 部分中定义,Ansible将自动安装和配置HAProxy作为负载平衡解决方案。如果没有定义主机,
-则假定您已经预先配置了一个外部负载平衡解决方案,您可以选择在所有主机上平衡主API(端口8443)。
+如果主机在目录文件的 *[lb]* 部分中定义，Ansible将自动安装和配置HAProxy作为负载平衡解决方案。如果没有定义主机，
+则假定您已经预先配置了一个外部负载平衡解决方案，您可以选择在所有主机上平衡主API(端口8443)。
 
 [NOTE]
 ====
-此HAProxy负载均衡器旨在演示API服务器的HA模式,不建议用于生产环境。如果要部署到云提供商,Red Hat建议部署
-基于云的本地tcp的负载平衡器,或者采取其他步骤来提供高可用的负载平衡器。
+此HAProxy负载均衡器旨在演示API服务器的HA模式，不建议用于生产环境。如果要部署到云提供商，Red Hat建议部署
+基于云的本地tcp的负载平衡器，或者采取其他步骤来提供高可用的负载平衡器。
 ====
 
-对于外部负载平衡解决方案,您必须:
+对于外部负载平衡解决方案，您必须:
 
-* 预先创建的负载均衡器虚拟IP (VIP),贯穿SSL配置。
+* 预先创建的负载均衡器虚拟IP (VIP)，贯穿SSL配置。
 * VIP监听指定的端口
 xref:advanced-master-ports[`openshift_master_api_port`](默认情况下为8443) 
 并代理回该端口上的所有主机。
@@ -257,18 +257,18 @@ xref:advanced-master-ports[`openshift_master_api_port`](默认情况下为8443)
 `openshift_master_cluster_hostname` 的值。
 
 请查看
-link:https://github.com/redhat-cop/openshift-playbooks/blob/master/playbooks/installation/load_balancing.adoc[Github中的外部负载均衡集成示例]了解更多信息,了解高可用
-性主架构,参见
+link:https://github.com/redhat-cop/openshift-playbooks/blob/master/playbooks/installation/load_balancing.adoc[Github中的外部负载均衡集成示例]了解更多信息，了解高可用
+性主架构，参见
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[Kubernetes基础设施]。
 
 [NOTE]
 ====
-在主动-被动设置中,集群安装过程目前不支持多个HAProxy负载平衡器。请参考
+在主动-被动设置中，集群安装过程目前不支持多个HAProxy负载平衡器。请参考
 https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Load_Balancer_Administration/ch-lvs-overview-VSA.html[负载均衡器管理文档]
 用于安装后修改的html。
 ====
 
-要配置多个主机,请参考
+要配置多个主机，请参考
 xref:multi-masters-using-native-ha-ai[多个etcd与多个Master]
 
 [[multi-masters-using-native-ha-ai]]
@@ -276,11 +276,11 @@ xref:multi-masters-using-native-ha-ai[多个etcd与多个Master]
 
 下面描述了三个示例环境：
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[masters]
-使用 `原声` HA方法:, 一个HAProxy负载均衡器,三个
+使用 `原声` HA方法: 一个HAProxy负载均衡器，三个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[etcd]
-主机,两个
+主机，两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-用于托管用户应用程序, 以及具有两个节点 `node-role.kubernetes.io/infra=true` 主机标签
+用于托管用户应用程序， 以及具有两个节点 `node-role.kubernetes.io/infra=true` 主机标签
 xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
@@ -320,9 +320,9 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 
 .多个主机使用HAProxy库存文件
 ----
-# 创建一个包含主,节点,etcd和lb组的OSEv3组。
+# 创建一个包含主，节点，etcd和lb组的OSEv3组。
 # lb组允许Ansible将HAProxy配置为负载平衡解决方案。
-# 如果预配置了负载平衡器,请注释lb。
+# 如果预配置了负载平衡器，请注释lb。
 [OSEv3:children]
 masters
 nodes
@@ -347,11 +347,11 @@ ifdef::openshift-enterprise[]
 endif::[]
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
-# 本机高可用性聚类方法,可选负载均衡器。
-# 如果没有定义lb组,安装程序假定已经预先配置了负载平衡器。
+# 本机高可用性聚类方法，可选负载均衡器。
+# 如果没有定义lb组，安装程序假定已经预先配置了负载平衡器。
 # 对于安装
-# openshift_master_cluster_hostname的值必须解析为负载均衡器,如果
-# 没有负载均衡器,则解析为清单中定义的一个或所有主机。
+# openshift_master_cluster_hostname的值必须解析为负载均衡器，如果
+# 没有负载均衡器，则解析为清单中定义的一个或所有主机。
 openshift_master_cluster_method=native
 openshift_master_cluster_hostname=openshift-internal.example.com
 openshift_master_cluster_public_hostname=openshift-cluster.example.com
@@ -375,7 +375,7 @@ etcd3.example.com
 [lb]
 lb.example.com
 
-# 节点的主机组,包括区域信息
+# 节点的主机组，包括区域信息
 [nodes]
 master[1:3].example.com openshift_node_group_name='node-config-master'
 node1.example.com openshift_node_group_name='node-config-compute'
@@ -386,7 +386,7 @@ infra-node2.example.com openshift_node_group_name='node-config-infra'
 
 include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 
-要使用此示例,请修改文件以匹配您的环境和规范,并将其保存为*_/etc/ansible/hosts_*.
+要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*.
 
 [[multi-masters-single-etcd-using-native-ha]]
 === 多个主机使用本机HA和共存的集群etcd
@@ -395,9 +395,9 @@ include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[masters]
 使用 `原生` HA方法(以及
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[etcd]
-在每一个主机上作为一个静态pod运行), 一个HAProxy负载均衡器, 两个
+在每一个主机上作为一个静态pod运行)，一个HAProxy负载均衡器，两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-用于托管用户应用程序,以及具有`node-role.kubernetes.io/infra=true`的两个节点主机标签
+用于托管用户应用程序，以及具有`node-role.kubernetes.io/infra=true`的两个节点主机标签
 xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
@@ -406,7 +406,7 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 |主机名称 |要安装的组件/角色
 
 |*master1.example.com*
-.3+.^|主节点(使用本机HA集群)和节点,etcd作为每个主机上的静态pod运行
+.3+.^|主节点(使用本机HA集群)和节点，etcd作为每个主机上的静态pod运行
 
 |*master2.example.com*
 
@@ -429,9 +429,9 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 您可以在以下示例库存文件的 *[masters]*, *[etcd]*, *[lb]* 和 *[nodes]* 小节中看到这些示例主机:
 
 ----
-# 创建一个包含主,节点,etcd和lb组的OSEv3组。
+# 创建一个包含主，节点，etcd和lb组的OSEv3组。
 # lb组允许Ansible将HAProxy配置为负载平衡解决方案。
-# 如果预配置了负载平衡器,请注释lb。
+# 如果预配置了负载平衡器，请注释lb。
 [OSEv3:children]
 masters
 nodes
@@ -457,9 +457,9 @@ endif::[]
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
 # 具有可选负载均衡器的本地高可用性集群方法。
-# 如果没有定义lb组,安装程序假定已经预先配置了负载平衡器。
-# 对于安装,openshift_master_cluster_hostname的值必须解析为负载均衡器,
-# 如果没有负载均衡器,则解析为清单中定义的一个或所有主机。
+# 如果没有定义lb组，安装程序假定已经预先配置了负载平衡器。
+# 对于安装，openshift_master_cluster_hostname的值必须解析为负载均衡器，
+# 如果没有负载均衡器，则解析为清单中定义的一个或所有主机。
 openshift_master_cluster_method=native
 openshift_master_cluster_hostname=openshift-internal.example.com
 openshift_master_cluster_public_hostname=openshift-cluster.example.com
@@ -480,7 +480,7 @@ master3.example.com
 [lb]
 lb.example.com
 
-# 节点的主机组,包括区域信息
+# 节点的主机组，包括区域信息
 [nodes]
 master[1:3].example.com openshift_node_group_name='node-config-master'
 node1.example.com openshift_node_group_name='node-config-compute'
@@ -491,4 +491,4 @@ infra-node2.example.com openshift_node_group_name='node-config-infra'
 
 include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 
-要使用此示例,请修改文件以匹配您的环境和规范,并将其保存为 *_/etc/ansible/hosts_*.
+要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为 *_/etc/ansible/hosts_*.
