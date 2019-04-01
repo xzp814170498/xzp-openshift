@@ -18,8 +18,8 @@ include::_snippets/glusterfs.adoc[]
 
 toc::[]
 
-您可以通过运行 *_uninstall.yml_* 去卸载您集群中的{product-title}主机剧本。
-本剧本删除安布尔安装的{product-title}内容，包括:
+您可以通过运行 *_uninstall.yml_* 去卸载您集群中的{product-title}主机playbooks。
+本playbooks删除安布尔安装的{product-title}内容,包括:
 
 - 配置
 - 容器
@@ -32,7 +32,7 @@ playbook删除在运行playbook时指定的目录文件中定义的任何主机�
 [[uninstalling]]
 = 卸载一个{product-title}集群
 
-要在集群中的所有主机上卸载{product-title}，请切换到playbook目录，
+要在集群中的所有主机上卸载{product-title},请切换到playbook目录,
 并使用最近使用的目录文件运行playbook:
 
 ----
@@ -45,7 +45,7 @@ ifdef::openshift-origin[]
     ~/openshift-ansible/playbooks/adhoc/uninstall.yml
 endif::[]
 ----
-<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，请指定 `-i` 和库存文件的路径。
+<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中,请指定 `-i` 和库存文件的路径。
 [[uninstalling-nodes]]
 === 卸载节点
 
@@ -53,7 +53,7 @@ endif::[]
 
 [WARNING]
 ====
-仅在尝试卸载特定节点主机时使用此方法，而不是卸载特定的主机或etcd主机。
+仅在尝试卸载特定节点主机时使用此方法,而不是卸载特定的主机或etcd主机。
 卸载主主机或etcd主机需要在集群中进行更多的配置更改。
 ====
 
@@ -61,7 +61,7 @@ endif::[]
 xref:../admin_guide/manage_nodes.adoc#deleting-nodes[删除节点]
 从集群中删除节点对象。
 
-. 创建一个仅引用这些主机的不同库存文件。例如，只从一个节点删除内容:
+. 创建一个仅引用这些主机的不同库存文件。例如,只从一个节点删除内容:
 +
 ----
 [OSEv3:children]
@@ -82,7 +82,7 @@ node3.example.com openshift_node_group_name='node-config-infra' <2>
 <1> 只包含应用于要卸载的主机的部分。
 <2> 只包含要卸载的主机。
 
-. 切换到playbook目录并运行 *_uninstall.yml_* 剧本:
+. 切换到playbook目录并运行 *_uninstall.yml_* playbooks:
 +
 ----
 ifdef::openshift-enterprise[]
@@ -96,4 +96,4 @@ endif::[]
 ----
 <1> 指定新库存文件的路径。
 
-当playbook完成时，将从指定的主机中删除所有{product-title}内容。
+当playbook完成时,将从指定的主机中删除所有{product-title}内容。

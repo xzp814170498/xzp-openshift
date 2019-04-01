@@ -11,21 +11,21 @@
 
 toc::[]
 
-{product-title}是一个功能齐全的企业解决方案，它包括一个集成的容器映像注册表
+{product-title}是一个功能齐全的企业解决方案,它包括一个集成的容器映像注册表
 xref:../architecture/infrastructure_components/image_registry.adoc#integrated-openshift-registry
-[OpenShift容器注册表] (OCR). 您可以将OCR安装为独立的容器映像注册表，以便在现场或云中运行，
+[OpenShift容器注册表] (OCR). 您可以将OCR安装为独立的容器映像注册表,以便在现场或云中运行,
 而不是将{product-title}部署为开发人员的完整平台即服务环境。
 
-在安装OCR的独立部署时，仍然安装了一个主节点和节点集群，类似于典型的{product-title}安装。
-然后，将容器映像注册表部署到集群上运行。这个独立的部署选项对于希望使用容器映像注册表
-但不需要完整的{product-title}环境的管理员非常有用，该环境包括以开发人员
+在安装OCR的独立部署时,仍然安装了一个主节点和节点集群,类似于典型的{product-title}安装。
+然后,将容器映像注册表部署到集群上运行。这个独立的部署选项对于希望使用容器映像注册表
+但不需要完整的{product-title}环境的管理员非常有用,该环境包括以开发人员
 为中心的Web控制台和应用程序构建和部署工具。
 
 OCR提供以下功能:
 
 - 一个以用户为中心的注册表web控制台, link:http://cockpit-project.org/[Cockpit].
 - xref:../install_config/registry/securing_and_exposing_registry.adoc#securing-the-registry[交通安全]
-默认情况下，通过TLS提供服务。
+默认情况下,通过TLS提供服务。
 - 全球变量
 xref:../install_config/configuring_authentication.adoc#install-config-configuring-authentication[身份提供商的身份验证].
 - 一个
@@ -39,7 +39,7 @@ xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#ar
 xref:../architecture/core_concepts/builds_and_image_streams.adoc#image-streams[图像流]来增强图像管理。
 
 管理员可以部署一个独立的OCR来单独管理支持多个{product-title}集群的注册表。
-独立的OCR还允许管理员将注册表分开，以满足自己的安全性或遵从性需求。
+独立的OCR还允许管理员将注册表分开,以满足自己的安全性或遵从性需求。
 
 [[registry-minimum-hardware-requirements]]
 == 最低硬件要求
@@ -51,7 +51,7 @@ xref:../architecture/core_concepts/builds_and_image_streams.adoc#image-streams[�
 ifdef::openshift-origin[]
 Fedora 21, CentOS 7.4, or
 endif::[]
-RHEL 7.4或7.5带有"最小"安装选项，以及来自RHEL 7 Extras通道或RHEL原子主机7.4.5或更高版本的最新包。
+RHEL 7.4或7.5带有"最小"安装选项,以及来自RHEL 7 Extras通道或RHEL原子主机7.4.5或更高版本的最新包。
 - NetworkManager1.0或更高版本
 - 2 vCPU.
 - 最小16 GB RAM。
@@ -68,7 +68,7 @@ xref:host_preparation.adoc#configuring-docker-storage[Docker配置存储]
 
 [NOTE]
 ====
-要满足PHEL原子主机中的 *_/var/_* 文件系统大小要求，必须修改默认配置。请查看
+要满足PHEL原子主机中的 *_/var/_* 文件系统大小要求,必须修改默认配置。请查看
 https://access.redhat.com/documentation/en/red-hat-enterprise-linux-atomic-host/version-7/getting-started-with-containers/#managing_storage_in_red_hat_enterprise_linux_atomic_host[管理存储在
 Red Hat Enterprise Linux原子主机]以获得安装过程中或安装后配置此功能的说明。
 ====
@@ -80,16 +80,16 @@ Red Hat Enterprise Linux原子主机]以获得安装过程中或安装后配置�
 
 [horizontal]
 一体化::
-包含主、节点和注册表组件的单一主机。
+包含主,节点和注册表组件的单一主机。
 多主机(高可用)::
-包含所有组件(主组件、节点和注册表)的三个主机，每个主机上都配置了用于本机高可用性的主机。
+包含所有组件(主组件,节点和注册表)的三个主机,每个主机上都配置了用于本机高可用性的主机。
 
 [[registry-installing]]
 == 安装OpenShift容器注册表
 
-. 查看完整的安装过程，从
+. 查看完整的安装过程,从
 xref:index.adoc#install-planning[规划您的安装]开始一起规划您的安装。
-安装OCR使用相同的过程，但需要在库存文件中进行一些特定的设置。
+安装OCR使用相同的过程,但需要在库存文件中进行一些特定的设置。
 安装文档包括库存文件可用的Ansible变量的全面列表。
 
 . 完成
@@ -101,7 +101,7 @@ xref:../install/configuring_inventory_file.adoc#install-config-configuring-inven
 +
 [IMPORTANT]
 ====
-要安装一个独立的OCR，您必须在 `[OSEv3:vars]` 部分的库存文件中设置 `deployment_subtype=registry`。
+要安装一个独立的OCR,您必须在 `[OSEv3:vars]` 部分的库存文件中设置 `deployment_subtype=registry`。
 ====
 +
 对于不同支持的系统拓扑使用以下示例库存文件:
@@ -116,11 +116,11 @@ etcd
 
 # 为所有OSEv3主机设置通用变量
 [OSEv3:vars]
-# SSH用户，该用户应该允许基于SSH的身份验证，而不需要密码ansible_ssh_user=root
+# SSH用户,该用户应该允许基于SSH的身份验证,而不需要密码ansible_ssh_user=root
 
 openshift_master_default_subdomain=apps.test.example.com
 
-# 如果ansible_ssh_user不是根用户，则必须将ansible_become设置为true。
+# 如果ansible_ssh_user不是根用户,则必须将ansible_become设置为true。
 #ansible_become=true
 
 openshift_deployment_type=openshift-enterprise
@@ -142,14 +142,14 @@ registry.example.com
 [nodes]
 registry.example.com openshift_node_group_name='node-config-all-in-one'
 ----
-<1> 设置 `deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
+<1> 设置 `deployment_subtype=registry`,以确保安装独立的OCR,而不是完整的{product-title}环境。
 <2> 允许在单个主机上调度注册表及其web控制台。
 +
 .Multiple masters (highly-available) stand-alone OpenShift Container Registry inventory file
 ----
-# 创建一个包含主、节点、etcd和lb组的OSEv3组。
+# 创建一个包含主,节点,etcd和lb组的OSEv3组。
 # lb组允许Ansible将HAProxy配置为负载平衡解决方案。
-# 如果您的负载平衡器是预先配置好的，请注释lb out。
+# 如果您的负载平衡器是预先配置好的,请注释lb out。
 [OSEv3:children]
 masters
 nodes
@@ -169,9 +169,9 @@ openshift_master_default_subdomain=apps.test.example.com
 #openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 
 # 带有可选负载平衡器的本机高可用性集群方法。
-# 如果没有定义lb组，安装程序假定已经预先配置了负载平衡器。对于安装，
-# openshift_master_cluster_hostname的值必须解析为负载均衡器，
-# 如果没有负载均衡器，则解析为清单中定义的一个或所有主机。
+# 如果没有定义lb组,安装程序假定已经预先配置了负载平衡器。对于安装,
+# openshift_master_cluster_hostname的值必须解析为负载均衡器,
+# 如果没有负载均衡器,则解析为清单中定义的一个或所有主机。
 openshift_master_cluster_method=native
 openshift_master_cluster_hostname=openshift-internal.example.com
 openshift_master_cluster_public_hostname=openshift-cluster.example.com
@@ -179,7 +179,7 @@ openshift_master_cluster_public_hostname=openshift-cluster.example.com
 # 应用更新的node-config-compute组默认值
 openshift_node_groups=[{'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true'], 'edits': [{'key': 'kubeletArguments.pods-per-core','value': ['20']}, {'key': 'kubeletArguments.max-pods','value': ['250']}, {'key': 'kubeletArguments.image-gc-high-threshold', 'value':['90']}, {'key': 'kubeletArguments.image-gc-low-threshold', 'value': ['80']}]}]
 
-# 在主机上启用ntp，以确保正确的故障转移
+# 在主机上启用ntp,以确保正确的故障转移
 openshift_clock_enabled=true
 
 # master主机组
@@ -198,13 +198,13 @@ etcd3.example.com
 [lb]
 lb.example.com
 
-# 节点的主机组，包括区域信息
+# 节点的主机组,包括区域信息
 [nodes]
 master[1:3].example.com openshift_node_group_name='node-config-master-infra'
 node1.example.com       openshift_node_group_name='node-config-compute'
 node2.example.com       openshift_node_group_name='node-config-compute'
 ----
-<1> 设置 `deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
+<1> 设置 `deployment_subtype=registry`,以确保安装独立的OCR,而不是完整的{product-title}环境。
 
 . 安装独立的OCR。这个过程类似于完整的
 xref:index.adoc#install-planning[集群安装]过程。
@@ -214,23 +214,23 @@ xref:index.adoc#install-planning[集群安装]过程。
 运行Ansible playbook的主机在库存文件中每个主机必须至少有75MiB的空闲内存。
 ====
 +
-.. 在部署新集群之前，请切换到集群目录并运行 *_prerequisites.yml_* 剧本:
+.. 在部署新集群之前,请切换到集群目录并运行 *_prerequisites.yml_* playbooks:
 +
 ----
 $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook  [-i /path/to/inventory] \ <1>
     playbooks/prerequisites.yml
 ----
-<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，请指定 `-i` 和库存文件的路径。
+<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中,请指定 `-i` 和库存文件的路径。
 +
-你只能运行这个剧本一次。
+你只能运行这个playbooks一次。
 
-.. 要启动安装，请切换到playbook目录并运行 *_deploy_cluster.yml_* playbook:
+.. 要启动安装,请切换到playbook目录并运行 *_deploy_cluster.yml_* playbook:
 +
 ----
 $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook  [-i /path/to/inventory] \ <1>
     playbooks/deploy_cluster.yml
 ----
-<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，
+<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中,
 请指定 `-i` 和库存文件的路径。

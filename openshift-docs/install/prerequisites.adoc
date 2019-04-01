@@ -27,7 +27,7 @@ ifdef::openshift-enterprise[]
 [[red-hat-subscription]]
 === Red Hat订阅
 您的Red Hat账户上必须有一个活动的{product-title}订阅。
-如果没有，请联系您的销售代表了解更多信息。
+如果没有,请联系您的销售代表了解更多信息。
 
 endif::[]
 
@@ -44,36 +44,36 @@ a|- 运行在公共或私有IaaS上的物理或虚拟系统或实例。
 ifdef::openshift-origin[]
 - 相应操作系统: Fedora 21, CentOS 7.4,
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/installation_guide/index[Red Hat Enterprise Linux (RHEL) 7.4或更高版本]
-使用"最小"安装选项和Extras通道中的最新包，或者
+使用"最小"安装选项和Extras通道中的最新包,或者
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/installation_and_configuration_guide/[RHEL原子主机]
 7.4.5或更高版本。
 endif::[]
 ifdef::openshift-enterprise[]
 - 相应操作系统:
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/installation_guide/index[Red Hat Enterprise Linux (RHEL) 7.4或更高版本]
-使用 "最小" 安装选项和Extras通道中的最新包，或者
+使用 "最小" 安装选项和Extras通道中的最新包,或者
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/installation_and_configuration_guide/[RHEL原子主机]7.4.5或更高版本。
 endif::[]
 - 最少4个vCPU(强烈建议增加)。
-- 至少16GB RAM(强烈建议增加内存，特别是如果etcd位于主机上)。
+- 至少16GB RAM(强烈建议增加内存,特别是如果etcd位于主机上)。
 - 包含*_/var/_*的文件系统至少40GB硬盘空间。image:redcircle-1.png[]
 - 包含*_/usr/local/bin/_*的文件系统的最小1 GB硬盘空间。
 - 包含系统临时目录的文件系统的最小1GB硬盘空间。image:redcircle-2.png[]
 - 主机与一个共同定位etcd需要至少4个核心。双核心系统无法工作。
 
 |xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[节点]
-a| * 物理或虚拟系统，或运行在公共或私有IaaS上的实例。
+a| * 物理或虚拟系统,或运行在公共或私有IaaS上的实例。
 ifdef::openshift-origin[]
 * 相应操作系统: Fedora 21, CentOS 7.4,
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/installation_guide/index[RHEL 7.4或更高版本]
-与 "最小" 安装选项，或者
+与 "最小" 安装选项,或者
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/installation_and_configuration_guide/[RHEL原子主机]
 7.4.5或更高版本。
 endif::[]
 ifdef::openshift-enterprise[]
 * 相应操作系统:
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html-single/installation_guide/index[RHEL 7.4或更高版本]
-与 "最小" 安装选项，或者
+与 "最小" 安装选项,或者
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/installation_and_configuration_guide/[RHEL原子主机]
 7.4.5或更高版本。
 endif::[]
@@ -83,25 +83,25 @@ endif::[]
 * 包含*_/var/_*的文件系统至少需要15GB的硬盘空间。image:redcircle-1.png[]
 * 包含*_/usr/local/bin/_*的文件系统的最小1GB硬盘空间
 * 包含系统临时目录的文件系统的最小1GB硬盘空间。image:redcircle-2.png[]
-* 为Docker的后端存储，每个运行容器的系统至少增加15 GB的未分配空间
+* 为Docker的后端存储,每个运行容器的系统至少增加15 GB的未分配空间
 请查看
 xref:host_preparation.adoc#configuring-docker-storage[配置Docker存储]. 
-根据节点上运行的容器的大小和数量，可能需要额外的空间。
+根据节点上运行的容器的大小和数量,可能需要额外的空间。
 
 |外部etcd节点
 a|* 至少20 GB硬盘空间的etcd数据。
 * 请查看
 link:https://github.com/coreos/etcd/blob/master/Documentation/op-guide/hardware.md#hardware-recommendations[CoreOS etcd文档的硬件推荐部分]
 了解如何正确设置etcd节点的大小。
-* 当前，{product-title}在etcd中存储映像、构建和部署元数据。必须定期执行
+* 当前,{product-title}在etcd中存储映像,构建和部署元数据。必须定期执行
 xref:../admin_guide/pruning_resources.adoc#admin-guide-pruning-resources[删除旧资源].
-如果您计划利用大量这些资源，请将etcd放在具有大量内存和快速SSD驱动器的机器上。
+如果您计划利用大量这些资源,请将etcd放在具有大量内存和快速SSD驱动器的机器上。
 
 |Ansible控制器
 |运行Ansible playbook的主机在目录中每个主机必须至少有75MiB的空闲内存。
 |===
-image:redcircle-1.png[] 要满足RHEL原子主机中的*_/var/_*文件系统大小要求，需要更改默认配置。
-有关配置的说明，请参见
+image:redcircle-1.png[] 要满足RHEL原子主机中的*_/var/_*文件系统大小要求,需要更改默认配置。
+有关配置的说明,请参见
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/managing_storage_with_docker_formatted_containers[使用docker格式的容器管理存储]
 这在安装期间或之后。
 
@@ -114,34 +114,34 @@ https://docs.python.org/2/library/tempfile.html#tempfile.tempdir[`*tempfile*`]
 {product-title}只支持x86_64架构的服务器。
 ====
 
-您必须为每个运行容器守护进程的系统配置存储。对于容器化安装，您需要在主服务器上存储。
-此外，默认情况下，web控制台在主机上的容器中运行，主机需要存储空间来运行web控制台。
-容器在节点上运行，因此节点总是需要存储。存储的大小取决于工作负载、容器的数量、
+您必须为每个运行容器守护进程的系统配置存储。对于容器化安装,您需要在主服务器上存储。
+此外,默认情况下,web控制台在主机上的容器中运行,主机需要存储空间来运行web控制台。
+容器在节点上运行,因此节点总是需要存储。存储的大小取决于工作负载,容器的数量,
 正在运行的容器的大小以及容器的存储需求。还必须配置存储以运行容器化etcd。
 
 === 生产级硬件要求
 
-测试或样本环境功能与最低要求。对于生产环境，适用以下建议:
+测试或样本环境功能与最低要求。对于生产环境,适用以下建议:
 
 主主机::
-在具有外部etcd的高度可用的{product-title}集群中，主主机需要满足最低要求，
-每个1000个pod有一个CPU内核和1.5GB内存。因此，在一个包含2000个pod的{product-title}集群中，
-主主机的推荐大小是至少需要2个CPU内核和16GBRAM，再加上2个CPU内核和3GBRAM，总共需要4个CPU内核和19GBRAM。
+在具有外部etcd的高度可用的{product-title}集群中,主主机需要满足最低要求,
+每个1000个pod有一个CPU内核和1.5GB内存。因此,在一个包含2000个pod的{product-title}集群中,
+主主机的推荐大小是至少需要2个CPU内核和16GBRAM,再加上2个CPU内核和3GBRAM,总共需要4个CPU内核和19GBRAM。
 
 请查看
-xref:../scaling_performance/host_practices.adoc#scaling-performance-capacity-host-practices-master[推荐{product-title}主机的实践]，用于性能指导。
+xref:../scaling_performance/host_practices.adoc#scaling-performance-capacity-host-practices-master[推荐{product-title}主机的实践],用于性能指导。
 
 节点主机::
-节点主机的大小取决于其工作负载的预期大小。作为一个{product-title}集群管理员，您需要计算预期的工作负载，
-并添加大约10%的开销。对于生产环境，分配足够的资源，使节点主机故障不会影响您的最大容量。
+节点主机的大小取决于其工作负载的预期大小。作为一个{product-title}集群管理员,您需要计算预期的工作负载,
+并添加大约10%的开销。对于生产环境,分配足够的资源,使节点主机故障不会影响您的最大容量。
 
-有关更多信息，请参考
+有关更多信息,请参考
 xref:index.adoc#sizing[分级考虑]和
 xref:../scaling_performance/cluster_limits.adoc#scaling-performance-cluster-limits[集群限制].
 
 [IMPORTANT]
 ====
-过度订阅节点上的物理资源会影响资源，从而保证Kubernetes
+过度订阅节点上的物理资源会影响资源,从而保证Kubernetes
 调度程序在pod放置期间执行。了解你可以采取什么措施
 xref:../admin_guide/overcommit.adoc#disabling-swap-memory[避免内存交换]。
 ====
@@ -156,38 +156,38 @@ xref:../admin_guide/overcommit.adoc#disabling-swap-memory[避免内存交换]。
 |目录|笔记|定型|预期增长
 
 |*_/var/lib/openshift_*
-|只有在单一主模式下采用etcd存储，并且etcd嵌入到 *atomic-openshift-master* 进程中。
+|只有在单一主模式下采用etcd存储,并且etcd嵌入到 *atomic-openshift-master* 进程中。
 |小于10GB。
 |会随着环境的变化而缓慢的增长。只存储元数据。
 
 |*_/var/lib/etcd_*
-|当etcd处于多主模式或由管理员独立制作时，用于etcd存储。
+|当etcd处于多主模式或由管理员独立制作时,用于etcd存储。
 |小于20 GB。
 |会随着环境的变化而缓慢的增长。只存储元数据。
 
 |*_/var/lib/docker_*
-|当运行时为docker时，这是挂载点。用于活动容器运行时的存储(包括pods)和本地映像的存储(不用于注册表存储)。挂载点应该由docker-storage管理，而不是手动管理。
-|对于内存为16GB的节点，内存为50GB。
+|当运行时为docker时,这是挂载点。用于活动容器运行时的存储(包括pods)和本地映像的存储(不用于注册表存储)。挂载点应该由docker-storage管理,而不是手动管理。
+|对于内存为16GB的节点,内存为50GB。
 
-每增加8 GB内存，就增加20-25 GB。
+每增加8 GB内存,就增加20-25 GB。
 |增长受到运行容器容量的限制。
 
 |*_/var/lib/containers_*
-|当运行时为crio时，这是挂载点。用于活动容器运行时的存储(包括pods)和本地映像的存储(不用于注册表存储)。
-|对于内存为16GB的节点，内存为50GB。
+|当运行时为crio时,这是挂载点。用于活动容器运行时的存储(包括pods)和本地映像的存储(不用于注册表存储)。
+|对于内存为16GB的节点,内存为50GB。
 
-每增加8 GB内存，就增加20-25 GB。
+每增加8 GB内存,就增加20-25 GB。
 |增长受到运行容器容量的限制
 
 |*_/var/lib/origin/openshift.local.volumes_*
-|临时卷存储。这包括在运行时挂载到容器中的任何外部内容。包括环境变量、kube秘密和不受持久存储pv支持的数据卷。
+|临时卷存储。这包括在运行时挂载到容器中的任何外部内容。包括环境变量,kube秘密和不受持久存储pv支持的数据卷。
 |变化
-|如果需要存储的pod使用持久卷，则最小值。如果使用临时存储，这种情况会迅速增加。
+|如果需要存储的pod使用持久卷,则最小值。如果使用临时存储,这种情况会迅速增加。
 
 |*_/var/log_*
 |所有组件的日志文件。
 |10至30GB。
-|日志文件可以快速增长;大小可以通过增长磁盘来管理，也可以使用日志旋转来管理。
+|日志文件可以快速增长;大小可以通过增长磁盘来管理,也可以使用日志旋转来管理。
 
 |===
 
@@ -199,7 +199,7 @@ include::install_config/persistent_storage/topics/glusterfs_prereqs_hardware.ado
 [[hardware-monitoring]]
 === 监控硬件需求
 
-监视堆栈附加了额外的系统资源需求，并且默认安装。请参考
+监视堆栈附加了额外的系统资源需求,并且默认安装。请参考
 xref:../scaling_performance/scaling_cluster_monitoring.adoc#cluster-monitoring-recommendations-for-OCP[计算资源推荐]
 和
 xref:../install_config/prometheus_cluster_monitoring.adoc#overview[集群监控文档].
@@ -207,8 +207,8 @@ xref:../install_config/prometheus_cluster_monitoring.adoc#overview[集群监控�
 [[prereq-selinux]]
 === SELinux的需求
 
-在安装{product-title}之前，必须在所有服务器上启用安全增强的Linux (SELinux)，
-否则安装程序将失败，在 *_/etc/selinux/config_* 文件中配置 `SELINUX=enforcing` 和 `SELINUXTYPE=targeted` ：
+在安装{product-title}之前,必须在所有服务器上启用安全增强的Linux (SELinux),
+否则安装程序将失败,在 *_/etc/selinux/config_* 文件中配置 `SELINUX=enforcing` 和 `SELINUXTYPE=targeted` ：
 
 ----
 # 这个文件控制系统上SELinux的状态。
@@ -227,35 +227,35 @@ SELINUXTYPE=targeted
 [[configuring-core-usage]]
 === 可选: 配置核心用法
 
-默认情况下，{product-title}master和节点使用它们所运行的系统中的所有可用内核。
-您可以通过设置 `*GOMAXPROCS*` 环境变量来选择要使用的{product-title}内核的数量，有关
-更多信息，包括 `*GOMAXPROCS*` 环境变量如何工作，请参见:
+默认情况下,{product-title}master和节点使用它们所运行的系统中的所有可用内核。
+您可以通过设置 `*GOMAXPROCS*` 环境变量来选择要使用的{product-title}内核的数量,有关
+更多信息,包括 `*GOMAXPROCS*` 环境变量如何工作,请参见:
 link:https://golang.org/pkg/runtime/#GOMAXPROCS[Go 语言文档]。
 
-例如，在启动服务器之前运行以下代码，使{product-title}只在一个内核上运行:
+例如,在启动服务器之前运行以下代码,使{product-title}只在一个内核上运行:
 
 ----
 # export GOMAXPROCS=1
 ----
 
 ifdef::openshift-origin[]
-或者，如果您计划获取
-_started/administrators.adoc#running-in-a-docker-container[在容器中运行OpenShift]，
-当启动服务器时，在 `docker run` 命令中添加 `-e GOMAXPROCS=1`。 
+或者,如果您计划获取
+_started/administrators.adoc#running-in-a-docker-container[在容器中运行OpenShift],
+当启动服务器时,在 `docker run` 命令中添加 `-e GOMAXPROCS=1`。 
 
 endif::[]
 
 [[install-prerequisites-overlayfs]]
 === 可选: 使用OverlayFS
 
-OverlayFS是一个联合文件系统，允许您将一个文件系统覆盖在另一个文件系统之上。
+OverlayFS是一个联合文件系统,允许您将一个文件系统覆盖在另一个文件系统之上。
 
-从Red Hat Enterprise Linux 7.4开始，您可以选择配置您的{product-title}
-环境来使用OverlayFS。除了旧的 `overlay2` 驱动程序外，
-`overlay2` 图形驱动程序也得到了完全支持。然而，Red Hat推荐使用
-`overlay2` 而不是 `overlay`，因为它的速度和实现简单。
+从Red Hat Enterprise Linux 7.4开始,您可以选择配置您的{product-title}
+环境来使用OverlayFS。除了旧的 `overlay2` 驱动程序外,
+`overlay2` 图形驱动程序也得到了完全支持。然而,Red Hat推荐使用
+`overlay2` 而不是 `overlay`,因为它的速度和实现简单。
 
-有关如何操作的说明，请参阅原子主机文档
+有关如何操作的说明,请参阅原子主机文档
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/managing_containers/#using_the_overlay_graph_driver[叠加图形驱动程序]
 为Docker服务启用 `overlay2` 图形驱动程序。
 
@@ -263,23 +263,23 @@ link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atom
 === 安全警告
 
 // tag::container-image-security-warning[]
-{product-title}在集群中的主机上运行容器，在某些情况下，例如构建操作和注册中心服务，
-它使用特权容器来运行容器。此外，这些容器访问主机的 `Docker守护进程` 并执行 `Docker构建`
-和 `Docker推送` 操作。因此，集群管理员必须意识到在任意映像上执行 `docker run` 操作所带来
-的固有安全风险，因为它们可以有效地进行根访问。这与`docker构建`操作特别相关。
+{product-title}在集群中的主机上运行容器,在某些情况下,例如构建操作和注册中心服务,
+它使用特权容器来运行容器。此外,这些容器访问主机的 `Docker守护进程` 并执行 `Docker构建`
+和 `Docker推送` 操作。因此,集群管理员必须意识到在任意映像上执行 `docker run` 操作所带来
+的固有安全风险,因为它们可以有效地进行根访问。这与`docker构建`操作特别相关。
 
-可以通过为节点分配特定的构建来限制对有害容器的暴露，从而将任何暴露限制在这些节点上。
-为此，请查看
+可以通过为节点分配特定的构建来限制对有害容器的暴露,从而将任何暴露限制在这些节点上。
+为此,请查看
 xref:../dev_guide/builds/advanced_build_operations.adoc#dev-guide-assigning-builds-to-nodes[将构建分配给特定的节点]开发人员指南部分。 
-相对于集群管理员，请参考
+相对于集群管理员,请参考
 xref:../install_config/build_defaults_overrides.adoc#overview[配置全局构建默认值和覆盖]主题。
 
 您还可以使用
 xref:../architecture/additional_concepts/authorization.adoc#security-context-constraints[安全上下文约束]
-来控制pod可以执行的操作和它能够访问的内容。有关如何在Dockerfile中使用 *USER* 运行图像的说明，请参见
+来控制pod可以执行的操作和它能够访问的内容。有关如何在Dockerfile中使用 *USER* 运行图像的说明,请参见
 xref:../admin_guide/manage_scc.adoc#how-do-i[管理安全上下文约束] (需要具有 *集群管理* 特权的用户)。
 
-有关更多信息，请参阅以下文章:
+有关更多信息,请参阅以下文章:
 
 - http://opensource.com/business/14/7/docker-security-selinux
 - https://docs.docker.com/engine/security/security/
@@ -288,21 +288,21 @@ xref:../admin_guide/manage_scc.adoc#how-do-i[管理安全上下文约束] (需�
 [[envirornment-requirements]]
 == 环境的要求
 
-下面的部分定义了包含{product-title}配置的环境的需求。这包括网络考虑因素和对外部服务的访问，
-如Git存储库访问、存储和云基础设施提供者。
+下面的部分定义了包含{product-title}配置的环境的需求。这包括网络考虑因素和对外部服务的访问,
+如Git存储库访问,存储和云基础设施提供者。
 
 [[prereq-dns]]
 === DNS需求
 
-{product-title}要求环境中有一个功能齐全的DNS服务器。理想情况下，这是一个运行DNS软件的单独主机，
+{product-title}要求环境中有一个功能齐全的DNS服务器。理想情况下,这是一个运行DNS软件的单独主机,
 可以为平台上运行的主机和容器提供名称解析。
 
 [IMPORTANT]
 在每个主机的 *_/etc/hosts_* 文件中添加条目是不够的。此文件不会复制到平台上运行的容器中。
 
-{product-title}的关键组件在容器内运行，并使用以下过程进行名称解析:
+{product-title}的关键组件在容器内运行,并使用以下过程进行名称解析:
 
-. 默认情况下，容器从它们的主机接收它们的DNS配置文件(*_/etc/resolv.conf_*)。
+. 默认情况下,容器从它们的主机接收它们的DNS配置文件(*_/etc/resolv.conf_*)。
 
 . {product-title}然后将pod的第一个名称服务器设置为节点的IP地址。
 
@@ -313,15 +313,15 @@ endif::[]
 ifdef::openshift-origin[]
 1.2,
 endif::[]
-*dnsmasq* 在所有主节点和节点上自动配置。pods使用节点作为它们的DNS，节点转发请求。默认情况下，
-节点上的 *dnsmasq* 被配置为监听端口53，因此节点不能运行任何其他类型的DNS应用程序。
+*dnsmasq* 在所有主节点和节点上自动配置。pods使用节点作为它们的DNS,节点转发请求。默认情况下,
+节点上的 *dnsmasq* 被配置为监听端口53,因此节点不能运行任何其他类型的DNS应用程序。
 
 [NOTE]
 ====
 包括::install/prerequisites.adoc[tag=networkmanager]
 
-类似地，如果在网络脚本中将 `PEERDNS` 参数设置为 `no`，例如 *_/etc/sysconfig/network-scripts/ifcfg-em1_*, 
-则不会生成dnsmasq文件，并且Ansible安装将失败，确保 `PEERDNS` 设置为 `yes`。
+类似地,如果在网络脚本中将 `PEERDNS` 参数设置为 `no`,例如 *_/etc/sysconfig/network-scripts/ifcfg-em1_*, 
+则不会生成dnsmasq文件,并且Ansible安装将失败,确保 `PEERDNS` 设置为 `yes`。
 ====
 
 下面是DNS记录的一个例子:
@@ -333,11 +333,11 @@ node1      A   10.64.33.101
 node2      A   10.64.33.102
 ----
 
-如果你没有一个正常运作的DNS环境，你可能会遇到以下情况:
+如果你没有一个正常运作的DNS环境,你可能会遇到以下情况:
 
 - 通过引用基于Ansible的脚本安装产品
-- 基础设施容器的部署(注册表、路由器)
-- 访问{product-title} web控制台，因为不能仅通过IP地址访问它
+- 基础设施容器的部署(注册表,路由器)
+- 访问{product-title} web控制台,因为不能仅通过IP地址访问它
 
 
 [[dns-config-prereq]]
@@ -346,9 +346,9 @@ node2      A   10.64.33.102
 确保环境中的每个主机都配置为从DNS服务器解析主机名。
 主机DNS解析的配置取决于是否启用DHCP。如果DHCP是:
 
-- 禁用，然后将网络接口配置为静态，并将DNS名称服务器添加到NetworkManager。
+- 禁用,然后将网络接口配置为静态,并将DNS名称服务器添加到NetworkManager。
 
-- 启用后，NetworkManager分派脚本将根据DHCP配置自动配置DNS。
+- 启用后,NetworkManager分派脚本将根据DHCP配置自动配置DNS。
 
 验证你的DNS服务器可以解析主机:
 
@@ -362,7 +362,7 @@ nameserver 10.64.33.1
 # nameserver updated by /etc/NetworkManager/dispatcher.d/99-origin-dns.sh
 ----
 +
-在本例中，10.64.33.1是我们DNS服务器的地址。
+在本例中,10.64.33.1是我们DNS服务器的地址。
 
 . 测试 *_/etc/resolv.conf_* 中列出的DNS服务器能够将主机名解析为您的{product-title}环境中所有主机和节点的IP地址:
 +
@@ -382,12 +382,12 @@ $ dig node1.example.com @10.64.33.1 +short
 [[wildcard-dns-prereq]]
 ==== 配置DNS通配符
 
-可选地，为路由器配置一个通配符，以便在添加新路由时不需要更新DNS配置。
+可选地,为路由器配置一个通配符,以便在添加新路由时不需要更新DNS配置。
 
 DNS的通配符最终必须解析为{product-title}
 xref:../architecture/networking/routes.adoc#routers[路线]的IP地址。
 
-例如，为 *cloudapps* 创建一个通配符DNS条目，该条目具有较低的生存时间值，
+例如,为 *cloudapps* 创建一个通配符DNS条目,该条目具有较低的生存时间值,
 并指向将部署路由器的主机的公共IP地址:
 
 ----
@@ -396,20 +396,20 @@ xref:../architecture/networking/routes.adoc#routers[路线]的IP地址。
 
 [WARNING]
 ====
-在你每个节点主机上 *_/etc/resolv.conf_* 文件，确保具有通配符条目的DNS服务器不作为名称服务器列出，
+在你每个节点主机上 *_/etc/resolv.conf_* 文件,确保具有通配符条目的DNS服务器不作为名称服务器列出,
 或者在搜索列表中不列出通配符域。
-否则，由{product-title}管理的容器可能无法正确解析主机名。
+否则,由{product-title}管理的容器可能无法正确解析主机名。
 ====
 
 [[node-hostnames-prereq]]
 ==== 配置节点主机名
 
-在设置不与云提供商集成的集群时，必须正确设置节点的主机名。每个节点的主机名必须是可解析的，
+在设置不与云提供商集成的集群时,必须正确设置节点的主机名。每个节点的主机名必须是可解析的,
 并且每个节点必须能够到达彼此的节点。
 
 确认一个节点可以到达另一个节点:
 
-. 在一个节点上，获取主机名:
+. 在一个节点上,获取主机名:
 +
 ----
 $ hostname
@@ -417,7 +417,7 @@ $ hostname
 master-1.example.com
 ----
 
-. 在同一节点上，获得主机的全限定域名:
+. 在同一节点上,获得主机的全限定域名:
 +
 ----
 $ hostname -f
@@ -425,7 +425,7 @@ $ hostname -f
 master-1.example.com
 ----
 
-. 从另一个节点，确认可以到达第一个节点:
+. 从另一个节点,确认可以到达第一个节点:
 +
 ----
 $ ping master-1.example.com -c 1
@@ -434,7 +434,7 @@ PING master-1.example.com (172.16.122.9) 56(84)字节的数据。
 来自master-1.example.com (172.16.122.9)的64字节: icmp_seq=1 ttl=64 time=0.319 ms
 
 --- master-1.example.com ping statistics ---
-传输1个包，接收1个包，0%包丢失，时间0ms
+传输1个包,接收1个包,0%包丢失,时间0ms
 rtt min/avg/max/mdev = 0.319/0.319/0.319/0.000 ms
 ----
 
@@ -442,27 +442,27 @@ rtt min/avg/max/mdev = 0.319/0.319/0.319/0.000 ms
 === 网络访问需求
 
 主主机和节点主机之间必须存在共享网络。如果您计划配置
-xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#high-availability-masters[多主机用于高可用性]使用标准集群安装过程，
+xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#high-availability-masters[多主机用于高可用性]使用标准集群安装过程,
 您还必须选择一个IP来配置为您的
 xref:../admin_guide/high_availability.adoc#virtual-ips[虚拟IP] (VIP)
 在安装过程中使用。
-您选择的IP必须在所有节点之间可路由，如果使用FQDN进行配置，则必须在所有节点上解析它。
+您选择的IP必须在所有节点之间可路由,如果使用FQDN进行配置,则必须在所有节点上解析它。
 
 [[prereq-networkmanager]]
 ==== NetworkManager
 
 //tag::networkmanager[]
-为了使用DNS IP地址填充 *dnsmasq*，节点上需要 *NetworkManager* 程序，
+为了使用DNS IP地址填充 *dnsmasq*,节点上需要 *NetworkManager* 程序,
 它为系统自动连接到网络提供检测和配置。
 
-`NM_CONTROLLED` 默认设置为 `yes`。如果 `NM_CONTROLLED` 设置为 `no`，
-则NetworkManager分派脚本不会创建相关的 *_origin-upstream-dns.conf_* dnsmasq文件，您必须手动配置dnsmasq。
+`NM_CONTROLLED` 默认设置为 `yes`。如果 `NM_CONTROLLED` 设置为 `no`,
+则NetworkManager分派脚本不会创建相关的 *_origin-upstream-dns.conf_* dnsmasq文件,您必须手动配置dnsmasq。
 //end::networkmanager[]
 
 [[install-config-network-using-firewalld]]
 ==== 将firewalld配置为防火墙
 
-虽然iptables是默认的防火墙，但是对于新安装，建议使用firewalld。
+虽然iptables是默认的防火墙,但是对于新安装,建议使用firewalld。
 您可以在
 xref:configuring_inventory_file.adoc#advanced-install-configuring-firewalls[Ansible库存文件]
 中设置 `os_firewall_use_firewalld=true`。
@@ -472,11 +472,11 @@ xref:configuring_inventory_file.adoc#advanced-install-configuring-firewalls[Ansi
 os_firewall_use_firewalld=True
 ----
 
-将此变量设置为 `true` 将打开所需的端口并将规则添加到默认区域，从而确保正确配置了firewalld。
+将此变量设置为 `true` 将打开所需的端口并将规则添加到默认区域,从而确保正确配置了firewalld。
 
 [NOTE]
 ====
-使用firewalld默认配置附带有限的配置选项，并且不能被覆盖。例如，虽然可以在多个区域中设置具有接口的存储网络，
+使用firewalld默认配置附带有限的配置选项,并且不能被覆盖。例如,虽然可以在多个区域中设置具有接口的存储网络,
 但是节点通信的接口必须位于缺省区域中。
 ====
 
@@ -484,13 +484,13 @@ os_firewall_use_firewalld=True
 [[required-ports]]
 ==== 所需的港口
 
-在使用的每台主机上，{product-title}安装会自动创建一组内部防火墙规则
-xref:../admin_guide/iptables.adoc#overview[iptables]. 但是，
-如果您的网络配置使用外部防火墙(如基于硬件的防火墙)，
+在使用的每台主机上,{product-title}安装会自动创建一组内部防火墙规则
+xref:../admin_guide/iptables.adoc#overview[iptables]. 但是,
+如果您的网络配置使用外部防火墙(如基于硬件的防火墙),
 则必须确保基础设施组件能够通过充当某些流程或服务的通信端点的特定端口彼此通信。
 
-确保在您的网络上打开{product-title}所需的下列端口，并配置为允许主机之间的访问。
-有些端口是可选的，这取决于您的配置和使用。
+确保在您的网络上打开{product-title}所需的下列端口,并配置为允许主机之间的访问。
+有些端口是可选的,这取决于您的配置和使用。
 
 .节点对节点
 [cols='2,1,8']
@@ -512,7 +512,7 @@ endif::[]
 ifdef::openshift-enterprise[]
 3.2之前的安装或升级到3.2的环境使用端口53。
 endif::[]
-默认情况下，新安装将使用8053，以便可以配置 *dnsmasq*。
+默认情况下,新安装将使用8053,以便可以配置 *dnsmasq*。
 
 | *4789*
 |UDP
@@ -520,7 +520,7 @@ endif::[]
 
 | *443* 或 *8443* 
 |TCP
-|需要节点主机与主API通信，需要节点主机发布状态、接收任务等等。
+|需要节点主机与主API通信,需要节点主机发布状态,接收任务等等。
 |===
 
 .主节点
@@ -536,7 +536,7 @@ endif::[]
 
 | *10010*
 |TCP
-|如果使用CRI-O，打开这个端口允许 `oc exec` 和 `oc rsh` 操作。
+|如果使用CRI-O,打开这个端口允许 `oc exec` 和 `oc rsh` 操作。
 |===
 
 .主对主
@@ -551,7 +551,7 @@ endif::[]
 ifdef::openshift-enterprise[]
 3.2之前的安装或升级到3.2的环境使用端口53。
 endif::[]
-默认情况下，新安装将使用8053，以便可以配置 *dnsmasq*。
+默认情况下,新安装将使用8053,以便可以配置 *dnsmasq*。
 
 | *2049*
 |TCP/UDP
@@ -563,7 +563,7 @@ endif::[]
 
 | *2380*
 |TCP
-|当使用独立etcd(集群)时，etcd要求在主机之间打开此端口，以便进行领袖选举和对等连接。
+|当使用独立etcd(集群)时,etcd要求在主机之间打开此端口,以便进行领袖选举和对等连接。
 
 | *4789*
 |UDP
@@ -576,7 +576,7 @@ endif::[]
 |===
 | *9000*
 |TCP
-|如果选择 `*本机*` HA方法，则可选允许访问HAProxy统计信息页面。
+|如果选择 `*本机*` HA方法,则可选允许访问HAProxy统计信息页面。
 
 |===
 
@@ -586,7 +586,7 @@ endif::[]
 |===
 | *443* or *8443*
 |TCP
-|需要节点主机与主API通信，需要节点主机发布状态、接收任务等等。
+|需要节点主机与主API通信,需要节点主机发布状态,接收任务等等。
 
 |*8444*
 |TCP
@@ -609,20 +609,20 @@ endif::[]
 ifdef::openshift-enterprise[]
 3.2之前的安装或升级到3.2的环境使用端口53。
 endif::[]
-默认情况下，新安装将使用8053，以便可以配置 *dnsmasq*。只需要在主主机上打开内部。
+默认情况下,新安装将使用8053,以便可以配置 *dnsmasq*。只需要在主主机上打开内部。
 
 | *80* or *443*
 |TCP
-| 用于路由器的HTTP/HTTPS。需要在节点主机上对外打开，特别是在运行路由器的节点上。
+| 用于路由器的HTTP/HTTPS。需要在节点主机上对外打开,特别是在运行路由器的节点上。
 
 | *1936*
 |TCP
-| (*可选*)在运行模板路由器访问统计数据时需要打开。可以在外部或内部打开连接，这取决于您是否希望公开表示统计数据。
-可能需要额外的配置才能打开。有关更多信息，请参阅下面的Notes部分。
+| (*可选*)在运行模板路由器访问统计数据时需要打开。可以在外部或内部打开连接,这取决于您是否希望公开表示统计数据。
+可能需要额外的配置才能打开。有关更多信息,请参阅下面的Notes部分。
 
 | *2379* and *2380*
 |TCP
-| 供独立etcd使用。只需要在主主机上打开内部。*2379* 用于服务器-客户机连接。*2380* 用于服务器-服务器连接，
+| 供独立etcd使用。只需要在主主机上打开内部。*2379* 用于服务器-客户机连接。*2380* 用于服务器-服务器连接,
 只有在集群etcd时才需要。
 
 | *4789*
@@ -631,7 +631,7 @@ endif::[]
 
 | *8443*
 |TCP
-| 供{product-title} web控制台使用，与API服务器共享。
+| 供{product-title} web控制台使用,与API服务器共享。
 
 | *10250*
 |TCP
@@ -640,12 +640,12 @@ endif::[]
 
 *Notes*
 
-* 在上面的例子中，端口 *4789* 用于用户数据报协议(UDP)。
-* 当部署使用SDN时，pod网络通过服务代理访问，除非它从部署注册表的相同节点访问注册表。
-* {product-title}无法通过SDN接收内部DNS。对于非云部署，这将默认为与主主机上的默认路由关联的IP地址。
-对于云部署，它将默认使用与云元数据定义的第一个内部接口相关联的IP地址。
-* 主主机使用端口 *10250* 到达节点，不经过SDN。它依赖于部署的目标主机，并使用 `*openshift_public_hostname*` 的计算值。
-* 由于您的iptables规则，端口 *1936* 仍然无法访问。使用以下配置iptables来打开 *1936*:
+* 在上面的例子中,端口 *4789* 用于用户数据报协议(UDP)。
+* 当部署使用SDN时,pod网络通过服务代理访问,除非它从部署注册表的相同节点访问注册表。
+* {product-title}无法通过SDN接收内部DNS。对于非云部署,这将默认为与主主机上的默认路由关联的IP地址。
+对于云部署,它将默认使用与云元数据定义的第一个内部接口相关联的IP地址。
+* 主主机使用端口 *10250* 到达节点,不经过SDN。它依赖于部署的目标主机,并使用 `*openshift_public_hostname*` 的计算值。
+* 由于您的iptables规则,端口 *1936* 仍然无法访问。使用以下配置iptables来打开 *1936*:
 +
 ----
 # iptables -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp \
@@ -657,12 +657,12 @@ endif::[]
 |===
 | *9200*
 |TCP
-|对于Elasticsearch API使用。需要在任何基础设施节点上在内部打开，以便Kibana能够检索日志以供显示。它可以从外部打开，
+|对于Elasticsearch API使用。需要在任何基础设施节点上在内部打开,以便Kibana能够检索日志以供显示。它可以从外部打开,
 通过路径直接访问Elasticsearch。可以使用 `oc expose` 创建路由。
 
 | *9300*
 |TCP
-|用于集群间的弹性搜索。要求在任何基础设施节点上都是内部开放的，以便Elasticsearch集群的成员可以彼此通信。
+|用于集群间的弹性搜索。要求在任何基础设施节点上都是内部开放的,以便Elasticsearch集群的成员可以彼此通信。
 |===
 
 [[prereq-persistent-storage]]
@@ -671,7 +671,7 @@ endif::[]
 Kubernetes的
 xref:../architecture/additional_concepts/storage.adoc#architecture-additional-concepts-storage[持久卷]
 框架允许您使用环境中可用的网络存储为{product-title}集群提供持久性存储。
-这可以在完成初始的{product-title}安装之后根据应用程序的需要完成，使用户可以在不了解底层基础设施的情况下请求这些资源。
+这可以在完成初始的{product-title}安装之后根据应用程序的需要完成,使用户可以在不了解底层基础设施的情况下请求这些资源。
 
 配置集群指南为集群管理员提供了使用持久性存储提供{product-title}集群的使用
 xref:../install_config/persistent_storage/persistent_storage_nfs.adoc#install-config-persistent-storage-persistent-storage-nfs[NFS],
@@ -685,19 +685,19 @@ xref:../install_config/persistent_storage/persistent_storage_iscsi.adoc#install-
 [[prereq-cloud-provider-considerations]]
 === 云提供商的考虑
 
-如果在云提供商上安装{product-title}，需要考虑一些方面。
+如果在云提供商上安装{product-title},需要考虑一些方面。
 
-* 对于Amazon Web服务，请参见
+* 对于Amazon Web服务,请参见
 xref:../install_config/configuring_aws.adoc#configuring-aws-permissions[权限]和
 xref:../install_config/configuring_aws.adoc#configuring-a-security-group-aws[配置安全组]部分。
-* 对于OpenStack，请参见
+* 对于OpenStack,请参见
 xref:../install_config/configuring_openstack.adoc#configuring-openstack-permissions[权限]和
 xref:../install_config/configuring_openstack.adoc#configuring-a-security-group-openstack[配置安全组]部分。
 
 [[overriding-detected-ip-addresses-host-names]]
 ==== 覆盖检测到的IP地址和主机名
 
-一些部署要求用户覆盖检测到的主机名和主机的IP地址。要查看默认值，请切换到playbook目录并运行 `*openshift_facts*` 剧本:
+一些部署要求用户覆盖检测到的主机名和主机的IP地址。要查看默认值,请切换到playbook目录并运行 `*openshift_facts*` playbooks:
 
 ----
 $ cd /usr/share/ansible/openshift-ansible
@@ -707,12 +707,12 @@ $ ansible-playbook  [-i /path/to/inventory] \
 
 [IMPORTANT]
 ====
-对于Amazon Web服务，请参见
+对于Amazon Web服务,请参见
 xref:../install_config/configuring_aws.adoc#overriding-detected-ip-addresses-host-names-aws[覆盖检测到的IP地址和主机名]部分。
 ====
 
 
-现在，验证检测到的公共设置。如果它们不是您所期望的，您可以覆盖它们。
+现在,验证检测到的公共设置。如果它们不是您所期望的,您可以覆盖它们。
 
 xref:../install/configuring_inventory_file.adoc#configuring-ansible[配置您的库存文件]
 主题将更详细地讨论可用的Ansible变量。
@@ -736,14 +736,14 @@ a| - 与实例关联的外部可访问的IP地址。
 - `*openshift_public_ip*`覆盖。
 
 |`*use_openshift_sdn*`
-a| - 除了GCE，所有云都设置为 `true`。
+a| - 除了GCE,所有云都设置为 `true`。
 - `*openshift_use_openshift_sdn*` 覆盖。
 
 |===
 
 ==== 云提供商的安装后配置
 
-按照安装过程，您可以为以下配置{product-title}：
+按照安装过程,您可以为以下配置{product-title}：
 xref:../install_config/configuring_aws.adoc#install-config-configuring-aws[AWS],
 xref:../install_config/configuring_openstack.adoc#install-config-configuring-openstack[OpenStack], 或
 xref:../install_config/configuring_gce.adoc#install-config-configuring-gce[GCE].

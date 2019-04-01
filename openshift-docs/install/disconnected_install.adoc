@@ -15,13 +15,13 @@
 
 toc::[]
 
-数据中心的某些部分可能频繁无法访问网络，甚至无法通过代理服务器访问网络。
-您仍然可以在这些环境中安装{product-title}，
-但是您必须下载所需的软件和映像，并将它们提供给断开连接的环境。
+数据中心的某些部分可能频繁无法访问网络,甚至无法通过代理服务器访问网络。
+您仍然可以在这些环境中安装{product-title},
+但是您必须下载所需的软件和映像,并将它们提供给断开连接的环境。
 
-安装组件对节点主机可用之后，按照标准安装步骤安装{product-title}。
+安装组件对节点主机可用之后,按照标准安装步骤安装{product-title}。
 
-在安装{product-title}之后，必须使您提取的S2I构建器映像对集群可用。
+在安装{product-title}之后,必须使您提取的S2I构建器映像对集群可用。
 
 [[disconnected-prerequisites]]
 == 先决条件
@@ -30,39 +30,40 @@ toc::[]
 xref:../architecture/index.adoc#architecture-index[{product-title}的总体体系结构]
 并计划您的环境拓扑。
 
-* 获得一个Red Hat Enterprise Linux (RHEL)7服务器，该服务器具有根访问权限，可以访问网络和至少110GB的磁盘空间。
+* 获得一个Red Hat Enterprise Linux (RHEL)7服务器,该服务器具有根访问权限,可以访问网络和至少110GB的磁盘空间。
 您将所需的软件存储库和容器映像下载到此计算机。
 
-* 计划在断开连接的环境中维护web服务器，以提供镜像存储库。
+* 计划在断开连接的环境中维护web服务器,以提供镜像存储库。
 您可以通过网络或在断开连接的部署中使用物理媒体将存储库从网络连接的主机复制到此Web服务器。
 
-* 提供源代码控制存储库。安装之后，节点必须访问源代码存储库中的源代码，比如Git。
+* 提供源代码控制存储库。安装之后,节点必须访问源代码存储库中的源代码,比如Git。
 +
-当在{product-title}中构建应用程序时，您的构建可能包含外部依赖项，例如用于Ruby应用程序的Maven存储库或Gem文件。
+当在{product-title}中构建应用程序时,您的构建可能包含外部依赖项,例如用于Ruby应用程序的Maven存储库或Gem文件。
 
 * 在断开连接的环境中提供注册表。选项包括:
 ** 安装一个
 xref:../install/stand_alone_registry.adoc#install-config-installing-stand-alone-registry[独立{product-title}注册表]。
-** 使用一个 https://access.redhat.com/documentation/en/red-hat-satellite/[Red Hat Satellite6.1]充当容器映像注册表的服务器。
+** 使用一个
+link:https://access.redhat.com/documentation/en/red-hat-satellite/[Red Hat Satellite6.1]充当容器映像注册表的服务器。
 ////
-由于这个原因，也因为它们可能需要某些标记，{product-title}提供的许多
+由于这个原因,也因为它们可能需要某些标记,{product-title}提供的许多
 Quickstart模板可能无法在断开连接的环境中工作。
-然而，虽然Red Hat容器映像默认情况下尝试访问外部存储库，但是您可以配置
-{product-title}来使用您自己的内部存储库。出于本文档的目的，我们假设这样的内部存储库已经存在，
+然而,虽然Red Hat容器映像默认情况下尝试访问外部存储库,但是您可以配置
+{product-title}来使用您自己的内部存储库。出于本文档的目的,我们假设这样的内部存储库已经存在,
 并且可以从{product-title}节点主机访问。安装这样的存储库超出了本文档的范围。
 ////
 
 [[disconnected-required-software-and-components]]
 == 获取所需的软件包和图像
 
-在断开连接的环境中安装{product-title}之前，获取所需的映像和组件并将它们存储在存储库中。
+在断开连接的环境中安装{product-title}之前,获取所需的映像和组件并将它们存储在存储库中。
 
 [[disconnected-syncing-repos]]
 ===  获取{product-title}包
 
-在具有互联网连接的RHEL 7服务器上，同步存储库:
+在具有互联网连接的RHEL 7服务器上,同步存储库:
 
-. 为确保同步资料库后不会删除套件，请输入GPG密钥:
+. 为确保同步资料库后不会删除套件,请输入GPG密钥:
 +
 [source, bash]
 ----
@@ -111,8 +112,8 @@ $ subscription-manager repos \
 $ sudo yum -y install yum-utils createrepo docker git
 ----
 +
-`yum-utils` 包提供了*制作一个目录将软件存储在服务器的存储器或USB驱动器或其他外部设备: *reposync* 应用程序，它允许您镜像yum存储库，
-并且您可以使用 `createrepo` 包从目录创建一个可用的`yum`存储库。
+ `yum-utils` 包提供了制作一个目录将软件存储在服务器的存储器或USB驱动器或其他外部设备: *reposync* 应用程序,它允许您镜像yum存储库,
+并且您可以使用 `createrepo` 包从目录创建一个可用的 `yum` 存储库。
 
 . 制作一个目录将软件存储在服务器的存储器或USB驱动器或其他外部设备:
 +
@@ -123,11 +124,11 @@ $ mkdir -p </path/to/repos>
 +
 [IMPORTANT]
 ====
-如果可以将此服务器重新连接到断开连接的LAN并将其用作存储库服务器，请在本地存储文件。
-如果不能，请使用usb连接的存储，以便可以将软件传输到断开连接的LAN中的存储库服务器。
+如果可以将此服务器重新连接到断开连接的LAN并将其用作存储库服务器,请在本地存储文件。
+如果不能,请使用usb连接的存储,以便可以将软件传输到断开连接的LAN中的存储库服务器。
 ====
 
-. 同步包，并为每个包创建存储库:
+. 同步包,并为每个包创建存储库:
 +
 [source, bash]
 ----
@@ -157,7 +158,7 @@ $ systemctl start docker
 
 . 提取所有必需的{product-title}基础设施组件映像。
 ifdef::openshift-enterprise[]
-用要安装的版本替换`<tag>`。例如，为最新版本指定`{latest-tag}`。
+用要安装的版本替换`<tag>`。例如,为最新版本指定`{latest-tag}`。
 您可以指定一个不同的次要版本。
 endif::[]
 +
@@ -219,7 +220,7 @@ $ docker pull registry.redhat.io/rhel7/etcd:3.2.22
 
 . 为可选组件提取所有必需的{product-title}组件映像。
 ifdef::openshift-enterprise[]
-用要安装的版本替换`<tag>` 。例如，为最新版本指定`{latest-tag}`。
+用要安装的版本替换`<tag>` 。例如,为最新版本指定`{latest-tag}`。
 您可以指定一个不同的次要版本。
 endif::[]
 +
@@ -255,17 +256,17 @@ $ docker pull registry.redhat.io/rhgs3/rhgs-s3-server-rhel7
 +
 [IMPORTANT]
 ====
-对于Red Hat的支持， `rhgs3/` 图像需要一个{gluster-native}订阅。
+对于Red Hat的支持, `rhgs3/` 图像需要一个{gluster-native}订阅。
 ====
 +
 [IMPORTANT]
 ====
-在{product-title}Prometheus只是一个技术预览功能。
+在{product-title}中Prometheus只是一个技术预览功能。
 ifdef::openshift-enterprise[]
-Red Hat生产服务水平协议(SLA)不支持技术预览功能，功能上可能不完整，Red Hat不建议在生产中使用这些功能。
-这些特性提供了对即将到来的产品特性的早期访问，使客户能够在开发过程中测试功能并提供反馈。
+Red Hat生产服务水平协议(SLA)不支持技术预览功能,功能上可能不完整,Red Hat不建议在生产中使用这些功能。
+这些特性提供了对即将到来的产品特性的早期访问,使客户能够在开发过程中测试功能并提供反馈。
 
-有关Red Hat技术预览功能支持范围的更多信息，请参见
+有关Red Hat技术预览功能支持范围的更多信息,请参见
 https://access.redhat.com/support/offerings/techpreview/.
 endif::[]
 ====
@@ -273,11 +274,11 @@ endif::[]
 . 使用Red Hat认证的
 xref:../architecture/core_concepts/builds_and_image_streams.adoc#source-build[Source-to-Image(S2I)]在您的{product-title}环境中构建映射器映像。
 +
-请确保通过指定版本号来指示正确的标记。有关图像版本兼容性的详细信息，请参见链接中的S2I表：
-https://access.redhat.com/articles/2176281[OpenShift and Atomic Platform Tested Integrations page]。
+请确保通过指定版本号来指示正确的标记。有关图像版本兼容性的详细信息,请参见链接中的S2I表：
+link:https://access.redhat.com/articles/2176281[OpenShift 和 Atomic Platform集成测试页面]。
 +
 ////
-例如，要同时提取Tomcat映像的前一个和最新版本:
+例如,要同时提取Tomcat映像的前一个和最新版本:
 +
 [source, bash]
 ----
@@ -323,11 +324,11 @@ $ docker pull registry.redhat.io/rhscl/mariadb-101-rhel7:<tag>
 
 [[disconnected-preparing-images-for-export]]
 === 导出图像
-如果您的环境无法访问您的内部网络，并且需要物理媒体来传输内容，
-那么将图像导出到压缩文件中。如果您的主机同时连接到互联网和内部网络，
-则跳过以下步骤，继续执行xref:disconnected-repo-server[准备并填充存储库服务器]。
+如果您的环境无法访问您的内部网络,并且需要物理媒体来传输内容,
+那么将图像导出到压缩文件中。如果您的主机同时连接到互联网和内部网络,
+则跳过以下步骤,继续执行xref:disconnected-repo-server[准备并填充存储库服务器]。
 
-. 创建一个目录存储您的压缩图像，并更改为:
+. 创建一个目录存储您的压缩图像,并更改为:
 +
 [source, bash]
 ----
@@ -396,11 +397,11 @@ $ docker save -o ose3-images.tar \
 +
 [IMPORTANT]
 ====
-对于Red Hat支持，`rhgs3/`图像需要一个{gluster-native}订阅。
+对于Red Hat支持,`rhgs3/`图像需要一个{gluster-native}订阅。
 ====
 ////
 
-. 如果您为可选组件同步图像，请导出它们:
+. 如果您为可选组件同步图像,请导出它们:
 +
 [source, bash]
 ----
@@ -433,7 +434,7 @@ $ docker save -o ose3-optional-imags.tar \
     registry.redhat.io/rhgs3/rhgs-s3-server-rhel7
 ----
 
-. 导出您所提取的S2I构建器映像。例如，如果只同步Jenkins和Tomcat图像:
+. 导出您所提取的S2I构建器映像。例如,如果只同步Jenkins和Tomcat图像:
 +
 [source, bash]
 ----
@@ -462,13 +463,13 @@ $ docker load -i ose3-optional-images.tar
 [[disconnected-repo-server]]
 == 准备并填充存储库服务器
 
-在安装过程中，以及以后的任何更新过程中，您都需要一个web服务器来承载软件。
+在安装过程中,以及以后的任何更新过程中,您都需要一个web服务器来承载软件。
 RHEL 7可以提供Apache web服务器。
 
 . 准备网络服务器:
-.. 如果您需要在断开连接的环境中安装一个新的web服务器，请在LAN上安装一个新的RHEL 7系统，
-该系统至少有110 GB的空间。在RHEL安装过程中，选择 *基本Web服务器* 选项。
-.. 如果您正在重用下载了{product-title}软件和所需映像的服务器，请在服务器上安装Apache:
+.. 如果您需要在断开连接的环境中安装一个新的web服务器,请在LAN上安装一个新的RHEL 7系统,
+该系统至少有110 GB的空间。在RHEL安装过程中,选择 *基本Web服务器* 选项。
+.. 如果您正在重用下载了{product-title}软件和所需映像的服务器,请在服务器上安装Apache:
 +
 [source, bash]
 ----
@@ -485,7 +486,7 @@ $ chmod -R +r /var/www/html/repos
 $ restorecon -vR /var/www/html
 ----
 
-** 如果你安装了一个新的服务器，附加外部存储，然后复制文件:
+** 如果你安装了一个新的服务器,附加外部存储,然后复制文件:
 +
 [source, bash]
 ----
@@ -502,7 +503,7 @@ $ sudo firewall-cmd --permanent --add-service=http
 $ sudo firewall-cmd --reload
 ----
 
-. 启用并启动Apache，使更改生效:
+. 启用并启动Apache,使更改生效:
 +
 [source, bash]
 ----
@@ -513,29 +514,29 @@ $ systemctl start httpd
 [[disconnected-populate-registry]]
 == 填充注册表
 
-从您断开连接的环境中，标记并将图像推送到您的内部注册表:
+从您断开连接的环境中,标记并将图像推送到您的内部注册表:
 
 [IMPORTANT]
 ====
 以下步骤是将图像加载到注册表的通用指南。您可能需要采取更多或不同的操作来加载图像。
 ====
 
-. 在将图像放入注册表之前，请重新标记每个图像。
-** 对于 `openshift3` 存储库中的图像，将图像标记为主版本号和副版本号。例如，要标记{product-title}节点图像:
+. 在将图像放入注册表之前,请重新标记每个图像。
+** 对于 `openshift3` 存储库中的图像,将图像标记为主版本号和副版本号。例如,要标记{product-title}节点图像:
 +
 [source, bash]
 ----
 $ docker tag registry.redhat.io/openshift3/ose-node:<tag> registry.example.com/openshift3/ose-node:<tag>
 $ docker tag registry.redhat.io/openshift3/ose-node:<tag> registry.example.com/openshift3/ose-node:{major-tag}
 ----
-** 对于其他图像，使用准确的版本号标记图像。例如，要标记etcd图像:
+** 对于其他图像,使用准确的版本号标记图像。例如,要标记etcd图像:
 +
 [source, bash]
 ----
 $ docker tag registry.redhat.io/rhel7/etcd:3.2.22 registry.example.com/rhel7/etcd:3.2.22
 ----
 
-. 将每个图像推入注册表。例如，要推送{product-title}节点图像:
+. 将每个图像推入注册表。例如,要推送{product-title}节点图像:
 +
 [source, bash]
 ----
@@ -546,12 +547,12 @@ $ docker push registry.example.com/openshift3/ose-node:{major-tag}
 [[disconnected-openshift-systems]]
 == 准备集群主机
 
-现在您已经有了安装文件，准备好您的主机。
+现在您已经有了安装文件,准备好您的主机。
 
 . 为您的{product-title}集群创建主机。建议使用最新版本的RHEL 7并执行最小的安装。
 确保主机满足xref:../install/prerequisites.adoc#install-config-install-prerequisites[系统需求]。
 
-. 在每个节点主机上，创建存储库定义。将以下文本放在*_/etc/yum.repos.d/ose.repo_* 文件:
+. 在每个节点主机上,创建存储库定义。将以下文本放在*_/etc/yum.repos.d/ose.repo_* 文件:
 +
 ----
 [rhel-7-server-rpms]
@@ -578,13 +579,13 @@ gpgcheck=0
 <1> 用承载软件库的Apache服务器的IP地址或主机名替换`<server_IP>`。
 
 . 完成主机的安装准备工作。遵循
-xref:host_preparation.adoc#install-config-install-host-preparation[准备您的主机]步骤，
+xref:host_preparation.adoc#install-config-install-host-preparation[准备您的主机]步骤,
 省略了*Host Registration*部分中的步骤。
 
 [[disconnected-installing-openshift]]
 == 安装{product-title}
 
-准备好软件、图像和主机后，使用标准安装方法安装{product-title}:
+准备好软件,图像和主机后,使用标准安装方法安装{product-title}:
 
 . xref:configuring_inventory_file.adoc#configuring-ansible[配置你的库存文件]参考你的内部注册表:
 +
@@ -593,14 +594,14 @@ oreg_url=registry.example.com/openshift3/ose-${component}:${version}
 openshift_examples_modify_imagestreams=true
 ----
 
-. xref:running_install.adoc#install-running-installation-playbooks[运行安装剧本]。
+. xref:running_install.adoc#install-running-installation-playbooks[运行安装playbooks]。
 ////
 +
 [IMPORTANT]
 ====
-您必须为提取的图像提供`<tag>`的值，例如*{latest-tag}*，
+您必须为提取的图像提供`<tag>`的值,例如*{latest-tag}*,
 作为`openshift_image_tag`参数的值。
-如果没有为该参数提供正确的值，安装程序可能尝试访问存储库服务器中没有的映像，
+如果没有为该参数提供正确的值,安装程序可能尝试访问存储库服务器中没有的映像,
 安装可能会失败。
 ====
 ////
