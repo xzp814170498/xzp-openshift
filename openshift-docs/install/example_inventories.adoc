@@ -131,7 +131,7 @@ infra-node2.example.com openshift_node_group_name='node-config-infra'
 ====
 // end::exampleinventorynodelabel[]
 
-要使用此实例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*。
+要使用此实例，请修改文件以匹配您的环境和规范，并将其保存为 *_/etc/ansible/hosts_*。
 
 [[single-master-multi-etcd-multi-node-ai]]
 === 单个主节点，多个etcd和多个节点
@@ -142,7 +142,7 @@ xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#ma
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#master[etcd]
 主机，两个
 xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#node[nodes]
-用于托管主机用户应用程序，以及两个具有`node-role.kubernetes.io/infra=true`的主机标签。
+用于托管主机用户应用程序，以及两个具有 `node-role.kubernetes.io/infra=true` 的主机标签。
 xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[专门的基础设施]:
 
 [options="header"]
@@ -171,7 +171,7 @@ xref:configuring_inventory_file.adoc#configuring-dedicated-infrastructure-nodes[
 |*infra-node2.example.com*
 |===
 
-您可以在以下示例库存文件的*[masters]*, *[nodes]*, 和 *[etcd]* 小节中看到这些示例主机:
+您可以在以下示例库存文件的 *[masters]*, *[nodes]*, 和 *[etcd]* 小节中看到这些示例主机:
 
 .单个主目录，多个etcd和多个节点目录文件
 ----
@@ -218,7 +218,7 @@ infra-node1.example.com openshift_node_group_name='node-config-infra'
 infra-node2.example.com openshift_node_group_name='node-config-infra'
 ----
 
-include::install/example_inventories.adoc[tag=exampleinventorynodelabel].
+include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 
 要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为 *_/etc/ansible/hosts_*.
 
@@ -386,7 +386,7 @@ infra-node2.example.com openshift_node_group_name='node-config-infra'
 
 include::install/example_inventories.adoc[tag=exampleinventorynodelabel]
 
-要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为*_/etc/ansible/hosts_*.
+要使用此示例，请修改文件以匹配您的环境和规范，并将其保存为 *_/etc/ansible/hosts_*.
 
 [[multi-masters-single-etcd-using-native-ha]]
 === 多个主机使用本机HA和共存的集群etcd

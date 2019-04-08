@@ -55,7 +55,7 @@ RHEL 7.4或7.5带有"最小"安装选项，以及来自RHEL 7 Extras通道或RHE
 - NetworkManager1.0或更高版本
 - 2 vCPU.
 - 最小16 GB RAM。
-- 包含*_/var/_*文件系统的至少需要15GB的硬盘空间。
+- 包含 *_/var/_* 文件系统的至少需要15GB的硬盘空间。
 - 为Docker的存储后端增加至少15GB的未分配空间;
 请查看
 xref:host_preparation.adoc#configuring-docker-storage[Docker配置存储]
@@ -145,7 +145,7 @@ registry.example.com openshift_node_group_name='node-config-all-in-one'
 <1> 设置 `deployment_subtype=registry`，以确保安装独立的OCR，而不是完整的{product-title}环境。
 <2> 允许在单个主机上调度注册表及其web控制台。
 +
-.Multiple masters (highly-available) stand-alone OpenShift Container Registry inventory file
+.多个主机(高度可用)独立的OpenShift容器注册表目录文件
 ----
 # 创建一个包含主，节点，etcd和lb组的OSEv3组。
 # lb组允许Ansible将HAProxy配置为负载平衡解决方案。

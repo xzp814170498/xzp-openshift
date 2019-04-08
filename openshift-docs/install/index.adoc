@@ -28,15 +28,15 @@ ifdef::openshift-origin[]
 小节提供了关于可用的云提供商选项的更多信息
 endif::[]
 
-* _在您的集群中有多少的pod?_ The xref:sizing[分级考虑]
+* _在您的集群中有多少的pod?_ 这个 xref:sizing[分级考虑]
 小节为节点和pod提供了限制，这样您就可以计算您的环境需要多大。
 
-* _在集群中需要多少主机?_ The xref:environment-scenarios[环境场景]
+* _在集群中需要多少主机?_ 这个 xref:environment-scenarios[环境场景]
 小节提供了单个主配置和多个主配置的多个示例。
 
 * _是否需要一个xref:../architecture/infrastructure_components/kubernetes_infrastructure.adoc#high-availability-masters[高可用]集群?_
-高可用性配置提高容错能力。在这种情况下，可以使用:multi-masters-using-native-ha-colocated[多个Master使用本机HA]
-示例来设置环境。
+高可用性配置提高容错能力。在这种情况下，可以使用
+xref:multi-masters-using-native-ha-colocated[多个Master使用本机HA]示例来设置环境。
 
 * _xref:../install_config/prometheus_cluster_monitoring.adoc#prometheus-cluster-monitoring[集群监测]是必须的吗?_
 监控栈需要额外的
@@ -102,7 +102,7 @@ xref:../scaling_performance/cluster_limits.adoc#scaling-performance-cluster-limi
 === 一个系统上的单个主节点和节点
 
 您可以在单个系统上安装{product-title}，只用于开发环境，您不能将
-_all-in-one environment_环境用作生产环境。
+_all-in-one environment_ 环境用作生产环境。
 
 [[single-master-multi-node]]
 === 单个主节点和多个节点

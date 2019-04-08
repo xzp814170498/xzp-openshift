@@ -30,7 +30,7 @@ endif::[]
 [[setting-path]]
 == 设置路径
 
-每个主机上的根用户的`路径`必须包含以下目录:
+每个主机上的根用户的 `路径` 必须包含以下目录:
 
 - *_/bin_*
 - *_/sbin_*
@@ -363,7 +363,7 @@ OverlayFS是联合文件系统的一种类型。它允许您将一个文件系�
 更改记录在上层文件系统中，而下层文件系统保持不变。
 
 xref:../scaling_performance/optimizing_storage.adoc#comparing-overlay-graph-drivers[比较覆盖图驱动程序]
-有关*覆盖*和*覆盖2*驱动程序的更多信息。
+有关 *overlay* 和 *overlay2* 驱动程序的更多信息。
 
 有关为Docker服务启用OverlayFS存储驱动程序的信息，请参见
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/managing_containers/#using_the_overlay_graph_driver[Red Hat Enterprise Linux原子主机文档]。
@@ -396,7 +396,7 @@ DEVS=/dev/vdc
 VG=docker-vg
 EOF
 ----
-.. 运行*docker-storage-setup*并检查输出，确保创建了 *docker-pool* 卷:
+.. 运行 *docker-storage-setup* 并检查输出，确保创建了 *docker-pool* 卷:
 +
 ----
 # docker-storage-setup                                                                                                                                                                                                                                [5/1868]
@@ -440,7 +440,7 @@ Warning: no primary partition is marked bootable (active)
 ----
 
 ** 若要使用现有的指定卷组，请:
-.. 在*_/etc/sysconfig/docker-storage-setup_*中，将*VG*设置为卷组，例如：
+.. 在 *_/etc/sysconfig/docker-storage-setup_* 中，将 *VG* 设置为卷组，例如：
 +
 ----
 # cat <<EOF > /etc/sysconfig/docker-storage-setup
@@ -461,7 +461,7 @@ EOF
 ----
 
 ** 要使用根文件系统所在卷组的剩余空闲空间:
-.. 验证根文件系统所在的卷组具有所需的空闲空间，然后运行 *docker-storage-setup* 并检查输出，确保创建了*docker-pool*卷:
+.. 验证根文件系统所在的卷组具有所需的空闲空间，然后运行 *docker-storage-setup* 并检查输出，确保创建了 *docker-pool* 卷:
 +
 ----
 # docker-storage-setup

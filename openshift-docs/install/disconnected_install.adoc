@@ -553,7 +553,7 @@ $ docker push registry.example.com/openshift3/ose-node:{major-tag}
 . 为您的{product-title}集群创建主机。建议使用最新版本的RHEL 7并执行最小的安装。
 确保主机满足xref:../install/prerequisites.adoc#install-config-install-prerequisites[系统需求]。
 
-. 在每个节点主机上，创建存储库定义。将以下文本放在*_/etc/yum.repos.d/ose.repo_* 文件:
+. 在每个节点主机上，创建存储库定义。将以下文本放在 *_/etc/yum.repos.d/ose.repo_* 文件:
 +
 ----
 [rhel-7-server-rpms]
@@ -577,11 +577,11 @@ baseurl=http://<server_IP>/repos/rhel-7-server-ose-3.11-rpms <1>
 enabled=1
 gpgcheck=0
 ----
-<1> 用承载软件库的Apache服务器的IP地址或主机名替换`<server_IP>`。
+<1> 用承载软件库的Apache服务器的IP地址或主机名替换 `<server_IP>`。
 
 . 完成主机的安装准备工作。遵循
 xref:host_preparation.adoc#install-config-install-host-preparation[准备您的主机]步骤，
-省略了*Host Registration*部分中的步骤。
+省略了 *Host Registration* 部分中的步骤。
 
 [[disconnected-installing-openshift]]
 == 安装{product-title}

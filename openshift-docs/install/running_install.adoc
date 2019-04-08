@@ -230,7 +230,7 @@ ifdef::openshift-origin[]
     docker.io/openshift/origin-ansible:v3.11
 endif::[]
 ----
-<1> 将`PLAYBOOK_FILE`设置为从 *_playbooks/_* 目录开始的playbook的完整路径。
+<1> 将 `PLAYBOOK_FILE` 设置为从 *_playbooks/_* 目录开始的playbook的完整路径。
 Playbook与基于RPM的安装程序位于相同的位置。
 <2> 设置 `OPTS` 以向 `ansible-playbook` 添加命令行选项。
 
