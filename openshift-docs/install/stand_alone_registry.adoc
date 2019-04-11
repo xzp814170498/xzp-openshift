@@ -23,11 +23,11 @@ xref:../architecture/infrastructure_components/image_registry.adoc#integrated-op
 
 OCR提供以下功能:
 
-- 一个以用户为中心的注册表web控制台， link:http://cockpit-project.org/[Cockpit].
+- 一个以用户为中心的注册表web控制台， link:http://cockpit-project.org/[Cockpit]。
 - xref:../install_config/registry/securing_and_exposing_registry.adoc#securing-the-registry[交通安全]
 默认情况下，通过TLS提供服务。
 - 全球变量
-xref:../install_config/configuring_authentication.adoc#install-config-configuring-authentication[身份提供商的身份验证].
+xref:../install_config/configuring_authentication.adoc#install-config-configuring-authentication[身份提供商的身份验证]。
 - 一个
 xref:../architecture/core_concepts/projects_and_users.adoc#architecture-core-concepts-projects-and-users[项目名称]
 模型以实现团队合作
@@ -89,24 +89,24 @@ Red Hat Enterprise Linux原子主机]以获得安装过程中或安装后配置�
 
 . 查看完整的安装过程，从
 xref:index.adoc#install-planning[规划您的安装]开始一起规划您的安装。
-安装OCR使用相同的过程，但需要在库存文件中进行一些特定的设置。
-安装文档包括库存文件可用的Ansible变量的全面列表。
+安装OCR使用相同的过程，但需要在目录文件中进行一些特定的设置。
+安装文档包括目录文件可用的Ansible变量的全面列表。
 
 . 完成
 xref:host_preparation.adoc#install-config-install-host-preparation[主机准备]步骤。
 
 . 创建一个
-xref:../install/configuring_inventory_file.adoc#install-config-configuring-inventory-file[库存文件]
+xref:../install/configuring_inventory_file.adoc#install-config-configuring-inventory-file[目录文件]
 安装在 *_/etc/ansible/hosts_* 目录下:
 +
 [IMPORTANT]
 ====
-要安装一个独立的OCR，您必须在 `[OSEv3:vars]` 部分的库存文件中设置 `deployment_subtype=registry`。
+要安装一个独立的OCR，您必须在 `[OSEv3:vars]` 部分的目录文件中设置 `deployment_subtype=registry`。
 ====
 +
-对于不同支持的系统拓扑使用以下示例库存文件:
+对于不同支持的系统拓扑使用以下示例目录文件:
 +
-.所有在一个独立的OpenShift容器注册表库存文件
+.所有在一个独立的OpenShift容器注册表目录文件
 ----
 # 创建包含主节点组和节点组的OSEv3组
 [OSEv3:children]
@@ -211,7 +211,7 @@ xref:index.adoc#install-planning[集群安装]过程。
 +
 [IMPORTANT]
 ====
-运行Ansible playbook的主机在库存文件中每个主机必须至少有75MiB的空闲内存。
+运行Ansible playbook的主机在目录文件中每个主机必须至少有75MiB的空闲内存。
 ====
 +
 .. 在部署新集群之前，请切换到集群目录并运行 *_prerequisites.yml_* playbooks:
@@ -221,7 +221,7 @@ $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook  [-i /path/to/inventory] \ <1>
     playbooks/prerequisites.yml
 ----
-<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，请指定 `-i` 和库存文件的路径。
+<1> 如果您的目录文件不在 *_/etc/ansible/hosts_* 目录中，请指定 `-i` 和目录文件的路径。
 +
 你只能运行这个playbooks一次。
 
@@ -232,5 +232,5 @@ $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook  [-i /path/to/inventory] \ <1>
     playbooks/deploy_cluster.yml
 ----
-<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，
-请指定 `-i` 和库存文件的路径。
+<1> 如果您的目录文件不在 *_/etc/ansible/hosts_* 目录中，
+请指定 `-i` 和目录文件的路径。

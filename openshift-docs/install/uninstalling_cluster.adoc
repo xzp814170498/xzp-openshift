@@ -45,7 +45,8 @@ ifdef::openshift-origin[]
     ~/openshift-ansible/playbooks/adhoc/uninstall.yml
 endif::[]
 ----
-<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，请指定 `-i` 和库存文件的路径。
+<1> 如果您的目录文件不在 *_/etc/ansible/hosts_* 目录中，请指定 `-i` 和目录文件的路径。
+
 [[uninstalling-nodes]]
 === 卸载节点
 
@@ -61,7 +62,7 @@ endif::[]
 xref:../admin_guide/manage_nodes.adoc#deleting-nodes[删除节点]
 从集群中删除节点对象。
 
-. 创建一个仅引用这些主机的不同库存文件。例如，只从一个节点删除内容:
+. 创建一个仅引用这些主机的不同目录文件。例如，只从一个节点删除内容:
 +
 ----
 [OSEv3:children]
@@ -94,6 +95,6 @@ ifdef::openshift-origin[]
     ~/openshift-ansible/playbooks/adhoc/uninstall.yml
 endif::[]
 ----
-<1> 指定新库存文件的路径。
+<1> 指定新目录文件的路径。
 
 当playbook完成时，将从指定的主机中删除所有{product-title}内容。

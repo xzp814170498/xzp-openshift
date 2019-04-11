@@ -158,7 +158,7 @@ $ systemctl start docker
 
 . 提取所有必需的{product-title}基础设施组件映像。
 ifdef::openshift-enterprise[]
-用要安装的版本替换`<tag>`。例如，为最新版本指定`{latest-tag}`。
+用要安装的版本替换 `<tag>`。例如，为最新版本指定 `{latest-tag}`。
 您可以指定一个不同的次要版本。
 endif::[]
 +
@@ -220,7 +220,7 @@ $ docker pull registry.redhat.io/rhel7/etcd:3.2.22
 
 . 为可选组件提取所有必需的{product-title}组件映像。
 ifdef::openshift-enterprise[]
-用要安装的版本替换`<tag>` 。例如，为最新版本指定`{latest-tag}`。
+用要安装的版本替换 `<tag>`。例如，为最新版本指定 `{latest-tag}`。
 您可以指定一个不同的次要版本。
 endif::[]
 +
@@ -256,7 +256,7 @@ $ docker pull registry.redhat.io/rhgs3/rhgs-s3-server-rhel7
 +
 [IMPORTANT]
 ====
-对于Red Hat的支持， `rhgs3/` 图像需要一个{gluster-native}订阅。
+对于Red Hat的支持，`rhgs3/` 图像需要一个{gluster-native}订阅。
 ====
 +
 [IMPORTANT]
@@ -275,7 +275,7 @@ endif::[]
 xref:../architecture/core_concepts/builds_and_image_streams.adoc#source-build[Source-to-Image(S2I)]在您的{product-title}环境中构建映射器映像。
 +
 请确保通过指定版本号来指示正确的标记。有关图像版本兼容性的详细信息，请参见链接中的S2I表：
-link:https://access.redhat.com/articles/2176281[OpenShift 和 Atomic Platform集成测试页面]。
+link:https://access.redhat.com/articles/2176281[OpenShift和Atomic Platform集成测试页面]。
 +
 ////
 例如，要同时提取Tomcat映像的前一个和最新版本:
@@ -398,7 +398,7 @@ $ docker save -o ose3-images.tar \
 +
 [IMPORTANT]
 ====
-对于Red Hat支持，`rhgs3/`图像需要一个{gluster-native}订阅。
+对于Red Hat支持，`rhgs3/` 图像需要一个{gluster-native}订阅。
 ====
 ////
 
@@ -588,7 +588,7 @@ xref:host_preparation.adoc#install-config-install-host-preparation[准备您的�
 
 准备好软件，图像和主机后，使用标准安装方法安装{product-title}:
 
-. xref:configuring_inventory_file.adoc#configuring-ansible[配置你的库存文件]参考你的内部注册表:
+. xref:configuring_inventory_file.adoc#configuring-ansible[配置你的目录文件]参考你的内部注册表:
 +
 ----
 oreg_url=registry.example.com/openshift3/ose-${component}:${version}
@@ -600,8 +600,8 @@ openshift_examples_modify_imagestreams=true
 +
 [IMPORTANT]
 ====
-您必须为提取的图像提供`<tag>`的值，例如*{latest-tag}*，
-作为`openshift_image_tag`参数的值。
+您必须为提取的图像提供 `<tag>` 的值，例如 *{latest-tag}*，
+作为 `openshift_image_tag` 参数的值。
 如果没有为该参数提供正确的值，安装程序可能尝试访问存储库服务器中没有的映像，
 安装可能会失败。
 ====

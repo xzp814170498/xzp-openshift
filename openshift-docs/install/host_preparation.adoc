@@ -177,7 +177,7 @@ endif::[]
 ====
 如果您的主机使用RHEL 7.5，并且您希望接受{product-title}的默认 *docker*
 配置(使用OverlayFS存储和所有默认日志选项)，
-则不需要手动安装这些包。这些包是在运行 *prerequisites.yml* 期间安装
+则不需要手动安装这些包。这些包是在运行 *prerequisites.yml* 期间
 xref:running_install.adoc#running-the-installation-playbooks[安装]。
 
 如果您的主机使用RHEL 7.4或RHEL 7.5，并且您想定制 *docker* 配置，请安装这些包。
@@ -266,13 +266,13 @@ endif::[]
 . 如果有最新的原子树，请升级到最新的原子树，以确保主机是最新的:
 +
 ----
-# 原子主机升级
+# atomic host upgrade
 ----
 
 . 升级完成并为下一次引导做好准备后，重启主机:
 +
 ----
-# 重启
+# reboot
 ----
 
 [[installing-docker]]
@@ -324,8 +324,8 @@ Web控制台和etcd(需要存储)在主机上的容器中运行。容器在节�
 ====
 如果您的主机使用RHEL 7.5，并且希望接受{product-title}的默认 *docker* 配置
 (使用OverlayFS存储和所有默认日志选项)，
-则不需要手动安装这些包，这些包是在运行 *prerequisites.yml* 先前安装的。
-xref:running_install.adoc#running-the-installation-playbooks[安装]。
+则不需要手动安装这些包，这些包是在运行 *prerequisites.yml* 之前
+xref:running_install.adoc#running-the-installation-playbooks[安装] 的。
 
 如果您的主机使用RHEL 7.4或RHEL 7.5，并且您想定制 *docker* 配置，
 请安装这些包。
@@ -337,7 +337,7 @@ RHEL 7上Docker的默认存储后端是环回设备上的一个瘦池，它不�
 对于生产环境，您必须创建一个瘦池逻辑卷，并重新配置Docker以使用该卷。
 
 Docker在图形驱动程序中存储图像和容器，这是一种可插入的存储技术，例如 *DeviceMapper*，
-*OverlayFS*， 和 *Btrfs*。每种方法都有优点和缺点。例如，在启动和停止容器时，OverlayFS比DeviceMapper更快，
+*OverlayFS*，和 *Btrfs*。每种方法都有优点和缺点。例如，在启动和停止容器时，OverlayFS比DeviceMapper更快，
 但由于union文件系统的体系结构限制，它不是兼容Unix(POSIX)的可移植操作系统接口。参见链接:
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/?version=7[Red Hat Enterprise Linux]
 发布关于在RHEL版本中使用OverlayFS的信息。
@@ -362,8 +362,8 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_ho
 OverlayFS是联合文件系统的一种类型。它允许您将一个文件系统覆盖在另一个文件系统之上。
 更改记录在上层文件系统中，而下层文件系统保持不变。
 
-xref:../scaling_performance/optimizing_storage.adoc#comparing-overlay-graph-drivers[比较覆盖图驱动程序]
-有关 *overlay* 和 *overlay2* 驱动程序的更多信息。
+有关 *overlay* 和 *overlay2* 驱动程序的更多信息，请查看
+xref:../scaling_performance/optimizing_storage.adoc#comparing-overlay-graph-drivers[比较覆盖图驱动程序]。
 
 有关为Docker服务启用OverlayFS存储驱动程序的信息，请参见
 link:https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html-single/managing_containers/#using_the_overlay_graph_driver[Red Hat Enterprise Linux原子主机文档]。
@@ -631,8 +631,8 @@ registry.redhat.io                  signed security@redhat.com,security@redhat.c
 |设置每个主机要保存的日志文件的最大数量。
 |===
 
-. 要配置日志文件，请编辑 *_/etc/sysconfig/docker_* 文件。例如，要将最大文件大小设置为
-1MB，并始终保留最后三个日志文件，请在 `OPTIONS=` 行中添加 `max-size=1M `和 `max-file=3`，
+. 要配置日志文件，请编辑 *_/etc/sysconfig/docker_* 文件。例如，要将最大文件大小设置为1MB，
+并始终保留最后三个日志文件，请在 `OPTIONS=` 行中添加 `max-size=1M` 和 `max-file=3`，
 确保值保持单引号格式：
 +
 ----
@@ -727,7 +727,7 @@ include::install_config/persistent_storage/topics/glusterfs_prereqs_software.ado
 
 ifdef::openshift-enterprise[]
 在您准备好主机之后，如果您正在安装{product-title}，
-xref:configuring_inventory_file.adoc#configuring-ansible[配置你的库存文件]。
+xref:configuring_inventory_file.adoc#configuring-ansible[配置你的目录文件]。
 如果正在安装独立注册表，请继续
 xref:stand_alone_registry.adoc#install-config-installing-stand-alone-registry[安装独立注册表].
 endif::[]
@@ -739,5 +739,5 @@ xref:../getting_started/administrators.adoc#getting-started-administrators[管�
 xref:../getting_started/administrators.adoc#installation-methods[安装方法]. 
 或者，您也可以使用标准集群安装过程安装{product-title}，
 方法是继续安装到
-xref:configuring_inventory_file.adoc#configuring-ansible[配置您的库存文件].
+xref:configuring_inventory_file.adoc#configuring-ansible[配置您的目录文件].
 endif::[]

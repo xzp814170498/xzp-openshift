@@ -37,13 +37,13 @@ xref:prerequisites.adoc#install-config-install-prerequisites[系统和环境需�
 - 如果您有一个大型集群，有关优化安装时间的建议，请查看
 xref:../scaling_performance/install_practices.adoc#scaling-performance-install-best-practices[缩放和性能指南]。
 
-- xref:host_preparation.adoc#install-config-install-host-preparation[一起准备你的主机]。
+- xref:host_preparation.adoc#install-config-install-host-preparation[准备你的主机]
 这个过程包括验证每个组件类型的系统和环境需求，安装和配置 *docker* 服务，
-以及安装Ansible 2.6或更高版本。您必须安装Ansible运行安装playbooks。
+以及安装Ansible 2.目录
 
-- xref:configuring_inventory_file.adoc#install-config-configuring-inventory-file[配置您的库存文件]
+- xref:configuring_inventory_file.adoc#install-config-configuring-inventory-file[配置目录文件]
 来定义您的环境和{product-title}集群配置。
-您的初始安装和未来的集群升级都基于此库存文件。
+您的初始安装和未来的集群升级都基于此目录文件。
 
 - 如果您正在Red Hat Enterprise Linux上安装{product-title}，请决定是否要使用
 xref:index.adoc#planning-installation-types[RPM或容器安装]安装方法。
@@ -80,7 +80,7 @@ link:https://github.com/openshift/openshift-ansible/tree/master/playbooks/openst
 来自动化它们。请参见
 xref:../install_config/configuring_openstack#install-config-configuring-openstack[OpenStack的配置]
 和
-xref:configuring_inventory_file.adoc#configuring-ansible[配置您的库存文件]。
+xref:configuring_inventory_file.adoc#configuring-ansible[配置您的目录文件]。
 
 ////
 *在"advanced-cloud-providers"一节之后，openshift-origin发行版中需要包含以下重要警告不再只包含在openshift-origin中。暂时退出评论。
@@ -118,8 +118,8 @@ $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook [-i /path/to/inventory] \ <1>
   playbooks/prerequisites.yml
 ----
-<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，
-请指定 `-i` 和库存文件的路径。
+<1> 如果您的目录文件不在 *_/etc/ansible/hosts_* 目录中，
+请指定 `-i` 和目录文件的路径。
 
 . 切换到playbook目录并运行 *_deploy_cluster.yml_* playbook启动集群安装:
 +
@@ -128,8 +128,8 @@ $ cd /usr/share/ansible/openshift-ansible
 $ ansible-playbook [-i /path/to/inventory] \
     playbooks/deploy_cluster.yml
 ----
-<1> 如果您的库存文件不在 *_/etc/ansible/hosts_* 目录中，
-请指定 `-i` 和库存文件的路径。
+<1> 如果您的目录文件不在 *_/etc/ansible/hosts_* 目录中，
+请指定 `-i` 和目录文件的路径。
 
 .
 ** 如果安装成功，
@@ -175,7 +175,7 @@ ifdef::openshift-origin[]
     docker.io/openshift/origin-ansible:v3.11
 endif::[]
 ----
-<1> 指定库存文件在本地主机上的位置。
+<1> 指定目录文件在本地主机上的位置。
 +
 该命令使用指定的目录文件和 `根` 用户的SSH配置运行一组prerequiste任务。
 
@@ -194,7 +194,7 @@ ifdef::openshift-origin[]
     docker.io/openshift/origin-ansible:v3.11
 endif::[]
 ----
-<1> 指定库存文件在本地主机上的位置。
+<1> 指定目录文件在本地主机上的位置。
 +
 该命令使用指定的目录文件和`根`用户的SSH配置启动集群安装。
 它将输出记录在终端上，并将其保存在 *_/var/log/ansible.log_* 文件。
@@ -253,7 +253,7 @@ Playbook与基于RPM的安装程序位于相同的位置。
 至少，当安装程序作为一个 *docker* 容器运行时，您必须提供:
 
 * SSH密钥，以便Ansible可以到达您的主机。
-* 一个可能的库存文件。
+* 一个可能的目录文件。
 * 根据该目录运行的Ansibleplaybooks的位置。
 
 下面是一个如何通过`docker`运行安装的例子，它必须由访问 `docker` 的非 *root* 用户运行：
@@ -290,7 +290,7 @@ SSH私钥只能由其所有者读取。
 您可能希望使用SSH密钥或目录的单独副本，以便原始文件标签保持不变。
 <3> `-v $HOME/ansible/hosts:/tmp/inventory:Z` 和 `-e INVENTORY_FILE=/tmp/inventory`
 将一个静态的Ansible存货文件作为 *_/tmp/inventory_* 挂载在容器中，并设置相应的环境变量指向该文件。
-与SSH密钥一样，可能需要通过使用 `:Z` 标志重新标记库存文件SELinux标签，以允许在容器中读取，
+与SSH密钥一样，可能需要通过使用 `:Z` 标志重新标记目录文件SELinux标签，以允许在容器中读取，
 这取决于现有的标签。
 对于用户 `$HOME` 目录中的文件，可能需要这样做。您可能更愿意在挂载清单之前将其复制到专用位置。
 如果指定`INVENTORY_URL`环境变量，或者使用 `DYNAMIC_SCRIPT_URL` 参数指定提供动态清单的可执行脚本，
@@ -299,7 +299,7 @@ SSH私钥只能由其所有者读取。
 内容的顶层目录作为相对路径运行的playbooks。
 在本例中，取决于先决条件playbook。
 您还可以指定从RPM或容器中的任何其他playbook文件的完整路径。
-<5> `-e OPTS="-v"`为容器内运行的 `ansible-playbook` 命令提供任意命令行选项。
+<5> `-e OPTS="-v"` 为容器内运行的 `ansible-playbook` 命令提供任意命令行选项。
 在本例中，指定以 `-v` 以增加冗长。
 
 . 接下来，运行 *_deploy_cluster.yml_* playbooks启动集群安装:
@@ -371,14 +371,13 @@ xref:installer-known-issues[已知问题]，以检查任何特定的指令或工
 
 . 确定是否需要卸载，重新安装或重试安装:
 ** 如果您没有修改SDN配置或生成新的证书，请重试安装。
-** 如果您修改了SDN配置，生成了新的证书，或者安装程序再次失败，您必须重新启动一个
-干净的系统安装，或者
+** 如果您修改了SDN配置，生成了新的证书，或者安装程序再次失败，您必须重新启动一个干净的系统安装，或者
 xref:../install/uninstalling_cluster.adoc#uninstalling[卸载]
 并重新安装。
 ** 如果使用虚拟机，请从一个新映像或
-xref:../install/uninstalling_cluster.adoc#uninstalling[卸载]卸载并重新安装。
+xref:../install/uninstalling_cluster.adoc#uninstalling[卸载] 并重新安装。
 ** 如果您使用裸金属机器，
-xref:../install/uninstalling_cluster.adoc#uninstalling[卸载]卸载并重新安装。
+xref:../install/uninstalling_cluster.adoc#uninstalling[卸载] 并重新安装。
 
 
 . 重试安装:

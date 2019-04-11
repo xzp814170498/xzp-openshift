@@ -48,10 +48,10 @@ xref:../install_config/prometheus_cluster_monitoring.adoc#prometheus-cluster-mon
 * _您想使用Red Hat Enterprise Linux (RHEL)或RHEL Atomic Host为集群节点的操作系统吗?_
 如果在RHEL上安装{product-title}，则使用基于rpm的安装。
 在RHEL原子主机上，使用系统容器。
-xref:planning-installation-types[两种安装类型]提供了一个工作环境{product-title}。
+xref:planning-installation-types[两种安装类型] 提供了一个工作环境{product-title}。
 
 * _您提供哪个身份
-xref:../install_config/configuring_authentication.adoc#install-config-configuring-authentication[认证服务器]程序?_
+xref:../install_config/configuring_authentication.adoc#install-config-configuring-authentication[认证服务器] 程序?_
 如果您已经使用受支持的标识提供程序，请在安装期间配置{product-title}以使用该标识提供程序。
 
 ifdef::openshift-enterprise[]
@@ -68,7 +68,7 @@ ifdef::openshift-origin[]
 您可以在本地安装{product-title}，或者将其托管在共有云或私有云上，您可以使用所提供的
 Ansible playbooks来帮助您自动化配置和安装过程。
 更多信息，请参考
-xref:running_install.adoc#advanced-cloud-providers[Running Installation Playbooks].
+xref:running_install.adoc#advanced-cloud-providers[安装并运行Playbooks]。
 endif::[]
 
 [[sizing]]
@@ -279,7 +279,7 @@ https://registry.redhat.io[registry.redhat.io].
 endif::[]
 
 如果需要在安装期间使用私有注册表来提取这些映像，
-可以提前指定注册表信息。根据需要，在你的库存文件中设置以下可能的变量:
+可以提前指定注册表信息。根据需要，在你的目录文件中设置以下可能的变量:
 
 ----
 ifdef::openshift-origin[]

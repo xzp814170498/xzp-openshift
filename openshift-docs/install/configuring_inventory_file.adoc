@@ -188,7 +188,7 @@ xref:../install_config/redeploying_certificates.adoc#redeploying-new-custom-ca[�
 默认为 `1825`(5年)。
 
 |`openshift_certificate_expiry_warning_days`
-|自动生成的证书必须有效才能进行时间的升级，默认为`365` (1年)。
+|自动生成的证书必须有效才能进行时间的升级，默认为 `365` (1年)。
 
 |`openshift_certificate_expiry_fail_on_warn`
 |如果自动生成的证书在 `openshift_certificate_expiry_warning_days` 参数指定的时间内无效，
@@ -292,8 +292,8 @@ openshift_docker_additional_registries=example.com:443
 如果在集群设置之后修改 `openshift_image_tag` 或 `openshift_pkg_version` 变量，则可以触发升级，
 从而导致停机。
 
-* 如果设置 `openshift_image_tag`，它的值将用于系统容器环境中的所有主机，甚至包括那些安装了其他版本的主机。如果
-* `openshift_pkg_version` 被设置，它的值被用于基于RPM的环境中的所有主机，即使是那些安装了其他版本的主机。
+* 如果 `openshift_image_tag` 被设置，它的值将用于系统容器环境中的所有主机，甚至包括那些安装了其他版本的主机。
+* 如果 `openshift_pkg_version` 被设置，它的值被用于基于RPM的环境中的所有主机，即使是那些安装了其他版本的主机。
 ====
 
 [[advanced-install-networking-variables-table]]
@@ -1146,13 +1146,13 @@ a|这个变量用于为master和Docker守护进程设置 `NO_PROXY` 环境变量
 * 其他内部主机名。必须包含域后缀。
 * etcd IP地址。您必须提供IP地址，因为etcd访问是由IP地址管理的。
 * 容器映像注册表IP地址。
-* Kubernetes的IP地址。该值默认为'172.30.0.1'，如果提供了'openshift_portal_net'参数值，则为'openshift_portal_net'参数值。
+* Kubernetes的IP地址。该值默认为 `172.30.0.1`，如果提供了 `openshift_portal_net` 参数值，则为 `openshift_portal_net` 参数值。
 * `cluster.local` Kubernetes内部域后缀。
 * `svc` Kubernetes内部域后缀。
 
 |`openshift_generate_no_proxy_hosts`
-|这个布尔变量指定是否所有定义的OpenShift 主机和 `pass:[*.cluster.local]` 
-可以自动添加到 `NO_PROXY` 列表中。默认为 `true`; 将其设置为 `false` 来覆盖此选项。
+|这个布尔变量指定是否所有定义的OpenShift主机和 `pass:[*.cluster.local]` 
+可以自动添加到 `NO_PROXY` 列表中。默认为 `true`；将其设置为 `false` 来覆盖此选项。
 
 |`openshift_builddefaults_http_proxy`
 |这个变量定义了使用 `BuildDefaults` 承认控制器插入到构建中的 `HTTP_PROXY` 环境变量中。
@@ -1178,7 +1178,7 @@ a|这个变量用于为master和Docker守护进程设置 `NO_PROXY` 环境变量
 
 |`openshift_builddefaults_git_https_proxy`
 |这个变量定义了 `git clone` 操作在构建期间使用的HTTPS代理，
-该代理使用 `BuildDefaults` 承认控制器定义。将 `openshift_builddefaults_git_https_proxy` 值设置为 False`，用来禁用
+该代理使用 `BuildDefaults` 承认控制器定义。将 `openshift_builddefaults_git_https_proxy` 值设置为 `False`，用来禁用
 构建过程中 `git clone` 操作的默认HTTP代理，而不管 `openshift_https_proxy` 的值是多少.
 |===
 
@@ -1236,7 +1236,7 @@ openshift_master_session_name=ssn
 openshift_master_session_max_seconds=3600
 ----
 
-如果提供了， `openshift_master_session_auth_secrets` 和
+如果提供了，`openshift_master_session_auth_secrets` 和
 `openshift_master_encryption_secrets` 必须相同长度。
 
  `openshift_master_session_auth_secrets`，用于使用HMAC对会话进行身份验证，建议使用32或64字节的密码:
@@ -1264,7 +1264,7 @@ xref:../architecture/infrastructure_components/web_console.adoc#architecture-inf
 为与 `*publicMasterURL*` 关联的主机名配置自定义证书，将其设置为
 `*openshift_master_cluster_public_hostname*` 参数值。使用自定义服务证书
 对于与 `*masterURL*` 关联的主机名( `openshift_master_cluster_hostname` )
-会导致TLS错误，因为基础设施组件试图使用内部`*masterURL*` 主机联系主API。
+会导致TLS错误，因为基础设施组件试图使用内部 `*masterURL*` 主机联系主API。
 ====
 
 证书和密钥文件路径可以使用 `openshift_master_named_certificates` 集群变量配置:
@@ -1423,8 +1423,8 @@ xref:../install_config/master_node_configuration.adoc#master-node-config-volume-
 [[advanced-install-cluster-metrics-storage-nfs-host-group]]
 ==== 选项B: NFS主机组
 
-设置了以下的变量后，将在集群安装期间在 `[nfs]`主机组的主机上创建一个NFS卷，
-路径 *_<nfs_directory>/<volume_name>_* 。
+设置了以下的变量后，将在集群安装期间在 `[nfs]` 主机组的主机上创建一个NFS卷，
+路径 *_<nfs_directory>/<volume_name>_*。
 例如，使用这些选项的卷路径是 *_/exports/metrics_*:
 
 ----
@@ -1523,8 +1523,7 @@ openshift_logging_install_logging=true
 ==== 选项A: 动态
 
 如果您的{product-title}环境具有动态卷供应，则可以通过云提供程序或独立存储提供程序对其进行配置。
-例如，云服务商可以有一个带有供应者 `kubernetes.io/gce-pd` 在GCE上，以及一个独立存储提供程序(如GlusterFS)可以有一个带有供应程序 `kubernetes.io/glusterfs`
-的 `StorageClass` 。
+例如，云服务商可以有一个带有供应者 `kubernetes.io/gce-pd` 在GCE上，以及一个独立存储提供程序(如GlusterFS)可以有一个带有供应程序 `kubernetes.io/glusterfs` 的 `StorageClass`。
 在这两个情况下，使用以下变量：
 
 ----
